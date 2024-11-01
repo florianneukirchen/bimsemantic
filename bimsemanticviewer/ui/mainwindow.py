@@ -86,10 +86,10 @@ class MainWindow(QMainWindow):
         QMessageBox.about(
             self,
             "BIM Semantic Viewer",
-            "The <b>Dock Widgets</b> example demonstrates how to use "
-            "Qt's dock widgets. You can enter your own text, click a "
-            "customer to add a customer name and address, and click "
-            "standard paragraphs to add them.",
+            "Bla "
+            "Bla "
+            "Bla "
+            "Bla ",
         )
 
     def open_file(self):
