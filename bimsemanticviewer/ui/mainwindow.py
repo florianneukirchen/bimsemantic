@@ -22,7 +22,7 @@ class MainWindow(QMainWindow):
         self._filename = None
         self._ifc_model = None
 
-        # Provisorisch
+        # Provisorisch ################################################################################
         self._filename = "/media/riannek/PortableSSD/share/FranzLiszt/GE_2000_3TM_KIB_EU_003_AA_003-Franz-Liszt-Strasse.ifc"
         self._ifc_model = ifcopenshell.open(self._filename)
 
@@ -68,11 +68,12 @@ class MainWindow(QMainWindow):
 
         self.create_dock_windows()
 
-        # Provisorisch
+        # Provisorisch ################################################################################
         treemodel = LocationTreeModel(self._ifc_model)
         treeview = QTreeView()
-
         treeview.setModel(treemodel)
+        treeview.setAlternatingRowColors(True)
+        treeview.expandAll()
         self.setCentralWidget(treeview)
 
     def create_dock_windows(self):
