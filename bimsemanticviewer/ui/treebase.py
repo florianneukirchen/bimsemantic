@@ -41,6 +41,7 @@ class TreeItem:
         return self._id
 
 
+
 class TreeModelBaseclass(QAbstractItemModel):
     def __init__(self, data, parent=None):
         super(TreeModelBaseclass, self).__init__(parent)

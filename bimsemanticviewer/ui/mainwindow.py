@@ -77,7 +77,6 @@ class MainWindow(QMainWindow):
         treeview.setAlternatingRowColors(True)
         treeview.setSortingEnabled(True)
         treeview.setColumnHidden(1, True)
-        treeview.resizeColumnToContents(2)
         treeview.expandAll()
         self.setCentralWidget(treeview)
 
