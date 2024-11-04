@@ -11,20 +11,20 @@ from PySide6.QtWidgets import (
 
 import ifcopenshell
 
+from .ifcfile import IfcFile
 from .ifctrees import LocationTreeModel
+
 
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("BIM Semantic Viewer")
-
-        self._filename = None
-        self._ifc_model = None
+        self.ifc = None
 
         # Provisorisch ################################################################################
-        self._filename = "/media/riannek/PortableSSD/share/FranzLiszt/GE_2000_3TM_KIB_EU_003_AA_003-Franz-Liszt-Strasse.ifc"
-        self._ifc_model = ifcopenshell.open(self._filename)
+        filename = "/media/riannek/PortableSSD/share/FranzLiszt/GE_2000_3TM_KIB_EU_003_AA_003-Franz-Liszt-Strasse.ifc"
+        self.ifc = IfcFile(filename)
 
         # File menu
         self._file_menu = self.menuBar().addMenu("&File")
@@ -69,7 +69,7 @@ class MainWindow(QMainWindow):
         self.create_dock_windows()
 
         # Provisorisch ################################################################################
-        sourceModel = LocationTreeModel(self._ifc_model)
+        sourceModel = LocationTreeModel(self.ifc.model)
         proxyModel = QSortFilterProxyModel(self)
         proxyModel.setSourceModel(sourceModel)
         treeview = QTreeView()
