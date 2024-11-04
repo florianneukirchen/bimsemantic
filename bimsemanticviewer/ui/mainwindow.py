@@ -1,4 +1,4 @@
-from PySide6.QtCore import QFile, Qt
+from PySide6.QtCore import QFile, Qt, QSortFilterProxyModel
 from PySide6.QtGui import QAction, QIcon, QKeySequence
 from PySide6.QtWidgets import (
     QDockWidget,
@@ -69,10 +69,13 @@ class MainWindow(QMainWindow):
         self.create_dock_windows()
 
         # Provisorisch ################################################################################
-        treemodel = LocationTreeModel(self._ifc_model)
+        sourceModel = LocationTreeModel(self._ifc_model)
+        proxyModel = QSortFilterProxyModel(self)
+        proxyModel.setSourceModel(sourceModel)
         treeview = QTreeView()
-        treeview.setModel(treemodel)
+        treeview.setModel(proxyModel)
         treeview.setAlternatingRowColors(True)
+        treeview.setSortingEnabled(True)
         treeview.expandAll()
         self.setCentralWidget(treeview)
 
