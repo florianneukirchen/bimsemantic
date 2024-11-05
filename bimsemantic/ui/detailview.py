@@ -16,8 +16,11 @@ class DetailsTreeModel(TreeModelBaseclass):
         self.ifc_objects = data
 
         for object in self.ifc_objects:
-            object_item = TreeItem([f"{object.Name} (ID {object.id()})"], parent=parent)
-            parent.appendChild(object_item)
+            if len(self.ifc_objects) > 1:
+                object_item = TreeItem([f"{object.Name} (ID {object.id()})"], parent=parent)
+                parent.appendChild(object_item)
+            else:
+                object_item = parent
             info = object.get_info()
             object_item.appendChild(
                 TreeItem(["Name", object.Name], parent=object_item)
@@ -27,7 +30,7 @@ class DetailsTreeModel(TreeModelBaseclass):
             )
             if info["ObjectType"] is not None:
                 object_item.appendChild(
-                    TreeItem(["Object Type", info["ObjectType"]])
+                    TreeItem(["Object Type", info["ObjectType"]], parent=object_item)
                 )
             object_item.appendChild(
                 TreeItem(["IFC ID", object.id()], parent=object_item)
