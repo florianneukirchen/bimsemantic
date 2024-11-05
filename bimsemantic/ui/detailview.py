@@ -11,6 +11,7 @@ class DetailsTreeModel(TreeModelBaseclass):
         self.column_count = 2
 
     def setupModelData(self, data, parent):
+        self.rows_spanned = []
         if not isinstance(data, list):
             data = [data]
         self.ifc_objects = data
@@ -51,6 +52,7 @@ class DetailsTreeModel(TreeModelBaseclass):
             psets = ifcopenshell.util.element.get_psets(object)
             for pset_name, pset in psets.items():
                 pset_item = TreeItem([pset_name], parent=object_item)
+                self.rows_spanned.append(pset_item)
                 object_item.appendChild(pset_item)
                 for k, v in pset.items():
                     pset_item.appendChild(

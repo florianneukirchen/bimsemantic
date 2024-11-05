@@ -104,6 +104,8 @@ class MainWindow(QMainWindow):
         treeview = QTreeView()
         treeview.setModel(detailModel)
         treeview.expandAll()
+        for item in detailModel.rows_spanned:
+            treeview.setFirstColumnSpanned(item.row(), treeview.rootIndex(), True)
         self.detailsdock.setWidget(treeview)
 
 
