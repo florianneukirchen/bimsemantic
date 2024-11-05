@@ -23,8 +23,14 @@ class MainWindow(QMainWindow):
         self.ifc = None
 
         # Provisorisch ################################################################################
-        filename = "/media/riannek/PortableSSD/share/FranzLiszt/GE_2000_3TM_KIB_EU_003_AA_003-Franz-Liszt-Strasse.ifc"
+        filenames = ["/media/riannek/PortableSSD/share/FranzLiszt/GE_2000_3TM_KIB_EU_003_AA_003-Franz-Liszt-Strasse.ifc",
+                     "/media/riannek/PortableSSD/share/FranzLiszt/combined.ifc",
+                     "/media/riannek/PortableSSD/share/AC20-FZK-Haus.ifc",
+                     "/media/riannek/PortableSSD/share/VST_Röntgental.ifc",
+                     "/media/riannek/PortableSSD/share/linkedin.ifc"]
+        filename = filenames[4]
         self.ifc = IfcFile(filename)
+        print("Loaded file")
 
         # File menu
         self._file_menu = self.menuBar().addMenu("&File")
@@ -76,7 +82,7 @@ class MainWindow(QMainWindow):
         treeview.setModel(proxyModel)
         treeview.setAlternatingRowColors(True)
         treeview.setSortingEnabled(True)
-        treeview.setColumnHidden(1, True)
+        # treeview.setColumnHidden(1, True)
         treeview.expandAll()
         self.setCentralWidget(treeview)
 

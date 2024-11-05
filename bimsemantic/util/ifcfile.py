@@ -10,7 +10,6 @@ class IfcFile():
             raise FileNotFoundError(f"File {self._abspath} not found.")
 
         self._model = ifcopenshell.open(self._abspath)
-
         self._pset_info = self._get_pset_info()
 
     @property
