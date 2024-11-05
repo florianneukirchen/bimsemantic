@@ -11,8 +11,8 @@ from PySide6.QtWidgets import (
 
 import ifcopenshell
 
-from .ifcfile import IfcFile
-from .ifctrees import LocationTreeModel
+from bimsemantic.util.ifcfile import IfcFile
+from bimsemantic.ui.ifctrees import LocationTreeModel
 
 
 
