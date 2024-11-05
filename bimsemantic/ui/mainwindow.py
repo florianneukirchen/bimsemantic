@@ -13,6 +13,7 @@ import ifcopenshell
 
 from bimsemantic.util.ifcfile import IfcFile
 from bimsemantic.ui.ifctrees import LocationTreeModel
+from bimsemantic.ui.detailview import DetailsTreeModel
 
 
 
@@ -28,7 +29,7 @@ class MainWindow(QMainWindow):
                      "/media/riannek/PortableSSD/share/AC20-FZK-Haus.ifc",
                      "/media/riannek/PortableSSD/share/VST_Röntgental.ifc",
                      "/media/riannek/PortableSSD/share/linkedin.ifc"]
-        filename = filenames[4]
+        filename = filenames[0]
         self.ifc = IfcFile(filename)
         print("Loaded file")
 
@@ -86,12 +87,25 @@ class MainWindow(QMainWindow):
         treeview.expandAll()
         self.setCentralWidget(treeview)
 
+        wall = self.ifc.model.by_type('IfcWall')[0]
+        self.show_details(wall)
+
+
+
     def create_dock_windows(self):
-        dock = QDockWidget("Details", self)
-        dock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
-        dock.setWidget(QLabel("No open file"))
-        self.addDockWidget(Qt.RightDockWidgetArea, dock)
-        self._view_menu.addAction(dock.toggleViewAction())
+        self.detailsdock = QDockWidget("Details", self)
+        self.detailsdock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
+        self.detailsdock.setWidget(QLabel("No open file"))
+        self.addDockWidget(Qt.RightDockWidgetArea, self.detailsdock)
+        self._view_menu.addAction(self.detailsdock.toggleViewAction())
+
+    def show_details(self, ifc_objects):
+        detailModel = DetailsTreeModel(ifc_objects)
+        treeview = QTreeView()
+        treeview.setModel(detailModel)
+        treeview.expandAll()
+        self.detailsdock.setWidget(treeview)
+
 
     def about(self):
         QMessageBox.about(
