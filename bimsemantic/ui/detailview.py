@@ -43,7 +43,7 @@ class DetailsTreeModel(TreeModelBaseclass):
             object_item.appendChild(
                 TreeItem(["Type", info["type"]], parent=object_item)
             )
-            if info["ObjectType"] is not None:
+            if info.get("ObjectType") is not None:
                 object_item.appendChild(
                     TreeItem(["Object Type", info["ObjectType"]], parent=object_item)
                 )
