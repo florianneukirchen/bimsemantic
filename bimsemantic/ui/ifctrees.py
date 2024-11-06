@@ -37,7 +37,6 @@ class IfcTreeTab(QWidget):
         self.mainwindow = parent.parent
         self.model = treemodel
         self.ifc = treemodel.ifc
-        print(self.ifc)
         self.layout = QVBoxLayout(self)
 
         self.proxymodel = QSortFilterProxyModel(self)

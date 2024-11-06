@@ -10,6 +10,14 @@ class DetailsTreeModel(TreeModelBaseclass):
         self._rootItem = TreeItem()
         self.column_count = 2
 
+    def newItem(self, key, value, parent):
+        if isinstance(value, ifcopenshell.entity_instance):
+            value = f"{value.is_a()} {value.id()}"
+
+        item = TreeItem([key, value], parent=parent)
+        return item
+
+
     def setupModelData(self, data, parent):
         self.rows_spanned = []
         if not isinstance(data, list):
@@ -40,13 +48,14 @@ class DetailsTreeModel(TreeModelBaseclass):
                 TreeItem(["Global ID", object.GlobalId], parent=object_item)
             )
 
+
             info_item = TreeItem(["Info"], parent=object_item)
             object_item.appendChild(info_item)
             
             for k,v in info.items():
                 if k not in ["Name", "id", "GlobalId", "type", "ObjectType"]:
                     info_item.appendChild(
-                        TreeItem([k, v], parent=info_item)
+                        self.newItem(k, v, info_item)
                     )
             
             psets = ifcopenshell.util.element.get_psets(object)
