@@ -5,9 +5,9 @@ from bimsemantic.ui import TreeItem, TreeModelBaseclass
 
 
 class IfcTabs(QWidget):
-    def __init__(self, ifc, parent):
+    def __init__(self, ifc_file, parent):
         super(IfcTabs, self).__init__(parent)
-        self.ifc = ifc
+        self.ifc = ifc_file
 
         self.parent = parent
         self.layout = QVBoxLayout(self)
@@ -62,12 +62,12 @@ class IfcTreeTab(QWidget):
         item = source_index.internalPointer()
         if isinstance(item, TreeItem):
             element_id = item.id
-            ifc_element = self.ifc.by_id(element_id)
+            ifc_element = self.ifc.model.by_id(element_id)
             self.mainwindow.show_details(ifc_element)
 
 
 class LocationTreeModel(TreeModelBaseclass):
-    def setupRootItem(self):
+    def setupRootItem(self, data):
         self.column_names = ["Type", "ID", "Name", "Guid"]
         self._rootItem = TreeItem(self.column_names)
         self.column_count = len(self.column_names)
@@ -83,11 +83,11 @@ class LocationTreeModel(TreeModelBaseclass):
     def setupModelData(self, data, parent):
         self.ifc = data  # ifcopenshell ifc model
 
-        project = self.ifc.by_type("IfcProject")[0]
+        project = self.ifc.model.by_type("IfcProject")[0]
         project_item = self.newItem(project, parent)
         parent.appendChild(project_item)
 
-        for site in self.ifc.by_type("IfcSite"):
+        for site in self.ifc.model.by_type("IfcSite"):
             self.addItems(site, project_item)
 
     def addItems(self, ifc_object, parent):
@@ -110,7 +110,7 @@ class LocationTreeModel(TreeModelBaseclass):
             self.addItems(child, item)
 
 class TypeTreeModel(TreeModelBaseclass):
-    def setupRootItem(self):
+    def setupRootItem(self, data):
         self.column_names = ["Type", "ID", "Name", "Guid"]
         self._rootItem = TreeItem(self.column_names)
         self.column_count = len(self.column_names)
@@ -127,7 +127,7 @@ class TypeTreeModel(TreeModelBaseclass):
         self.ifc = data  # ifcopenshell ifc model
 
         modeldict = {}
-        elements = self.ifc.by_type("IfcElement")
+        elements = self.ifc.model.by_type("IfcElement")
 
         for element in elements:
             ifc_class = element.is_a()

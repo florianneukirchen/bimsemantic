@@ -46,10 +46,10 @@ class TreeModelBaseclass(QAbstractItemModel):
     def __init__(self, data, parent=None):
         super(TreeModelBaseclass, self).__init__(parent)
         self.column_count = 3
-        self.setupRootItem()
+        self.setupRootItem(data)
         self.setupModelData(data, self._rootItem)
 
-    def setupRootItem(self):
+    def setupRootItem(self, data=None):
         self._rootItem = TreeItem()
 
     def setupModelData(self, data, parent):

@@ -39,3 +39,10 @@ class IfcFile():
                 if not prop.Name in pset_info[pset.Name]:
                     pset_info[pset.Name].append(prop.Name)
         return pset_info
+    
+    def get_pset_cols(self):
+        cols = []
+        for _, pset_props in self.pset_info.items():
+            for prop in pset_props:
+                cols.append(prop)
+        return cols

@@ -6,7 +6,7 @@ from .treebase import TreeItem, TreeModelBaseclass
 
 
 class DetailsTreeModel(TreeModelBaseclass):
-    def setupRootItem(self):
+    def setupRootItem(self, data):
         self._rootItem = TreeItem()
         self.column_count = 2
 

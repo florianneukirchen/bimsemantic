@@ -74,7 +74,7 @@ class MainWindow(QMainWindow):
 
         self.create_dock_windows()
 
-        self.tabs = IfcTabs(self.ifc.model, self)
+        self.tabs = IfcTabs(self.ifc, self)
         self.setCentralWidget(self.tabs)
         # Provisorisch ################################################################################
         # sourceModel = LocationTreeModel(self.ifc.model)
