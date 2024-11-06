@@ -22,7 +22,7 @@ class IfcTabs(QWidget):
         self.locationtab = IfcTreeTab(LocationTreeModel(self.ifc), self)
         self.tabs.addTab(self.locationtab, "Location")
 
-        self.typetab = QWidget()
+        self.typetab = IfcTreeTab(TypeTreeModel(self.ifc), self)
         self.tabs.addTab(self.typetab, "Type")
 
 
@@ -107,3 +107,41 @@ class LocationTreeModel(TreeModelBaseclass):
         for child in children:
             self.addItems(child, item)
 
+class TypeTreeModel(TreeModelBaseclass):
+    def setupRootItem(self):
+        self.column_names = ["Type", "ID", "Name", "Guid"]
+        self._rootItem = TreeItem(self.column_names)
+        self.column_count = len(self.column_names)
+
+    def newItem(self, ifc_item, parent):
+        item = TreeItem(
+            [ifc_item.is_a(), ifc_item.id(), ifc_item.Name, ifc_item.GlobalId],
+            ifc_item.id(),
+            parent,
+        )
+        return item
+
+    def setupModelData(self, data, parent):
+        self.ifc = data  # ifcopenshell ifc model
+
+        modeldict = {}
+        elements = self.ifc.by_type("IfcElement")
+
+        for element in elements:
+            ifc_class = element.is_a()
+            if not ifc_class in modeldict:
+                modeldict[ifc_class] = {}
+            if not element.ObjectType in modeldict[ifc_class]:
+                modeldict[ifc_class][element.ObjectType] = []
+            modeldict[ifc_class][element.ObjectType].append(element)
+
+        for ifc_class, types in modeldict.items():
+            class_item = TreeItem([ifc_class], "class:" + ifc_class, parent)
+            parent.appendChild(class_item)
+
+            for objecttype, elements in types.items():
+                objecttype_item = TreeItem([objecttype], "type:" + objecttype, class_item)
+                class_item.appendChild(objecttype_item)
+                for element in elements:
+                    element_item = self.newItem(element, objecttype_item)
+                    objecttype_item.appendChild(element_item)
