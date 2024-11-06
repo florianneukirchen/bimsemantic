@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (
 import ifcopenshell
 
 from bimsemantic.util.ifcfile import IfcFile
-from bimsemantic.ui.ifctrees import LocationTreeModel
+from bimsemantic.ui.ifctrees import LocationTreeModel, IfcTabs
 from bimsemantic.ui.detailview import DetailsTreeModel
 from bimsemantic.ui.treebase import TreeItem
 
@@ -76,23 +76,23 @@ class MainWindow(QMainWindow):
 
         self.create_dock_windows()
 
+        self.tabs = IfcTabs(self.ifc.model, self)
+        self.setCentralWidget(self.tabs)
         # Provisorisch ################################################################################
-        sourceModel = LocationTreeModel(self.ifc.model)
-        self.locProxyModel = QSortFilterProxyModel(self)
-        self.locProxyModel.setSourceModel(sourceModel)
-        self.loctreeview = QTreeView()
-        self.loctreeview.setModel(self.locProxyModel)
-        self.loctreeview.setAlternatingRowColors(True)
-        self.loctreeview.setSortingEnabled(True)
-        self.loctreeview.setColumnWidth(0, 200)
-        self.loctreeview.setColumnWidth(2, 250)
-        # self.loctreeview.setColumnHidden(1, True)
-        self.loctreeview.expandAll()
-        self.setCentralWidget(self.loctreeview)
-        self.loctreeview.clicked.connect(self.on_treeview_clicked)
+        # sourceModel = LocationTreeModel(self.ifc.model)
+        # self.locProxyModel = QSortFilterProxyModel(self)
+        # self.locProxyModel.setSourceModel(sourceModel)
+        # self.loctreeview = QTreeView()
+        # self.loctreeview.setModel(self.locProxyModel)
+        # self.loctreeview.setAlternatingRowColors(True)
+        # self.loctreeview.setSortingEnabled(True)
+        # self.loctreeview.setColumnWidth(0, 200)
+        # self.loctreeview.setColumnWidth(2, 250)
+        # # self.loctreeview.setColumnHidden(1, True)
+        # self.loctreeview.expandAll()
+        # self.setCentralWidget(self.loctreeview)
+        # self.loctreeview.clicked.connect(self.on_treeview_clicked)
 
-        # wall = self.ifc.model.by_type('IfcWall')[0]
-        # self.show_details(wall)
 
 
 
@@ -115,16 +115,16 @@ class MainWindow(QMainWindow):
             treeview.setFirstColumnSpanned(item.row(), treeview.rootIndex(), True)
         self.detailsdock.setWidget(treeview)
 
-    def on_treeview_clicked(self, index):
-        if not index.isValid():
-            print("Invalid index")
-            return
-        source_index = self.locProxyModel.mapToSource(index)
-        item = source_index.internalPointer()
-        if isinstance(item, TreeItem):
-            element_id = item.id
-            ifc_element = self.ifc.model.by_id(element_id)
-            self.show_details(ifc_element)
+    # def on_treeview_clicked(self, index):
+    #     if not index.isValid():
+    #         print("Invalid index")
+    #         return
+    #     source_index = self.locProxyModel.mapToSource(index)
+    #     item = source_index.internalPointer()
+    #     if isinstance(item, TreeItem):
+    #         element_id = item.id
+    #         ifc_element = self.ifc.model.by_id(element_id)
+    #         self.show_details(ifc_element)
 
     def about(self):
         QMessageBox.about(

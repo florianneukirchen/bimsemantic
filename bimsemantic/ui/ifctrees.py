@@ -1,7 +1,67 @@
-from PySide6.QtCore import QDate, QFile, Qt, QAbstractItemModel, QModelIndex, Qt
+from PySide6.QtCore import QDate, QFile, Qt, QAbstractItemModel, QModelIndex, Qt, QSortFilterProxyModel
 from PySide6.QtGui import QAction, QFont, QIcon
-from PySide6.QtWidgets import QTreeView
+from PySide6.QtWidgets import QTreeView, QWidget, QTabWidget, QVBoxLayout
 from .treebase import TreeItem, TreeModelBaseclass
+
+
+class IfcTabs(QWidget):
+    def __init__(self, ifc, parent):
+        super(IfcTabs, self).__init__(parent)
+        self.ifc = ifc
+
+        self.parent = parent
+        self.layout = QVBoxLayout(self)
+
+        self.tabs = QTabWidget()
+        self.tabs.setTabPosition(QTabWidget.West)
+        self.tabs.setMovable(True)
+
+        self.layout.addWidget(self.tabs)
+        self.setLayout(self.layout)
+
+        self.locationtab = IfcTreeTab(LocationTreeModel(self.ifc), self)
+        self.tabs.addTab(self.locationtab, "Location")
+
+        self.typetab = QWidget()
+        self.tabs.addTab(self.typetab, "Type")
+
+
+
+class IfcTreeTab(QWidget):
+    def __init__(self, treemodel, parent):
+        super(IfcTreeTab, self).__init__(parent)
+        self.parent = parent
+        self.mainwindow = parent.parent
+        self.model = treemodel
+        self.ifc = treemodel.ifc
+        print(self.ifc)
+        self.layout = QVBoxLayout(self)
+
+        self.proxymodel = QSortFilterProxyModel(self)
+        self.proxymodel.setSourceModel(self.model)
+        self.tree = QTreeView()
+        self.tree.setModel(self.proxymodel)
+        self.tree.setSortingEnabled(True)
+        self.tree.setAlternatingRowColors(True)
+        self.tree.setColumnWidth(0, 200)
+        self.tree.setColumnWidth(2, 250)
+        # self.tree.setColumnHidden(1, True)
+        self.tree.expandAll()
+        self.tree.clicked.connect(self.on_treeview_clicked)
+        self.setLayout(self.layout)
+        self.layout.addWidget(self.tree)
+        
+
+    def on_treeview_clicked(self, index):
+        if not index.isValid():
+            print("Invalid index")
+            return
+        source_index = self.proxymodel.mapToSource(index)
+        item = source_index.internalPointer()
+        if isinstance(item, TreeItem):
+            element_id = item.id
+            ifc_element = self.ifc.by_id(element_id)
+            self.mainwindow.show_details(ifc_element)
 
 
 class LocationTreeModel(TreeModelBaseclass):
