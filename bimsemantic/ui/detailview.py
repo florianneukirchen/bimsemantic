@@ -58,6 +58,7 @@ class DetailsTreeModel(TreeModelBaseclass):
                         self.newItem(k, v, info_item)
                     )
             
+            # Property Sets
             psets = ifcopenshell.util.element.get_psets(object)
             for pset_name, pset in psets.items():
                 pset_item = TreeItem([pset_name], parent=object_item)
@@ -69,9 +70,24 @@ class DetailsTreeModel(TreeModelBaseclass):
                     )
 
 
-
+            # Materials
+            materials = []
+            if object.HasAssociations:
+                for association in object.HasAssociations:
+                    if association.is_a("IfcRelAssociatesMaterial"):
+                        materials.append(association.RelatingMaterial)
         
-
+            if materials:
+                materials_item = TreeItem(["Materials"], parent=object_item)
+                object_item.appendChild(materials_item)
+                for material in materials:
+                    mat_item = TreeItem([material.Name], parent=materials_item)
+                    materials_item.appendChild(mat_item)
+                    for k,v in material.get_info().items():
+                        if k not in ["Name"]:
+                            mat_item.appendChild(
+                                self.newItem(k, v, mat_item)
+                            )
 
 
 
