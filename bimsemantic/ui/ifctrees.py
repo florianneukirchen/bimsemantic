@@ -27,6 +27,10 @@ class IfcTabs(QWidget):
         self.typetab = IfcTreeTab(TypeTreeModel(self.ifc), self)
         self.tabs.addTab(self.typetab, self.tr("Type"))
 
+        self.flattab = IfcTreeTab(FlatTreeModel(self.ifc), self)
+        self.tabs.addTab(self.flattab, self.tr("Flat"))
+
+        # Add hide/show columns actions
         self.create_column_actions(self.locationtab, parent)
         self.parent.statusbar.clearMessage()
 
@@ -43,6 +47,7 @@ class IfcTabs(QWidget):
     def toggle_column_visibility(self, column, visible):
         self.locationtab.tree.setColumnHidden(column, not visible)
         self.typetab.tree.setColumnHidden(column, not visible)
+
 
 class IfcTreeTab(QWidget):
     def __init__(self, treemodel, parent):
@@ -162,3 +167,25 @@ class TypeTreeModel(IfcTreeModelBaseClass):
                     objecttype_item.appendChild(element_item)
 
 
+class FlatTreeModel(IfcTreeModelBaseClass):
+    def setupModelData(self, data, parent):
+        self.ifc = data  # ifcopenshell ifc model
+
+        elements = self.ifc.model.by_type("IfcElement")
+
+        elements_item = TreeItem(["Elements"], "Elements", parent)
+        parent.appendChild(elements_item)
+
+        for element in elements:
+            element_item = self.newItem(element, elements_item)
+            elements_item.appendChild(element_item)
+
+        types_item = TreeItem(["Types"], "Types", parent)
+        parent.appendChild(types_item)
+
+        element_types = self.ifc.model.by_type("IfcElementType")
+
+
+        for element_type in element_types:
+            type_item = self.newItem(element_type, types_item)
+            types_item.appendChild(type_item)
