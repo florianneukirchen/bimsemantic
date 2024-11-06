@@ -1,7 +1,7 @@
 from PySide6.QtCore import QDate, QFile, Qt, QAbstractItemModel, QModelIndex, Qt, QSortFilterProxyModel
 from PySide6.QtGui import QAction, QFont, QIcon
 from PySide6.QtWidgets import QTreeView, QWidget, QTabWidget, QVBoxLayout
-from .treebase import TreeItem, TreeModelBaseclass
+from bimsemantic.ui import TreeItem, TreeModelBaseclass
 
 
 class IfcTabs(QWidget):

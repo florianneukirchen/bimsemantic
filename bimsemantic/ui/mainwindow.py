@@ -11,11 +11,8 @@ from PySide6.QtWidgets import (
 
 import ifcopenshell
 
-from bimsemantic.util.ifcfile import IfcFile
-from bimsemantic.ui.ifctrees import LocationTreeModel, IfcTabs
-from bimsemantic.ui.detailview import DetailsTreeModel
-from bimsemantic.ui.treebase import TreeItem
-
+from bimsemantic.util import IfcFile
+from bimsemantic.ui import LocationTreeModel, IfcTabs, DetailsTreeModel, TreeItem
 
 
 class MainWindow(QMainWindow):

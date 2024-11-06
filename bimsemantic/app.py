@@ -5,7 +5,7 @@ import os
 package_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, package_root)
 
-from ui.mainwindow import MainWindow
+from bimsemantic.ui import MainWindow
 from PySide6.QtWidgets import QApplication
 
 
