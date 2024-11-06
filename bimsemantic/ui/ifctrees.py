@@ -12,6 +12,8 @@ class IfcTabs(QWidget):
         self.parent = parent
         self.layout = QVBoxLayout(self)
 
+        self.parent.statusbar.showMessage("Creating treeviews")
+
         self.tabs = QTabWidget()
         self.tabs.setTabPosition(QTabWidget.West)
         self.tabs.setMovable(True)
@@ -25,6 +27,7 @@ class IfcTabs(QWidget):
         self.typetab = IfcTreeTab(TypeTreeModel(self.ifc), self)
         self.tabs.addTab(self.typetab, "Type")
 
+        self.parent.statusbar.clearMessage()
 
 
 class IfcTreeTab(QWidget):

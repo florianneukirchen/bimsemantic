@@ -19,6 +19,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("BIM Semantic Viewer")
+        self.statusbar = self.statusBar()
         self.ifc = None
 
         # Provisorisch ################################################################################
