@@ -27,8 +27,22 @@ class IfcTabs(QWidget):
         self.typetab = IfcTreeTab(TypeTreeModel(self.ifc), self)
         self.tabs.addTab(self.typetab, "Type")
 
+        self.create_column_actions(self.locationtab, parent)
         self.parent.statusbar.clearMessage()
 
+    def create_column_actions(self, tab, mainwindow):
+        tree = tab.tree
+        header = tree.header()
+        for column in range(1, header.count()):
+            column_name = header.model().headerData(column, Qt.Horizontal)
+            action = QAction(column_name, self, checkable=True, checked=True)
+            action.triggered.connect(lambda checked, col=column: self.toggle_column_visibility(col, checked))
+            mainwindow._view_cols_menu.addAction(action)   
+            mainwindow.column_actions.append(action)     
+
+    def toggle_column_visibility(self, column, visible):
+        self.locationtab.tree.setColumnHidden(column, not visible)
+        self.typetab.tree.setColumnHidden(column, not visible)
 
 class IfcTreeTab(QWidget):
     def __init__(self, treemodel, parent):

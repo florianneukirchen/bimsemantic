@@ -59,6 +59,16 @@ class MainWindow(QMainWindow):
 
         # View menu
         self._view_menu = self.menuBar().addMenu("&View")
+        self._view_cols_menu = self._view_menu.addMenu("Columns")
+        self.column_actions = []
+        select_all_action = QAction("Show All", self)
+        select_all_action.triggered.connect(self.select_all_columns)
+        self._view_cols_menu.addAction(select_all_action)
+
+        unselect_all_action = QAction("Hide All", self)
+        unselect_all_action.triggered.connect(self.unselect_all_columns)
+        self._view_cols_menu.addAction(unselect_all_action)
+        self._view_cols_menu.addSeparator()
 
         # Help menu
         self._help_menu = self.menuBar().addMenu("&Help")
@@ -91,7 +101,17 @@ class MainWindow(QMainWindow):
         # self.setCentralWidget(self.loctreeview)
         # self.loctreeview.clicked.connect(self.on_treeview_clicked)
 
+    def select_all_columns(self):
+        for action in self.column_actions:
+            action.setChecked(True)
+            # First Column can't be hidden in the treeview, so add +1 to index
+            self.tabs.toggle_column_visibility(self.column_actions.index(action) + 1, True)
 
+    def unselect_all_columns(self):
+        for action in self.column_actions:
+            action.setChecked(False)
+            # First Column can't be hidden in the treeview, so add +1 to index
+            self.tabs.toggle_column_visibility(self.column_actions.index(action) + 1, False)
 
 
     def create_dock_windows(self):
@@ -99,6 +119,7 @@ class MainWindow(QMainWindow):
         self.detailsdock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
         self.detailsdock.setWidget(QLabel("No open file"))
         self.addDockWidget(Qt.RightDockWidgetArea, self.detailsdock)
+        self._view_menu.addSeparator()
         self._view_menu.addAction(self.detailsdock.toggleViewAction())
 
     def show_details(self, ifc_objects):
