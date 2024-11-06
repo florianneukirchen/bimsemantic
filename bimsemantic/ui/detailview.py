@@ -12,7 +12,13 @@ class DetailsTreeModel(TreeModelBaseclass):
 
     def newItem(self, key, value, parent):
         if isinstance(value, ifcopenshell.entity_instance):
-            value = f"{value.is_a()} {value.id()}"
+            try:
+                name = value.Name
+            except AttributeError:
+                name = ""
+            if name:
+                name = f" ({name})"
+            value = f"{value.is_a()} {value.id()}{name}"
 
         item = TreeItem([key, value], parent=parent)
         return item
