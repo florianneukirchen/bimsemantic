@@ -33,32 +33,32 @@ class MainWindow(QMainWindow):
         print("Loaded file")
 
         # File menu
-        self._file_menu = self.menuBar().addMenu("&File")
+        self._file_menu = self.menuBar().addMenu(self.tr("&File"))
 
         icon = QIcon.fromTheme("document-new")
         self._open_act = QAction(
             icon,
-            "&Open...",
+            self.tr("&Open..."),
             self,
             shortcut=QKeySequence.Open,
-            statusTip="Open IFC file",
+            statusTip=self.tr("Open IFC file"),
             triggered=self.open_file,
         )
 
         self._file_menu.addAction(self._open_act)
 
         self._quit_act = QAction(
-            "&Quit",
+            self.tr("&Quit"),
             self,
             shortcut="Ctrl+Q",
-            statusTip="Quit the application",
+            statusTip=self.tr("Quit the application"),
             triggered=self.close,
         )
 
         self._file_menu.addAction(self._quit_act)
 
         # View menu
-        self._view_menu = self.menuBar().addMenu("&View")
+        self._view_menu = self.menuBar().addMenu(self.tr("&View"))
         self._view_cols_menu = self._view_menu.addMenu("Columns")
         self.column_actions = []
         select_all_action = QAction("Show All", self)
