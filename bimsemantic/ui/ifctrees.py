@@ -66,7 +66,7 @@ class IfcTreeTab(QWidget):
             self.mainwindow.show_details(ifc_element)
 
 
-class LocationTreeModel(TreeModelBaseclass):
+class IfcTreeModelBaseClass(TreeModelBaseclass):
     def setupRootItem(self, data):
         self.column_names = ["Type", "ID", "Name", "Guid"] + data.get_pset_cols()
         self._rootItem = TreeItem(self.column_names)
@@ -90,6 +90,8 @@ class LocationTreeModel(TreeModelBaseclass):
         )
         return item
 
+
+class LocationTreeModel(IfcTreeModelBaseClass):
     def setupModelData(self, data, parent):
         self.ifc = data  # ifcopenshell ifc model
 
@@ -119,20 +121,7 @@ class LocationTreeModel(TreeModelBaseclass):
         for child in children:
             self.addItems(child, item)
 
-class TypeTreeModel(TreeModelBaseclass):
-    def setupRootItem(self, data):
-        self.column_names = ["Type", "ID", "Name", "Guid"]
-        self._rootItem = TreeItem(self.column_names)
-        self.column_count = len(self.column_names)
-
-    def newItem(self, ifc_item, parent):
-        item = TreeItem(
-            [ifc_item.is_a(), ifc_item.id(), ifc_item.Name, ifc_item.GlobalId],
-            ifc_item.id(),
-            parent,
-        )
-        return item
-
+class TypeTreeModel(IfcTreeModelBaseClass):
     def setupModelData(self, data, parent):
         self.ifc = data  # ifcopenshell ifc model
 
@@ -157,3 +146,5 @@ class TypeTreeModel(TreeModelBaseclass):
                 for element in elements:
                     element_item = self.newItem(element, objecttype_item)
                     objecttype_item.appendChild(element_item)
+
+
