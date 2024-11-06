@@ -86,20 +86,6 @@ class MainWindow(QMainWindow):
 
         self.tabs = IfcTabs(self.ifc, self)
         self.setCentralWidget(self.tabs)
-        # Provisorisch ################################################################################
-        # sourceModel = LocationTreeModel(self.ifc.model)
-        # self.locProxyModel = QSortFilterProxyModel(self)
-        # self.locProxyModel.setSourceModel(sourceModel)
-        # self.loctreeview = QTreeView()
-        # self.loctreeview.setModel(self.locProxyModel)
-        # self.loctreeview.setAlternatingRowColors(True)
-        # self.loctreeview.setSortingEnabled(True)
-        # self.loctreeview.setColumnWidth(0, 200)
-        # self.loctreeview.setColumnWidth(2, 250)
-        # # self.loctreeview.setColumnHidden(1, True)
-        # self.loctreeview.expandAll()
-        # self.setCentralWidget(self.loctreeview)
-        # self.loctreeview.clicked.connect(self.on_treeview_clicked)
 
     def select_all_columns(self):
         for action in self.column_actions:
