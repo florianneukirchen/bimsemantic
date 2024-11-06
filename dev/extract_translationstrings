@@ -1,5 +1,0 @@
-#!/bin/bash
-pyside6-lupdate ../bimsemantic/ui/*.py -ts ../bimsemantic/i18n/bimsemantic_de.ts
-echo 
-echo "pyside6-linguist"
-echo "pyside6-lrelease ../bimsemantic/i18n/bimsemantic_de.ts"
