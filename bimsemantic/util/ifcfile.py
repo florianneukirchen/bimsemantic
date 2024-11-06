@@ -1,4 +1,5 @@
 import ifcopenshell
+from collections import OrderedDict
 import os
 
 
@@ -29,7 +30,7 @@ class IfcFile():
         return self._pset_info
     
     def _get_pset_info(self):
-        pset_info = {}
+        pset_info = OrderedDict()
         psets = self._model.by_type("IfcPropertySet")
         for pset in psets:
             if not pset.Name in pset_info:
