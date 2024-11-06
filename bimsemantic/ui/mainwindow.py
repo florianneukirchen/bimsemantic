@@ -50,7 +50,7 @@ class MainWindow(QMainWindow):
         self._quit_act = QAction(
             self.tr("&Quit"),
             self,
-            shortcut="Ctrl+Q",
+            shortcut=self.tr("Ctrl+Q"),
             statusTip=self.tr("Quit the application"),
             triggered=self.close,
         )
@@ -59,24 +59,23 @@ class MainWindow(QMainWindow):
 
         # View menu
         self._view_menu = self.menuBar().addMenu(self.tr("&View"))
-        self._view_cols_menu = self._view_menu.addMenu("Columns")
+        self._view_cols_menu = self._view_menu.addMenu(self.tr("Columns"))
         self.column_actions = []
-        select_all_action = QAction("Show All", self)
+        select_all_action = QAction(self.tr("Show All"), self)
         select_all_action.triggered.connect(self.select_all_columns)
         self._view_cols_menu.addAction(select_all_action)
 
-        unselect_all_action = QAction("Hide All", self)
+        unselect_all_action = QAction(self.tr("Hide All"), self)
         unselect_all_action.triggered.connect(self.unselect_all_columns)
         self._view_cols_menu.addAction(unselect_all_action)
         self._view_cols_menu.addSeparator()
 
         # Help menu
-        self._help_menu = self.menuBar().addMenu("&Help")
+        self._help_menu = self.menuBar().addMenu(self.tr("&Help"))
 
         self._about_act = QAction(
-            "&About",
+            self.tr("&About"),
             self,
-            statusTip="Show the application's About box",
             triggered=self.about,
         )
 
@@ -101,9 +100,9 @@ class MainWindow(QMainWindow):
 
 
     def create_dock_windows(self):
-        self.detailsdock = QDockWidget("Details", self)
+        self.detailsdock = QDockWidget(self.tr("Details"), self)
         self.detailsdock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
-        self.detailsdock.setWidget(QLabel("No open file"))
+        self.detailsdock.setWidget(QLabel(self.tr("No open file")))
         self.addDockWidget(Qt.RightDockWidgetArea, self.detailsdock)
         self._view_menu.addSeparator()
         self._view_menu.addAction(self.detailsdock.toggleViewAction())

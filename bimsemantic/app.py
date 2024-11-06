@@ -20,9 +20,6 @@ if __name__ == "__main__":
     locale = QLocale.system().name()
     language_code = locale.split('_')[0]
     translation_file = os.path.join(package_root, "bimsemantic", "i18n", f"bimsemantic_{language_code}.qm")
-    print(locale)
-    print(translation_file)
-    print("Translation file exists", os.path.exists(translation_file))
     if translator.load(translation_file):
         app.installTranslator(translator)
     else:

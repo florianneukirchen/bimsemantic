@@ -12,7 +12,7 @@ class IfcTabs(QWidget):
         self.parent = parent
         self.layout = QVBoxLayout(self)
 
-        self.parent.statusbar.showMessage("Creating treeviews")
+        self.parent.statusbar.showMessage(self.tr("Creating treeviews"))
 
         self.tabs = QTabWidget()
         self.tabs.setTabPosition(QTabWidget.West)
@@ -22,10 +22,10 @@ class IfcTabs(QWidget):
         self.setLayout(self.layout)
 
         self.locationtab = IfcTreeTab(LocationTreeModel(self.ifc), self)
-        self.tabs.addTab(self.locationtab, "Location")
+        self.tabs.addTab(self.locationtab, self.tr("Location"))
 
         self.typetab = IfcTreeTab(TypeTreeModel(self.ifc), self)
-        self.tabs.addTab(self.typetab, "Type")
+        self.tabs.addTab(self.typetab, self.tr("Type"))
 
         self.create_column_actions(self.locationtab, parent)
         self.parent.statusbar.clearMessage()
