@@ -46,3 +46,8 @@ class IfcFile():
             for prop in pset_props:
                 cols.append(prop)
         return cols
+    
+    def pset_items(self):
+        for pset_name, pset_props in self.pset_info.items():
+            for prop in pset_props:
+                yield pset_name, prop

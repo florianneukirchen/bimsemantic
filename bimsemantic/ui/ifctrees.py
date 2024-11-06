@@ -2,7 +2,7 @@ from PySide6.QtCore import QDate, QFile, Qt, QAbstractItemModel, QModelIndex, Qt
 from PySide6.QtGui import QAction, QFont, QIcon
 from PySide6.QtWidgets import QTreeView, QWidget, QTabWidget, QVBoxLayout
 from bimsemantic.ui import TreeItem, TreeModelBaseclass
-
+import ifcopenshell.util.element
 
 class IfcTabs(QWidget):
     def __init__(self, ifc_file, parent):
@@ -68,13 +68,23 @@ class IfcTreeTab(QWidget):
 
 class LocationTreeModel(TreeModelBaseclass):
     def setupRootItem(self, data):
-        self.column_names = ["Type", "ID", "Name", "Guid"]
+        self.column_names = ["Type", "ID", "Name", "Guid"] + data.get_pset_cols()
         self._rootItem = TreeItem(self.column_names)
         self.column_count = len(self.column_names)
 
     def newItem(self, ifc_item, parent):
+        psets = ifcopenshell.util.element.get_psets(ifc_item)
+        pset_values = []
+        for pset_name, pset_prop in self.ifc.pset_items():
+            try:
+                pset_values.append(psets[pset_name][pset_prop])
+            except KeyError:
+                pset_values.append(None)
+
+        data = [ifc_item.is_a(), ifc_item.id(), ifc_item.Name, ifc_item.GlobalId] + pset_values
+
         item = TreeItem(
-            [ifc_item.is_a(), ifc_item.id(), ifc_item.Name, ifc_item.GlobalId],
+            data,
             ifc_item.id(),
             parent,
         )
