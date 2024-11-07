@@ -70,7 +70,11 @@ class DetailsTreeModel(TreeModelBaseclass):
 
                 contains_item = TreeItem(["Contains"], parent=object_item)
                 object_item.appendChild(contains_item)
-                for element in object.ContainsElements[0].RelatedElements:
+                try:
+                    elemtents = object.ContainsElements[0].RelatedElements
+                except IndexError:
+                    elements = []
+                for element in elements:
                     contains_item.appendChild(
                         TreeItem([element.is_a(), element.id(), element.Name], parent=contains_item)
                     )
