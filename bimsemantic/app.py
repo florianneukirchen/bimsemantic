@@ -22,7 +22,7 @@ if __name__ == "__main__":
     translation_file = os.path.join(package_root, "bimsemantic", "i18n", f"bimsemantic_{language_code}.qm")
     if translator.load(translation_file):
         app.installTranslator(translator)
-    else:
+    elif language_code != "en":
         print(f"Translation file for locale '{locale}' not found.")
 
     main_win = MainWindow()
