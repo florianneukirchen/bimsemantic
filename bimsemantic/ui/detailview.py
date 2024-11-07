@@ -54,9 +54,12 @@ class DetailsTreeModel(TreeModelBaseclass):
             )
 
             if object.is_a("IfcElement"):
-                object_item.appendChild(
-                    self.newItem("Contained in", object.ContainedInStructure[0].RelatingStructure, object_item)
-                )
+                try:
+                    object_item.appendChild(
+                        self.newItem("Contained in", object.ContainedInStructure[0].RelatingStructure, object_item)
+                    )
+                except IndexError:
+                    pass
 
             elif object.is_a("IfcSpatialStructureElement"):
                 decomposes = object.Decomposes
@@ -111,13 +114,23 @@ class DetailsTreeModel(TreeModelBaseclass):
                 materials_item = TreeItem(["Materials"], parent=object_item)
                 object_item.appendChild(materials_item)
                 for material in materials:
-                    mat_item = TreeItem([material.Name], parent=materials_item)
-                    materials_item.appendChild(mat_item)
-                    for k,v in material.get_info().items():
-                        if k not in ["Name"]:
-                            mat_item.appendChild(
-                                self.newItem(k, v, mat_item)
+                    if material.is_a("IfcMaterial"):
+                        mat_item = TreeItem([material.Name], parent=materials_item)
+                        materials_item.appendChild(mat_item)
+                        for k,v in material.get_info().items():
+                            if k not in ["Name"]:
+                                mat_item.appendChild(
+                                    self.newItem(k, v, mat_item)
                             )
+                    elif material.is_a("IfcMaterialConstituentSet"):
+                        for constituent in material.MaterialConstituents:
+                            mat_item = TreeItem([constituent.Name], parent=materials_item)
+                            materials_item.appendChild(mat_item)
+                            for k,v in constituent.get_info().items():
+                                if k not in ["Name"]:
+                                    mat_item.appendChild(
+                                        self.newItem(k, v, mat_item)
+                                )
 
 
 
