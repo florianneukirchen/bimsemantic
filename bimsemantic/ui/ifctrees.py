@@ -151,9 +151,12 @@ class TypeTreeModel(IfcTreeModelBaseClass):
             ifc_class = element.is_a()
             if not ifc_class in modeldict:
                 modeldict[ifc_class] = {}
-            if not element.ObjectType in modeldict[ifc_class]:
-                modeldict[ifc_class][element.ObjectType] = []
-            modeldict[ifc_class][element.ObjectType].append(element)
+            objecttype = element.ObjectType
+            if objecttype is None:
+                objecttype = "None"
+            if not objecttype in modeldict[ifc_class]:
+                modeldict[ifc_class][objecttype] = []
+            modeldict[ifc_class][objecttype].append(element)
 
         for ifc_class, types in modeldict.items():
             class_item = TreeItem([ifc_class], "class:" + ifc_class, parent)
