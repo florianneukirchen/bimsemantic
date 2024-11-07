@@ -16,9 +16,8 @@ class DetailsTreeModel(TreeModelBaseclass):
                 name = value.Name
             except AttributeError:
                 name = ""
-            if name:
-                name = f" ({name})"
-            value = f"{value.is_a()} {value.id()}{name}"
+
+            value = f"{value.is_a()} <{value.id()}> {name}"
 
         item = TreeItem([key, value], parent=parent)
         return item
@@ -32,7 +31,7 @@ class DetailsTreeModel(TreeModelBaseclass):
 
         for object in self.ifc_objects:
             if len(self.ifc_objects) > 1:
-                object_item = TreeItem([f"{object.Name} (ID {object.id()})"], parent=parent)
+                object_item = TreeItem([f"{object.Name} <{object.id()}>"], parent=parent)
                 parent.appendChild(object_item)
             else:
                 object_item = parent
@@ -53,6 +52,31 @@ class DetailsTreeModel(TreeModelBaseclass):
             object_item.appendChild(
                 TreeItem(["Global ID", object.GlobalId], parent=object_item)
             )
+
+            if object.is_a("IfcElement"):
+                object_item.appendChild(
+                    self.newItem("Contained in", object.ContainedInStructure[0].RelatingStructure, object_item)
+                )
+
+            elif object.is_a("IfcSpatialStructureElement"):
+                decomposes = object.Decomposes
+                if decomposes:
+                    object_item.appendChild(
+                    self.newItem("Contained in", decomposes[0].RelatingObject, object_item)
+                    )
+
+                contains_item = TreeItem(["Contains"], parent=object_item)
+                object_item.appendChild(contains_item)
+                for element in object.ContainsElements[0].RelatedElements:
+                    contains_item.appendChild(
+                        TreeItem([element.is_a(), element.id(), element.Name], parent=contains_item)
+                    )
+                iscomposedby = object.IsDecomposedBy
+                if iscomposedby:
+                    for obj in list(iscomposedby[0].RelatedObjects):
+                        contains_item.appendChild(
+                            TreeItem([obj.is_a(), obj.id(), obj.Name], parent=contains_item)
+                        )
 
 
             info_item = TreeItem(["Info"], parent=object_item)
