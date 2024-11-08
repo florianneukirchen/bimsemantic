@@ -52,6 +52,10 @@ class PsetColumns:
 
     def add_column(self, pset_name, attribute):
         self._columns.append((pset_name, attribute))
+        return len(self._columns) - 1
+
+    def remove_column(self, pset_column_index):
+        self._columns.pop(pset_column_index)
 
     def col(self, column):
         return self._columns[column]
@@ -65,6 +69,22 @@ class PsetColumns:
     @property
     def column_names(self):
         return [col[1] for col in self._columns]
+
+
+class ColheaderTreeItem(TreeItem):
+    def __init__(self, data, parent=None, first_cols=[]):
+        self._pset_columns = data
+        self._first_cols = first_cols
+        self._count_first_cols = len(first_cols)
+        self._parent = parent
+        self._children = []
+
+    def data(self, column):
+        if column < 0 or column >= (self._pset_columns.count + self._count_first_cols):
+            return None
+        if column < self._count_first_cols:
+            return self._first_cols[column]
+        return self._pset_columns.column_name(column + self._count_first_cols)
 
 
 class IfcTreeItem(TreeItem):
