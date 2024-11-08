@@ -6,9 +6,6 @@ from .treebase import TreeItem, TreeModelBaseclass
 
 
 class DetailsTreeModel(TreeModelBaseclass):
-    def setupRootItem(self, data):
-        self._rootItem = TreeItem()
-        self.column_count = 2
 
     def newItem(self, key, value, parent):
         if isinstance(value, ifcopenshell.entity_instance):
