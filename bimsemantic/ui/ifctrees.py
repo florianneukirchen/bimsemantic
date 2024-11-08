@@ -68,7 +68,7 @@ class IfcTreeItem(TreeItem):
             return self._ifc_item.GlobalId
         
         psets = ifcopenshell.util.element.get_psets(self._ifc_item)
-        pset_name, attribute = self._pset_columns(column - 4)
+        pset_name, attribute = self._pset_columns.col(column - 4)
         
         try:
             return psets[pset_name][attribute]
@@ -174,7 +174,6 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
         self.pset_columns = pset_columns
         self.first_cols = ["Type", "ID", "Name", "GUID"]
         super(IfcTreeModelBaseClass, self).__init__(data, parent)
-        print("Init done")
 
     def setupRootItem(self):
         self._rootItem = ColheaderTreeItem(self.pset_columns, parent=None, first_cols=self.first_cols)
@@ -187,12 +186,12 @@ class LocationTreeModel(IfcTreeModelBaseClass):
 
 
     def setupModelData(self, data, parent):
-        print("setupModelData")
         self.ifc = data  # ifcopenshell ifc model
 
         project = self.ifc.model.by_type("IfcProject")[0]
         project_item = IfcTreeItem(project, parent, self.pset_columns)
-        print(project_item)
+        print(project_item.data(0))
+        print(project_item.data(4))
         parent.appendChild(project_item)
 
         for site in self.ifc.model.by_type("IfcSite"):
