@@ -11,6 +11,7 @@ class PsetColumns:
 
     def add_column(self, pset_name, attribute):
         self._columns.append((pset_name, attribute))
+        print(self._columns)
         return len(self._columns) - 1
 
     def remove_column(self, pset_column_index):
@@ -43,7 +44,7 @@ class ColheaderTreeItem(TreeItem):
             return None
         if column < self._count_first_cols:
             return self._first_cols[column]
-        return self._pset_columns.column_name(column + self._count_first_cols)
+        return self._pset_columns.column_name(column - self._count_first_cols)
 
 
 class IfcTreeItem(TreeItem):
@@ -94,18 +95,28 @@ class IfcTabs(QWidget):
 
         self.pset_columns = PsetColumns()
 
+        # Add col
+        print("Add col")
+        pset_info = self.ifc.pset_info
+        pset = list(pset_info)[0]
+        attr = pset_info[pset][0]
+        self.pset_columns.add_column(pset, attr)
+        # #################
+
         self.locationtab = IfcTreeTab(LocationTreeModel(self.ifc, self.pset_columns), self)
         self.tabs.addTab(self.locationtab, self.tr("Location"))
 
-        self.typetab = IfcTreeTab(TypeTreeModel(self.ifc, self.pset_columns), self)
-        self.tabs.addTab(self.typetab, self.tr("Type"))
+        # self.typetab = IfcTreeTab(TypeTreeModel(self.ifc, self.pset_columns), self)
+        # self.tabs.addTab(self.typetab, self.tr("Type"))
 
-        self.flattab = IfcTreeTab(FlatTreeModel(self.ifc, self.pset_columns), self)
-        self.tabs.addTab(self.flattab, self.tr("Flat"))
+        # self.flattab = IfcTreeTab(FlatTreeModel(self.ifc, self.pset_columns), self)
+        # self.tabs.addTab(self.flattab, self.tr("Flat"))
 
         # Add hide/show columns actions
         # self.create_column_actions(self.locationtab, parent)
         self.parent.statusbar.clearMessage()
+
+
 
     # def create_column_actions(self, tab, mainwindow):
     #     tree = tab.tree
@@ -163,6 +174,7 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
         self.pset_columns = pset_columns
         self.first_cols = ["Type", "ID", "Name", "GUID"]
         super(IfcTreeModelBaseClass, self).__init__(data, parent)
+        print("Init done")
 
     def setupRootItem(self):
         self._rootItem = ColheaderTreeItem(self.pset_columns, parent=None, first_cols=self.first_cols)
@@ -175,10 +187,12 @@ class LocationTreeModel(IfcTreeModelBaseClass):
 
 
     def setupModelData(self, data, parent):
+        print("setupModelData")
         self.ifc = data  # ifcopenshell ifc model
 
         project = self.ifc.model.by_type("IfcProject")[0]
         project_item = IfcTreeItem(project, parent, self.pset_columns)
+        print(project_item)
         parent.appendChild(project_item)
 
         for site in self.ifc.model.by_type("IfcSite"):
