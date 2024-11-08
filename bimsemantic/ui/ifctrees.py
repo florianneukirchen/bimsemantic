@@ -104,8 +104,8 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
 
         item = TreeItem(
             data,
-            ifc_item.id(),
             parent,
+            ifc_item.id(),
         )
         return item
 
@@ -159,11 +159,11 @@ class TypeTreeModel(IfcTreeModelBaseClass):
             modeldict[ifc_class][objecttype].append(element)
 
         for ifc_class, types in modeldict.items():
-            class_item = TreeItem([ifc_class], "class:" + ifc_class, parent)
+            class_item = TreeItem([ifc_class], parent, "class:" + ifc_class)
             parent.appendChild(class_item)
 
             for objecttype, elements in types.items():
-                objecttype_item = TreeItem([objecttype], "type:" + objecttype, class_item)
+                objecttype_item = TreeItem([objecttype], class_item, "type:" + objecttype)
                 class_item.appendChild(objecttype_item)
                 for element in elements:
                     element_item = self.newItem(element, objecttype_item)
@@ -176,14 +176,14 @@ class FlatTreeModel(IfcTreeModelBaseClass):
 
         elements = self.ifc.model.by_type("IfcElement")
 
-        elements_item = TreeItem(["Elements"], "Elements", parent)
+        elements_item = TreeItem(["Elements"], parent, "Elements")
         parent.appendChild(elements_item)
 
         for element in elements:
             element_item = self.newItem(element, elements_item)
             elements_item.appendChild(element_item)
 
-        types_item = TreeItem(["Types"], "Types", parent)
+        types_item = TreeItem(["Types"], parent, "Types")
         parent.appendChild(types_item)
 
         element_types = self.ifc.model.by_type("IfcElementType")

@@ -19,7 +19,7 @@ class DetailsTreeModel(TreeModelBaseclass):
 
             value = f"{value.is_a()} <{value.id()}> {name}"
 
-        item = TreeItem([key, value], parent=parent)
+        item = TreeItem([key, value], parent)
         return item
 
 
@@ -31,7 +31,7 @@ class DetailsTreeModel(TreeModelBaseclass):
 
         for object in self.ifc_objects:
             if len(self.ifc_objects) > 1:
-                object_item = TreeItem([f"{object.Name} <{object.id()}>"], parent=parent)
+                object_item = TreeItem([f"{object.Name} <{object.id()}>"], parent)
                 parent.appendChild(object_item)
             else:
                 object_item = parent
@@ -71,7 +71,7 @@ class DetailsTreeModel(TreeModelBaseclass):
                 contains_item = TreeItem(["Contains"], parent=object_item)
                 object_item.appendChild(contains_item)
                 try:
-                    elemtents = object.ContainsElements[0].RelatedElements
+                    elements = object.ContainsElements[0].RelatedElements
                 except IndexError:
                     elements = []
                 for element in elements:

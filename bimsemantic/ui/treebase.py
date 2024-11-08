@@ -4,7 +4,7 @@ from PySide6.QtWidgets import QTreeView
 
 
 class TreeItem:
-    def __init__(self, data=None, id=None, parent=None):
+    def __init__(self, data=None, parent=None, id=None):
         self._data = data
         if data is None:
             self._data = []
@@ -33,13 +33,16 @@ class TreeItem:
 
     def row(self):
         if self._parent:
-            return self._parent._children.index(self)
+            return self._parent.children.index(self)
         return 0
 
     @property
     def id(self):
         return self._id
 
+    @property
+    def children(self):
+        return self._children
 
 
 class TreeModelBaseclass(QAbstractItemModel):
