@@ -93,7 +93,12 @@ class IfcTreeItem(TreeItem):
         
         psets = ifcopenshell.util.element.get_psets(self._ifc_item)
         pset_name, attribute = self._pset_columns(column - 4)
-        return self._pset_columns.col(column)
+        
+        try:
+            return psets[pset_name][attribute]
+        except KeyError:
+            return None
+
 
 
 

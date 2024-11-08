@@ -28,7 +28,7 @@ class MainWindow(QMainWindow):
                      "/media/riannek/PortableSSD/share/AC20-FZK-Haus.ifc",
                      "/media/riannek/PortableSSD/share/VST_Röntgental.ifc",
                      "/media/riannek/PortableSSD/share/linkedin.ifc"]
-        filename = filenames[2]
+        filename = filenames[0]
         self.ifc = IfcFile(filename)
         print("Loaded file")
 
