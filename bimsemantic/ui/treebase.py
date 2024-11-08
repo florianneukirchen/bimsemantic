@@ -1,7 +1,8 @@
 from PySide6.QtCore import QDate, QFile, Qt, QAbstractItemModel, QModelIndex, Qt
 from PySide6.QtGui import QAction, QFont, QIcon
 from PySide6.QtWidgets import QTreeView
-
+import ifcopenshell
+import ifcopenshell.util.element
 
 class TreeItem:
     def __init__(self, data=None, parent=None, id=None):
@@ -43,6 +44,57 @@ class TreeItem:
     @property
     def children(self):
         return self._children
+
+
+class PsetColumns:
+    def __init__(self):
+        self._columns = []
+
+    def add_column(self, pset_name, attribute):
+        self._columns.append((pset_name, attribute))
+
+    def col(self, column):
+        return self._columns[column]
+    
+    def column_name(self, column):
+        return self._columns[column][1]
+
+    def count(self):
+        return len(self._columns)
+    
+    @property
+    def column_names(self):
+        return [col[1] for col in self._columns]
+
+
+class IfcTreeItem(TreeItem):
+    def __init__(self, data, parent=None, pset_columns=None):
+        self._ifc_item = data
+        self._parent = parent
+        self._id = self._ifc_item.id()
+        self._children = []
+        self._pset_columns = pset_columns
+
+    def appendChild(self, item):
+        self._children.append(item)
+
+
+    def data(self, column):
+        if column < 0 or column >= self._pset_columns.count + 4:
+            return None
+        if column == 0:
+            return self._ifc_item.is_a()
+        if column == 1:
+            return self._ifc_item.id()
+        if column == 2:
+            return self._ifc_item.Name
+        if column == 3:
+            return self._ifc_item.GlobalId
+        
+        psets = ifcopenshell.util.element.get_psets(self._ifc_item)
+        pset_name, attribute = self._pset_columns(column - 4)
+        return self._pset_columns.col(column)
+
 
 
 class TreeModelBaseclass(QAbstractItemModel):
