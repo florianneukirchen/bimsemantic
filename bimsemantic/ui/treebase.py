@@ -75,10 +75,6 @@ class IfcTreeItem(TreeItem):
         self._children = []
         self._pset_columns = pset_columns
 
-    def appendChild(self, item):
-        self._children.append(item)
-
-
     def data(self, column):
         if column < 0 or column >= self._pset_columns.count + 4:
             return None
@@ -105,13 +101,11 @@ class IfcTreeItem(TreeItem):
 class TreeModelBaseclass(QAbstractItemModel):
     def __init__(self, data, parent=None):
         super(TreeModelBaseclass, self).__init__(parent)
-        self.column_count = 3
-        self.setupRootItem(data)
+        self.column_count = 2
+        self._rootItem = TreeItem()
         self.setupModelData(data, self._rootItem)
 
-    def setupRootItem(self, data=None):
-        self._rootItem = TreeItem()
-
+       
     def setupModelData(self, data, parent):
         pass
 
