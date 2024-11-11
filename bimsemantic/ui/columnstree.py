@@ -12,6 +12,8 @@ class ColumnsTreeModel(QTreeWidget):
         self.setHeaderHidden(True)
         self.setupModelData(data)
         self.expandAll()
+        self.itemChanged.connect(self.item_changed)
+
 
     def setupModelData(self, data):
         infocols_item = QTreeWidgetItem(self)
@@ -56,8 +58,25 @@ class ColumnsTreeModel(QTreeWidget):
         column = column - self._count_first_cols
         return self._columns[column][1]
 
-    @property
-    def cols_count(self):
+    def item_changed(self, item, column):
+        if item.checkState(column) in (Qt.CheckState.Checked, Qt.CheckState.Unchecked):
+            self.update_psetcolumns()
+
+    def update_psetcolumns(self):
+        self._psetcolumns = []
+        for i in range(self.psets_item.childCount()):
+            pset_item = self.psets_item.child(i)
+            pset_name = pset_item.text(0)
+            for j in range(pset_item.childCount()):
+                prop_item = pset_item.child(j)
+                if prop_item.checkState(0) == Qt.CheckState.Checked:
+                    self._psetcolumns.append((pset_name, prop_item.text(0)))
+        print()
+        print(self._psetcolumns)
+
+
+
+    def count(self):
         return self._count_first_cols + len(self._psetcolumns)
     
     

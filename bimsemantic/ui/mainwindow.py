@@ -22,6 +22,7 @@ class MainWindow(QMainWindow):
         self.setGeometry(100, 100, 800, 600)
         self.statusbar = self.statusBar()
         self.ifc = None
+        self.column_treeview = None
 
         # File menu
         self._file_menu = self.menuBar().addMenu(self.tr("&File"))
