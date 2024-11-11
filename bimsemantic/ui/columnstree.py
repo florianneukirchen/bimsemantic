@@ -31,7 +31,7 @@ class ColumnsTreeModel(QTreeWidget):
         
         self.psets_item = QTreeWidgetItem(self)
         self.psets_item.setText(0, "Property Sets")
-        self.psets_item.setFlags(self.psets_item.flags() | Qt.ItemFlag.ItemIsAutoTristate | Qt.ItemFlag.ItemIsUserCheckable)
+        # self.psets_item.setFlags(self.psets_item.flags() | Qt.ItemFlag.ItemIsAutoTristate | Qt.ItemFlag.ItemIsUserCheckable)
 
         pset_info = data.pset_info
         pset_keys = list(pset_info.keys())
