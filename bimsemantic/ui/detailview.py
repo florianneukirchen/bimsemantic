@@ -21,13 +21,14 @@ class DetailsTreeModel(TreeModelBaseclass):
 
 
     def setupModelData(self, data, parent):
+        print("Setting up model data")
         self.rows_spanned = []
+
         if not isinstance(data, list):
             data = [data]
-        self.ifc_objects = data
 
-        for object in self.ifc_objects:
-            if len(self.ifc_objects) > 1:
+        for object in data:
+            if len(data) > 1:
                 object_item = TreeItem([f"{object.Name} <{object.id()}>"], parent)
                 parent.appendChild(object_item)
             else:
@@ -132,6 +133,8 @@ class DetailsTreeModel(TreeModelBaseclass):
                                     mat_item.appendChild(
                                         self.newItem(k, v, mat_item)
                                 )
+                                    
+
 
 
 

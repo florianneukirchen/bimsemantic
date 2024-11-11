@@ -139,9 +139,10 @@ class IfcTreeTab(QWidget):
         source_index = self.proxymodel.mapToSource(index)
         item = source_index.internalPointer()
         if isinstance(item, TreeItem):
-            element_id = item.id
-            ifc_element = self.ifc.model.by_id(element_id)
-            self.mainwindow.show_details(ifc_element)
+            element = self.ifc.model.by_id(item.id)
+            self.mainwindow.show_details(element)
+
+
 
 
 class IfcTreeModelBaseClass(TreeModelBaseclass):
@@ -161,7 +162,12 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
         return self.columntree.count()
     
     def pset_columns_changed(self):
+        
+        self.beginResetModel()
         self.layoutChanged.emit()
+        self.endResetModel()
+
+
         
 
 

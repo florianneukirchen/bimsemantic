@@ -135,16 +135,8 @@ class MainWindow(QMainWindow):
             treeview.setFirstColumnSpanned(item.row(), treeview.rootIndex(), True)
         self.detailsdock.setWidget(treeview)
 
-    # def on_treeview_clicked(self, index):
-    #     if not index.isValid():
-    #         print("Invalid index")
-    #         return
-    #     source_index = self.locProxyModel.mapToSource(index)
-    #     item = source_index.internalPointer()
-    #     if isinstance(item, TreeItem):
-    #         element_id = item.id
-    #         ifc_element = self.ifc.model.by_id(element_id)
-    #         self.show_details(ifc_element)
+
+
 
     def about(self):
         QMessageBox.about(
