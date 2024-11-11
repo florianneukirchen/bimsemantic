@@ -6,7 +6,6 @@ from PySide6.QtGui import QAction, QFont, QIcon
 class ColumnsTreeModel(QTreeWidget):
     def __init__(self, data, parent=None):
         super(ColumnsTreeModel, self).__init__(parent)
-        # self.setColumnCount(1)
         self.setHeaderHidden(True)
         self.setupModelData(data)
         self.expandAll()
