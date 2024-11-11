@@ -69,7 +69,6 @@ class IfcTreeItem(TreeItem):
         
         psets = ifcopenshell.util.element.get_psets(self._ifc_item)
         pset_name, attribute = self._pset_columns.col(column - 4)
-        
         try:
             return psets[pset_name][attribute]
         except KeyError:
@@ -93,17 +92,9 @@ class IfcTabs(QWidget):
         self.layout.addWidget(self.tabs)
         self.setLayout(self.layout)
 
-        self.pset_columns = PsetColumns()
+        # self.pset_columns = PsetColumns()
 
-        # Add col
-        print("Add col")
-        pset_info = self.ifc.pset_info
-        pset = list(pset_info)[0]
-        attr = pset_info[pset][0]
-        self.pset_columns.add_column(pset, attr)
-        # #################
-
-        self.locationtab = IfcTreeTab(LocationTreeModel(self.ifc, self.pset_columns), self)
+        self.locationtab = IfcTreeTab(LocationTreeModel(self.ifc, PsetColumns()), self)
         self.tabs.addTab(self.locationtab, self.tr("Location"))
 
         # self.typetab = IfcTreeTab(TypeTreeModel(self.ifc, self.pset_columns), self)
@@ -116,6 +107,26 @@ class IfcTabs(QWidget):
         # self.create_column_actions(self.locationtab, parent)
         self.parent.statusbar.clearMessage()
 
+        pset_info = self.ifc.pset_info
+        pset = list(pset_info)[1]
+        attr = pset_info[pset][0]
+        self.add_column_to_all_views(pset, attr)
+
+        pset = list(pset_info)[0]
+        attr = pset_info[pset][1]
+        self.add_column_to_all_views(pset, attr)
+
+
+    def add_column_to_all_views(self, pset_name, attribute):
+        print("Add col")
+
+        self.add_column_to_model(self.locationtab.tree.model(), pset_name, attribute)
+
+
+    def add_column_to_model(self, model, pset_name, attribute):
+        # Hole das zugrunde liegende Modell aus dem QSortFilterProxyModel
+        source_model = model.sourceModel() if isinstance(model, QSortFilterProxyModel) else model
+        source_model.add_column(pset_name, attribute)
 
 
     # def create_column_actions(self, tab, mainwindow):
@@ -179,7 +190,16 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
         self._rootItem = ColheaderTreeItem(self.pset_columns, parent=None, first_cols=self.first_cols)
         
     def columnCount(self, parent=QModelIndex()):
+        count = len(self.first_cols) + self.pset_columns.count()
         return len(self.first_cols) + self.pset_columns.count()
+
+    def add_column(self, pset_name, attribute):
+        self.beginInsertColumns(QModelIndex(), self.columnCount(), self.columnCount())
+        self.pset_columns.add_column(pset_name, attribute)
+        self.endInsertColumns()
+
+        # self.dataChanged.emit(QModelIndex(), self.index(self.rowCount(), self.columnCount()))
+
 
 
 class LocationTreeModel(IfcTreeModelBaseClass):
