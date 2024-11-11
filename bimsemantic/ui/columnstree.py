@@ -22,3 +22,14 @@ class ColumnsTreeModel(QTreeWidget):
                 prop_item.setText(0, prop)
                 prop_item.setFlags(prop_item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
                 prop_item.setCheckState(0, Qt.CheckState.Unchecked)
+
+    def _get_pset_info(self):
+        pset_info = {}
+        psets = self._model.by_type("IfcPropertySet")
+        for pset in psets:
+            if not pset.Name in pset_info:
+                pset_info[pset.Name] = []
+            for prop in pset.HasProperties:
+                if not prop.Name in pset_info[pset.Name]:
+                    pset_info[pset.Name].append(prop.Name)
+        return pset_info
