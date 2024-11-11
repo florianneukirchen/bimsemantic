@@ -51,16 +51,6 @@ class MainWindow(QMainWindow):
 
         # View menu
         self._view_menu = self.menuBar().addMenu(self.tr("&View"))
-        self._view_cols_menu = self._view_menu.addMenu(self.tr("Columns"))
-        self.column_actions = []
-        select_all_action = QAction(self.tr("Show All"), self)
-        select_all_action.triggered.connect(self.select_all_columns)
-        self._view_cols_menu.addAction(select_all_action)
-
-        unselect_all_action = QAction(self.tr("Hide All"), self)
-        unselect_all_action.triggered.connect(self.unselect_all_columns)
-        self._view_cols_menu.addAction(unselect_all_action)
-        self._view_cols_menu.addSeparator()
 
         # Help menu
         self._help_menu = self.menuBar().addMenu(self.tr("&Help"))

@@ -10,8 +10,6 @@ import ifcopenshell.util.element
 class ColheaderTreeItem(TreeItem):
     def __init__(self, data, parent=None):
         self._columntree = data
-        # self._first_cols = self._columntree.first_cols
-        # self._count_first_cols = len(first_cols)
         self._parent = parent
         self._children = []
 
@@ -75,37 +73,11 @@ class IfcTabs(QWidget):
         self.flattab = IfcTreeTab(FlatTreeModel, self.ifc, self) 
         self.tabs.addTab(self.flattab, self.tr("Flat"))
 
-        # Add hide/show columns actions
-        # self.create_column_actions(self.locationtab, parent)
         self.mainwindow.statusbar.clearMessage()
 
 
 
-    def add_column_to_all_views(self, pset_name, attribute):
-        print("Add col")
 
-        self.add_column_to_model(self.locationtab.tree.model(), pset_name, attribute)
-
-
-    def add_column_to_model(self, model, pset_name, attribute):
-        # Hole das zugrunde liegende Modell aus dem QSortFilterProxyModel
-        source_model = model.sourceModel() if isinstance(model, QSortFilterProxyModel) else model
-        source_model.add_column(pset_name, attribute)
-
-
-    # def create_column_actions(self, tab, mainwindow):
-    #     tree = tab.tree
-    #     header = tree.header()
-    #     for column in range(1, header.count()):
-    #         column_name = header.model().headerData(column, Qt.Horizontal)
-    #         action = QAction(column_name, self, checkable=True, checked=True)
-    #         action.triggered.connect(lambda checked, col=column: self.toggle_column_visibility(col, checked))
-    #         mainwindow._view_cols_menu.addAction(action)   
-    #         mainwindow.column_actions.append(action)     
-
-    # def toggle_column_visibility(self, column, visible):
-    #     self.locationtab.tree.setColumnHidden(column, not visible)
-    #     self.typetab.tree.setColumnHidden(column, not visible)
 
 
 class IfcTreeTab(QWidget):
@@ -170,16 +142,6 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
         self._parent.tree.expandAll()
 
 
-        
-
-
-    # def add_column(self, pset_name, attribute):
-    #     self.beginInsertColumns(QModelIndex(), self.columnCount(), self.columnCount())
-    #     self.pset_columns.add_column(pset_name, attribute)
-    #     self.endInsertColumns()
-
-        # self.dataChanged.emit(QModelIndex(), self.index(self.rowCount(), self.columnCount()))
-
 
 
 class LocationTreeModel(IfcTreeModelBaseClass):
@@ -190,8 +152,7 @@ class LocationTreeModel(IfcTreeModelBaseClass):
 
         project = self.ifc.model.by_type("IfcProject")[0]
         project_item = IfcTreeItem(project, parent, self.columntree)
-        # print(project_item.data(0))
-        # print(project_item.data(4))
+
         parent.appendChild(project_item)
 
         for site in self.ifc.model.by_type("IfcSite"):
