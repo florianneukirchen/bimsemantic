@@ -1,9 +1,12 @@
 from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem
-from PySide6.QtCore import QDate, QFile, Qt, QAbstractItemModel, QModelIndex, Qt
+from PySide6.QtCore import QDate, QFile, Qt, QAbstractItemModel, QModelIndex, Qt, Signal
 from PySide6.QtGui import QAction, QFont, QIcon
 
 
 class ColumnsTreeModel(QTreeWidget):
+
+    columnsChanged = Signal()
+
     def __init__(self, data, parent=None):
         super(ColumnsTreeModel, self).__init__(parent)
         self.first_cols = ["Type", "ID", "Name", "GUID"]
@@ -56,11 +59,12 @@ class ColumnsTreeModel(QTreeWidget):
         if column < self._count_first_cols:
             return self.first_cols[column]
         column = column - self._count_first_cols
-        return self._columns[column][1]
+        return self._psetcolumns[column][1]
 
     def item_changed(self, item, column):
         if item.checkState(column) in (Qt.CheckState.Checked, Qt.CheckState.Unchecked):
             self.update_psetcolumns()
+            self.columnsChanged.emit()
 
     def update_psetcolumns(self):
         self._psetcolumns = []
@@ -71,8 +75,6 @@ class ColumnsTreeModel(QTreeWidget):
                 prop_item = pset_item.child(j)
                 if prop_item.checkState(0) == Qt.CheckState.Checked:
                     self._psetcolumns.append((pset_name, prop_item.text(0)))
-        print()
-        print(self._psetcolumns)
 
 
 

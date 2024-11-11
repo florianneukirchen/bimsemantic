@@ -113,12 +113,12 @@ class IfcTreeTab(QWidget):
         super(IfcTreeTab, self).__init__(parent)
         self._parent = parent
         self.mainwindow = self._parent.parent()
-        self.model = treemodel
+        self.treemodel = treemodel
         self.ifc = treemodel.ifc
         self.layout = QVBoxLayout(self)
 
         self.proxymodel = QSortFilterProxyModel(self)
-        self.proxymodel.setSourceModel(self.model)
+        self.proxymodel.setSourceModel(self.treemodel)
         self.tree = QTreeView()
         self.tree.setModel(self.proxymodel)
         self.tree.setSortingEnabled(True)
@@ -151,11 +151,19 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
         self.first_cols = self.columntree.first_cols
         super(IfcTreeModelBaseClass, self).__init__(data, parent)
 
+        self.columntree.columnsChanged.connect(self.pset_columns_changed)
+
+
     def setupRootItem(self):
         self._rootItem = ColheaderTreeItem(self.columntree, parent=None)
         
     def columnCount(self, parent=QModelIndex()):
         return self.columntree.count()
+    
+    def pset_columns_changed(self):
+        self.layoutChanged.emit()
+        
+
 
     # def add_column(self, pset_name, attribute):
     #     self.beginInsertColumns(QModelIndex(), self.columnCount(), self.columnCount())
