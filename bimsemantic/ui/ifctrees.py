@@ -66,13 +66,13 @@ class IfcTabs(QWidget):
         self.layout.addWidget(self.tabs)
         self.setLayout(self.layout)
 
-        self.locationtab = IfcTreeTab(LocationTreeModel(self.ifc, self), self)
+        self.locationtab = IfcTreeTab(LocationTreeModel, self.ifc, self)
         self.tabs.addTab(self.locationtab, self.tr("Location"))
 
-        self.typetab = IfcTreeTab(TypeTreeModel(self.ifc, self), self)
+        self.typetab = IfcTreeTab(TypeTreeModel, self.ifc, self) 
         self.tabs.addTab(self.typetab, self.tr("Type"))
 
-        self.flattab = IfcTreeTab(FlatTreeModel(self.ifc, self), self)
+        self.flattab = IfcTreeTab(FlatTreeModel, self.ifc, self) 
         self.tabs.addTab(self.flattab, self.tr("Flat"))
 
         # Add hide/show columns actions
@@ -109,12 +109,12 @@ class IfcTabs(QWidget):
 
 
 class IfcTreeTab(QWidget):
-    def __init__(self, treemodel, parent):
+    def __init__(self, treemodelclass, ifc, parent):
         super(IfcTreeTab, self).__init__(parent)
         self._parent = parent
         self.mainwindow = self._parent.parent()
-        self.treemodel = treemodel
-        self.ifc = treemodel.ifc
+        self.treemodel = treemodelclass(ifc, self)
+        self.ifc = ifc
         self.layout = QVBoxLayout(self)
 
         self.proxymodel = QSortFilterProxyModel(self)
@@ -151,6 +151,7 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
         self.columntree = mainwindow.column_treeview
         self.first_cols = self.columntree.first_cols
         super(IfcTreeModelBaseClass, self).__init__(data, parent)
+        self._parent = parent
 
         self.columntree.columnsChanged.connect(self.pset_columns_changed)
 
@@ -166,6 +167,7 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
         self.beginResetModel()
         self.layoutChanged.emit()
         self.endResetModel()
+        self._parent.tree.expandAll()
 
 
         
