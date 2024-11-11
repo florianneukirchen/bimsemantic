@@ -12,25 +12,16 @@ from PySide6.QtWidgets import (
 import ifcopenshell
 
 from bimsemantic.util import IfcFile
-from bimsemantic.ui import LocationTreeModel, IfcTabs, DetailsTreeModel, TreeItem
+from bimsemantic.ui import IfcTabs, DetailsTreeModel, ColumnsTreeModel
 
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("BIM Semantic Viewer")
+        self.setGeometry(100, 100, 800, 600)
         self.statusbar = self.statusBar()
         self.ifc = None
-
-        # Provisorisch ################################################################################
-        filenames = ["/media/riannek/PortableSSD/share/FranzLiszt/GE_2000_3TM_KIB_EU_003_AA_003-Franz-Liszt-Strasse.ifc",
-                     "/media/riannek/PortableSSD/share/FranzLiszt/combined.ifc",
-                     "/media/riannek/PortableSSD/share/AC20-FZK-Haus.ifc",
-                     "/media/riannek/PortableSSD/share/VST_Röntgental.ifc",
-                     "/media/riannek/PortableSSD/share/linkedin.ifc"]
-        filename = filenames[0]
-        self.ifc = IfcFile(filename)
-        print("Loaded file")
 
         # File menu
         self._file_menu = self.menuBar().addMenu(self.tr("&File"))
@@ -83,8 +74,26 @@ class MainWindow(QMainWindow):
 
         self.create_dock_windows()
 
+        # Provisorisch ################################################################################
+        filenames = ["/media/riannek/PortableSSD/share/FranzLiszt/GE_2000_3TM_KIB_EU_003_AA_003-Franz-Liszt-Strasse.ifc",
+                     "/media/riannek/PortableSSD/share/FranzLiszt/combined.ifc",
+                     "/media/riannek/PortableSSD/share/AC20-FZK-Haus.ifc",
+                     "/media/riannek/PortableSSD/share/VST_Röntgental.ifc",
+                     "/media/riannek/PortableSSD/share/linkedin.ifc"]
+        filename = filenames[0]
+        self.ifc = IfcFile(filename)
+        print("Loaded file")
+
+        self.setup_column_tree()
+
         self.tabs = IfcTabs(self.ifc, self)
         self.setCentralWidget(self.tabs)
+
+    def setup_column_tree(self):
+        self.column_treeview = ColumnsTreeModel(self.ifc)
+        # self.column_treeview.expandAll()
+        self.columnsdock.setWidget(self.column_treeview)
+
 
     def select_all_columns(self):
         for action in self.column_actions:
@@ -104,8 +113,14 @@ class MainWindow(QMainWindow):
         self.detailsdock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
         self.detailsdock.setWidget(QLabel(self.tr("No open file")))
         self.addDockWidget(Qt.RightDockWidgetArea, self.detailsdock)
-        self._view_menu.addSeparator()
+        # self._view_menu.addSeparator()
         self._view_menu.addAction(self.detailsdock.toggleViewAction())
+
+        self.columnsdock = QDockWidget(self.tr("Columns"), self)
+        self.columnsdock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
+        self.columnsdock.setWidget(QLabel(self.tr("No open file")))
+        self.addDockWidget(Qt.RightDockWidgetArea, self.columnsdock)
+        self._view_menu.addAction(self.columnsdock.toggleViewAction())
 
     def show_details(self, ifc_objects):
         detailModel = DetailsTreeModel(ifc_objects)

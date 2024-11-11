@@ -44,6 +44,7 @@ class TreeItem:
         return self._children
 
 
+    
 
 class TreeModelBaseclass(QAbstractItemModel):
     def __init__(self, data, parent=None):
