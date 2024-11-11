@@ -7,7 +7,8 @@ class ColumnsTreeModel(QTreeWidget):
     def __init__(self, data, parent=None):
         super(ColumnsTreeModel, self).__init__(parent)
         self.first_cols = ["Type", "ID", "Name", "GUID"]
-        self._cols_count = len(self.first_cols)
+        self._count_first_cols = len(self.first_cols)
+        self._psetcolumns = []
         self.setHeaderHidden(True)
         self.setupModelData(data)
         self.expandAll()
@@ -23,14 +24,18 @@ class ColumnsTreeModel(QTreeWidget):
             col_item.setFlags(col_item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
             col_item.setCheckState(0, Qt.CheckState.Checked)
         
-        psets_item = QTreeWidgetItem(self)
-        psets_item.setText(0, "Property Sets")
-        psets_item.setFlags(psets_item.flags() | Qt.ItemFlag.ItemIsAutoTristate | Qt.ItemFlag.ItemIsUserCheckable)
+        self.psets_item = QTreeWidgetItem(self)
+        self.psets_item.setText(0, "Property Sets")
+        self.psets_item.setFlags(self.psets_item.flags() | Qt.ItemFlag.ItemIsAutoTristate | Qt.ItemFlag.ItemIsUserCheckable)
 
         pset_info = data.pset_info
+        pset_keys = list(pset_info.keys())
+        pset_keys.sort()
 
-        for pset_name, pset_props in pset_info.items():
-            pset_item = QTreeWidgetItem(psets_item)
+        for pset_name in pset_keys:
+            pset_props = pset_info[pset_name]
+            pset_props.sort()
+            pset_item = QTreeWidgetItem(self.psets_item)
             pset_item.setText(0, pset_name)
             pset_item.setFlags(pset_item.flags() | Qt.ItemFlag.ItemIsAutoTristate | Qt.ItemFlag.ItemIsUserCheckable)
 
@@ -40,8 +45,21 @@ class ColumnsTreeModel(QTreeWidget):
                 prop_item.setFlags(prop_item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
                 prop_item.setCheckState(0, Qt.CheckState.Unchecked)
 
+
+    def col(self, column):
+        column = column - self._count_first_cols
+        return self._psetcolumns[column]
+    
+    def column_name(self, column):
+        if column < self._count_first_cols:
+            return self.first_cols[column]
+        column = column - self._count_first_cols
+        return self._columns[column][1]
+
     @property
     def cols_count(self):
-        return self._cols_count
+        return self._count_first_cols + len(self._psetcolumns)
+    
+    
 
 
