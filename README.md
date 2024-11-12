@@ -19,7 +19,7 @@ Activate the venv
 
 Linux:
 ```
-source /home/BENUTZER/venv-test/bin/activate
+source venv/bin/activate
 ```
 
 Windows Powershell:
@@ -112,9 +112,11 @@ pip3 install --upgrade PyInstaller pyinstaller-hooks-contrib
 
 
 ### Translation
-Update translations with:
+(Commands in the root direcory of the project with venv enabled)
+
+Update translations:
 ```
-pyside6-lupdate bimsemantic/ui/*.py -ts ../bimsemantic/i18n/bimsemantic_de.ts
+pyside6-lupdate bimsemantic/ui/*.py -ts bimsemantic/i18n/bimsemantic_de.ts
 ```
 
 Edit the translations in QtLinguist and then release translation with:
