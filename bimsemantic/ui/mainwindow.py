@@ -11,7 +11,7 @@ from PySide6.QtWidgets import (
 
 import ifcopenshell
 
-from bimsemantic.util import IfcFile
+from bimsemantic.util import IfcFile, IfcFiles
 from bimsemantic.ui import IfcTabs, DetailsTreeModel, ColumnsTreeModel
 
 
@@ -21,7 +21,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("BIM Semantic Viewer")
         self.setGeometry(100, 100, 800, 600)
         self.statusbar = self.statusBar()
-        self.ifc = None
+        self.ifcfiles = IfcFiles()
         self.column_treeview = None
 
         # File menu
@@ -72,31 +72,30 @@ class MainWindow(QMainWindow):
                      "/media/riannek/PortableSSD/share/VST_Röntgental.ifc",
                      "/media/riannek/PortableSSD/share/linkedin.ifc"]
         filename = filenames[0]
-        self.ifc = IfcFile(filename)
-        print("Loaded file")
+        self.ifcfiles.add_file(filename)
 
         self.setup_column_tree()
 
-        self.tabs = IfcTabs(self.ifc, self)
+
+        self.tabs = IfcTabs(self.ifcfiles, self) 
         self.setCentralWidget(self.tabs)
 
     def setup_column_tree(self):
-        self.column_treeview = ColumnsTreeModel(self.ifc)
-        # self.column_treeview.expandAll()
+        self.column_treeview = ColumnsTreeModel(self.ifcfiles)
         self.columnsdock.setWidget(self.column_treeview)
 
 
-    def select_all_columns(self):
-        for action in self.column_actions:
-            action.setChecked(True)
-            # First Column can't be hidden in the treeview, so add +1 to index
-            self.tabs.toggle_column_visibility(self.column_actions.index(action) + 1, True)
+    # def select_all_columns(self):
+    #     for action in self.column_actions:
+    #         action.setChecked(True)
+    #         # First Column can't be hidden in the treeview, so add +1 to index
+    #         self.tabs.toggle_column_visibility(self.column_actions.index(action) + 1, True)
 
-    def unselect_all_columns(self):
-        for action in self.column_actions:
-            action.setChecked(False)
-            # First Column can't be hidden in the treeview, so add +1 to index
-            self.tabs.toggle_column_visibility(self.column_actions.index(action) + 1, False)
+    # def unselect_all_columns(self):
+    #     for action in self.column_actions:
+    #         action.setChecked(False)
+    #         # First Column can't be hidden in the treeview, so add +1 to index
+    #         self.tabs.toggle_column_visibility(self.column_actions.index(action) + 1, False)
 
 
     def create_dock_windows(self):
@@ -124,8 +123,6 @@ class MainWindow(QMainWindow):
         for item in detailModel.rows_spanned:
             treeview.setFirstColumnSpanned(item.row(), treeview.rootIndex(), True)
         self.detailsdock.setWidget(treeview)
-
-
 
 
     def about(self):
