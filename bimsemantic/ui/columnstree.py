@@ -10,7 +10,13 @@ class ColumnsTreeModel(QTreeWidget):
 
     def __init__(self, data, parent=None):
         super(ColumnsTreeModel, self).__init__(parent)
-        self.first_cols = ["Type", "ID", "Name", "GUID", "Filename"]
+        self.first_cols = [
+            self.tr("Type"), 
+            "ID", self.tr("Name"), 
+            "GUID", 
+            self.tr("Filename")
+            ]
+        self._hidden = ["ID", "GUID", self.tr("Filename")] 
         self._count_first_cols = len(self.first_cols)
         self._psetcolumns = []
         self.setHeaderHidden(True)
@@ -20,15 +26,18 @@ class ColumnsTreeModel(QTreeWidget):
 
 
     def setupModelData(self, data):
-        infocols_item = QTreeWidgetItem(self)
-        infocols_item.setText(0, self.tr("Info Columns"))
-        infocols_item.setFlags(infocols_item.flags() | Qt.ItemFlag.ItemIsAutoTristate | Qt.ItemFlag.ItemIsUserCheckable)
+        self.infocols_item = QTreeWidgetItem(self)
+        self.infocols_item.setText(0, self.tr("Info Columns"))
+        self.infocols_item.setFlags(self.infocols_item.flags() | Qt.ItemFlag.ItemIsAutoTristate | Qt.ItemFlag.ItemIsUserCheckable)
         
         for col in self.first_cols[1:]:
-            col_item = QTreeWidgetItem(infocols_item)
+            col_item = QTreeWidgetItem(self.infocols_item)
             col_item.setText(0, col)
             col_item.setFlags(col_item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
-            col_item.setCheckState(0, Qt.CheckState.Checked)
+            if col in self._hidden:
+                col_item.setCheckState(0, Qt.CheckState.Unchecked)
+            else:
+                col_item.setCheckState(0, Qt.CheckState.Checked)
         
         self.psets_item = QTreeWidgetItem(self)
         self.psets_item.setText(0, self.tr("Property Sets"))
@@ -82,6 +91,14 @@ class ColumnsTreeModel(QTreeWidget):
                     self._psetcolumns.append((pset_name, prop_item.text(0)))
 
 
+    def hidden_info_columns(self):
+        """Returns a list of column indexes that are hidden"""
+        hidden = []
+        for i in range(self.infocols_item.childCount()):
+            child = self.infocols_item.child(i)
+            if child.checkState(0) == Qt.CheckState.Unchecked:
+                hidden.append(self.first_cols.index(child.text(0)))
+        return hidden
 
 
     def count(self):

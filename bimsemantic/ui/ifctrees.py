@@ -124,9 +124,13 @@ class IfcTreeTab(QWidget):
         self.tree.setModel(self.proxymodel)
         self.tree.setSortingEnabled(True)
         self.tree.setAlternatingRowColors(True)
+
         self.tree.setColumnWidth(0, 200)
         self.tree.setColumnWidth(2, 250)
-        # self.tree.setColumnHidden(1, True)
+        
+        for column in self.treemodel.columntree.hidden_info_columns():
+            self.tree.setColumnHidden(column, True)
+        
         self.tree.expandAll()
         self.tree.clicked.connect(self.on_treeview_clicked)
         self.setLayout(self.layout)
