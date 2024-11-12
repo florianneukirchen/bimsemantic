@@ -20,12 +20,18 @@ class ColheaderTreeItem(TreeItem):
 
 
 class IfcTreeItem(TreeItem):
-    def __init__(self, data, parent=None, columntree=None):
+    def __init__(self, data, parent=None, columntree=None, filename=None):
         self._ifc_item = data
         self._parent = parent
         self._id = self._ifc_item.id()
+        self._guid = self._ifc_item.GlobalId
         self._children = []
+        self._filenames = []
         self._columntree = columntree
+
+        if filename:
+            self._filenames.append(filename)
+        
 
     def data(self, column):
         if column < 0 or column >= self._columntree.count():
@@ -38,6 +44,8 @@ class IfcTreeItem(TreeItem):
             return self._ifc_item.Name
         if column == 3:
             return self._ifc_item.GlobalId
+        if column == 4:
+            return self.filenames_str
         
         psets = ifcopenshell.util.element.get_psets(self._ifc_item)
         pset_name, attribute = self._columntree.col(column)
@@ -46,11 +54,32 @@ class IfcTreeItem(TreeItem):
         except KeyError:
             return None
 
+    def add_filename(self, filename):
+        self._filenames.append(filename)
+
+    def remove_filename(self, filename):
+        self._filenames.remove(filename)
+        
+    @property
+    def filenames(self):
+        return self._filenames
+    
+    @property
+    def filenames_str(self):
+        return ", ".join(self._filenames)
+
+    @property
+    def id(self):
+        return self._id
+    
+    @property
+    def guid(self):
+        return self._guid
 
 class IfcTabs(QWidget):
-    def __init__(self, ifc_file, parent):
+    def __init__(self, ifc_files, parent):
         super(IfcTabs, self).__init__(parent)
-        self.ifc = ifc_file
+        self.ifc_files = ifc_files
 
         self.mainwindow = parent
         self.layout = QVBoxLayout(self)
@@ -64,14 +93,14 @@ class IfcTabs(QWidget):
         self.layout.addWidget(self.tabs)
         self.setLayout(self.layout)
 
-        self.locationtab = IfcTreeTab(LocationTreeModel, self.ifc, self)
+        self.locationtab = IfcTreeTab(LocationTreeModel, self.ifc_files, self)
         self.tabs.addTab(self.locationtab, self.tr("Location"))
 
-        self.typetab = IfcTreeTab(TypeTreeModel, self.ifc, self) 
-        self.tabs.addTab(self.typetab, self.tr("Type"))
+        # self.typetab = IfcTreeTab(TypeTreeModel, self.ifc_files, self) 
+        # self.tabs.addTab(self.typetab, self.tr("Type"))
 
-        self.flattab = IfcTreeTab(FlatTreeModel, self.ifc, self) 
-        self.tabs.addTab(self.flattab, self.tr("Flat"))
+        # self.flattab = IfcTreeTab(FlatTreeModel, self.ifc_files, self) 
+        # self.tabs.addTab(self.flattab, self.tr("Flat"))
 
         self.mainwindow.statusbar.clearMessage()
 
@@ -81,12 +110,12 @@ class IfcTabs(QWidget):
 
 
 class IfcTreeTab(QWidget):
-    def __init__(self, treemodelclass, ifc, parent):
+    def __init__(self, treemodelclass, ifc_files, parent):
         super(IfcTreeTab, self).__init__(parent)
         self._parent = parent
         self.mainwindow = self._parent.parent()
-        self.treemodel = treemodelclass(ifc, self)
-        self.ifc = ifc
+        self.treemodel = treemodelclass(ifc_files, self)
+        self.ifc_files = ifc_files
         self.layout = QVBoxLayout(self)
 
         self.proxymodel = QSortFilterProxyModel(self)
@@ -111,7 +140,9 @@ class IfcTreeTab(QWidget):
         source_index = self.proxymodel.mapToSource(index)
         item = source_index.internalPointer()
         if isinstance(item, TreeItem):
-            element = self.ifc.model.by_id(item.id)
+            element = self.ifc_files.get_element(item.filenames[0], item.id)
+            if not element:
+                element = self.ifc_files.get_project()
             self.mainwindow.show_details(element)
 
 
@@ -127,6 +158,8 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
 
         self.columntree.columnsChanged.connect(self.pset_columns_changed)
 
+    def addFile(self, ifc_file):
+        pass
 
     def setupRootItem(self):
         self._rootItem = ColheaderTreeItem(self.columntree, parent=None)
@@ -141,26 +174,46 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
         self.endResetModel()
         self._parent.tree.expandAll()
 
-
+    def get_child_by_guid(self, parent, guid):
+        for child in parent.children:
+            if child.guid == guid:
+                return child
+        return None
 
 
 class LocationTreeModel(IfcTreeModelBaseClass):
 
 
     def setupModelData(self, data, parent):
-        self.ifc = data  # ifcopenshell ifc model
+        self.ifc_files = data  
 
-        project = self.ifc.model.by_type("IfcProject")[0]
-        project_item = IfcTreeItem(project, parent, self.columntree)
+        for file in self.ifc_files:
+            self.addFile(file)
 
-        parent.appendChild(project_item)
 
-        for site in self.ifc.model.by_type("IfcSite"):
-            self.addItems(site, project_item)
+    def addFile(self, ifc_file):
+        filename = ifc_file.filename
+        project = ifc_file.model.by_type("IfcProject")[0]
 
-    def addItems(self, ifc_object, parent):
-        item = IfcTreeItem(ifc_object, parent, self.columntree)
-        parent.appendChild(item)
+        # Check if the project is already in the tree
+        project_item = self.get_child_by_guid(self._rootItem, project.GlobalId)
+        if project_item:
+            project_item.add_filename(filename)
+        else:
+            project_item = IfcTreeItem(project, self._rootItem, self.columntree, filename)
+            self._rootItem.appendChild(project_item)
+
+        for site in ifc_file.model.by_type("IfcSite"):
+            self.addItems(site, project_item, filename)
+
+    def addItems(self, ifc_object, parent, filename):
+        # Check if the object is already in the tree
+        item = self.get_child_by_guid(parent, ifc_object.GlobalId)
+        if item:
+            item.add_filename(filename)
+        else:
+            item = IfcTreeItem(ifc_object, parent, self.columntree, filename)
+            parent.appendChild(item)
         try:
             elements = ifc_object.ContainsElements[0].RelatedElements
         except IndexError:
@@ -171,11 +224,15 @@ class LocationTreeModel(IfcTreeModelBaseClass):
             children = []
 
         for element in elements:
-            element_item = IfcTreeItem(element, item, self.columntree) 
-            item.appendChild(element_item)
+            element_item = self.get_child_by_guid(item, element.GlobalId)
+            if element_item:
+                element_item.add_filename(filename)
+            else:
+                element_item = IfcTreeItem(element, item, self.columntree, filename) 
+                item.appendChild(element_item)
 
         for child in children:
-            self.addItems(child, item)
+            self.addItems(child, item, filename)
 
 class TypeTreeModel(IfcTreeModelBaseClass):
     def setupModelData(self, data, parent):
