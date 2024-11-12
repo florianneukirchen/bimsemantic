@@ -6,6 +6,7 @@ from PySide6.QtGui import QAction, QFont, QIcon
 class ColumnsTreeModel(QTreeWidget):
 
     columnsChanged = Signal()
+    hideInfoColumn = Signal(int, bool)
 
     def __init__(self, data, parent=None):
         super(ColumnsTreeModel, self).__init__(parent)
@@ -20,7 +21,7 @@ class ColumnsTreeModel(QTreeWidget):
 
     def setupModelData(self, data):
         infocols_item = QTreeWidgetItem(self)
-        infocols_item.setText(0, "Info Columns")
+        infocols_item.setText(0, self.tr("Info Columns"))
         infocols_item.setFlags(infocols_item.flags() | Qt.ItemFlag.ItemIsAutoTristate | Qt.ItemFlag.ItemIsUserCheckable)
         
         for col in self.first_cols[1:]:
@@ -30,7 +31,7 @@ class ColumnsTreeModel(QTreeWidget):
             col_item.setCheckState(0, Qt.CheckState.Checked)
         
         self.psets_item = QTreeWidgetItem(self)
-        self.psets_item.setText(0, "Property Sets")
+        self.psets_item.setText(0, self.tr("Property Sets"))
 
         pset_info = data.pset_info
         pset_keys = list(pset_info.keys())
@@ -61,9 +62,14 @@ class ColumnsTreeModel(QTreeWidget):
         return self._psetcolumns[column][1]
 
     def item_changed(self, item, column):
-        if item.checkState(column) in (Qt.CheckState.Checked, Qt.CheckState.Unchecked):
-            self.update_psetcolumns()
-            self.columnsChanged.emit()
+        if item.checkState(column) in (Qt.CheckState.Checked, Qt.CheckState.Unchecked) and item.parent() is not None:
+            if item.parent().text(column) == "Info Columns":
+                ishidden = item.checkState(column) == Qt.CheckState.Unchecked
+                col_index = self.first_cols.index(item.text(column))
+                self.hideInfoColumn.emit(col_index, ishidden)
+            else:
+                self.update_psetcolumns()
+                self.columnsChanged.emit()
 
     def update_psetcolumns(self):
         self._psetcolumns = []
@@ -74,6 +80,7 @@ class ColumnsTreeModel(QTreeWidget):
                 prop_item = pset_item.child(j)
                 if prop_item.checkState(0) == Qt.CheckState.Checked:
                     self._psetcolumns.append((pset_name, prop_item.text(0)))
+
 
 
 

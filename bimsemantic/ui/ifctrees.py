@@ -157,6 +157,7 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
         self._parent = parent
 
         self.columntree.columnsChanged.connect(self.pset_columns_changed)
+        self.columntree.hideInfoColumn.connect(self.hide_info_column)
 
     def setupModelData(self, data, parent):
         self.ifc_files = data  
@@ -179,6 +180,9 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
         self.layoutChanged.emit()
         self.endResetModel()
         self._parent.tree.expandAll()
+
+    def hide_info_column(self, col_index, ishidden):
+        self._parent.tree.setColumnHidden(col_index, ishidden)
 
     def get_child_by_guid(self, parent, guid):
         for child in parent.children:
