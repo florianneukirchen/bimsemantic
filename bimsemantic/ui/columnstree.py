@@ -9,7 +9,7 @@ class ColumnsTreeModel(QTreeWidget):
 
     def __init__(self, data, parent=None):
         super(ColumnsTreeModel, self).__init__(parent)
-        self.first_cols = ["Type", "ID", "Name", "GUID"]
+        self.first_cols = ["Type", "ID", "Name", "GUID", "Filename"]
         self._count_first_cols = len(self.first_cols)
         self._psetcolumns = []
         self.setHeaderHidden(True)
@@ -31,7 +31,6 @@ class ColumnsTreeModel(QTreeWidget):
         
         self.psets_item = QTreeWidgetItem(self)
         self.psets_item.setText(0, "Property Sets")
-        # self.psets_item.setFlags(self.psets_item.flags() | Qt.ItemFlag.ItemIsAutoTristate | Qt.ItemFlag.ItemIsUserCheckable)
 
         pset_info = data.pset_info
         pset_keys = list(pset_info.keys())
