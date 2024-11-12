@@ -71,8 +71,14 @@ class MainWindow(QMainWindow):
                      "/media/riannek/PortableSSD/share/AC20-FZK-Haus.ifc",
                      "/media/riannek/PortableSSD/share/VST_Röntgental.ifc",
                      "/media/riannek/PortableSSD/share/linkedin.ifc"]
-        filename = filenames[0]
-        self.ifcfiles.add_file(filename)
+        fl = ['/media/riannek/PortableSSD/share/FranzLiszt/GE_2000_3TM_KIB_EU_003_AA_003-Franz-Liszt-Strasse.ifc',
+                '/media/riannek/PortableSSD/share/FranzLiszt/GE_2000_3TM_VEA_SB_003_AA_003-Franz-Liszt-Strasse.ifc',
+                '/media/riannek/PortableSSD/share/FranzLiszt/GE_2000_3TM_VEA_ST_003_AA_003-Franz-Liszt-Strasse.ifc']
+        # filename = filenames[0]
+        # self.ifcfiles.add_file(filename)
+
+        for filename in fl:
+            self.ifcfiles.add_file(filename)
 
         self.setup_column_tree()
 

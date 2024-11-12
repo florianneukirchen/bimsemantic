@@ -158,6 +158,12 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
 
         self.columntree.columnsChanged.connect(self.pset_columns_changed)
 
+    def setupModelData(self, data, parent):
+        self.ifc_files = data  
+
+        for file in self.ifc_files:
+            self.addFile(file)
+
     def addFile(self, ifc_file):
         pass
 
@@ -182,13 +188,6 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
 
 
 class LocationTreeModel(IfcTreeModelBaseClass):
-
-
-    def setupModelData(self, data, parent):
-        self.ifc_files = data  
-
-        for file in self.ifc_files:
-            self.addFile(file)
 
 
     def addFile(self, ifc_file):
