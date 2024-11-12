@@ -50,10 +50,21 @@ class DetailsTreeModel(TreeModelBaseclass):
                 TreeItem(["Global ID", object.GlobalId], parent=object_item)
             )
 
+
+            info_item = TreeItem(["Info"], parent=object_item)
+            object_item.appendChild(info_item)
+            
+            for k,v in info.items():
+                if k not in ["Name", "id", "GlobalId", "type", "ObjectType"]:
+                    info_item.appendChild(
+                        self.newItem(k, v, info_item)
+                    )
+
+            # Spatial relations
             if object.is_a("IfcElement"):
                 try:
-                    object_item.appendChild(
-                        self.newItem("Contained in", object.ContainedInStructure[0].RelatingStructure, object_item)
+                    info_item.appendChild(
+                        self.newItem("Contained in", object.ContainedInStructure[0].RelatingStructure, info_item)
                     )
                 except IndexError:
                     pass
@@ -61,12 +72,12 @@ class DetailsTreeModel(TreeModelBaseclass):
             elif object.is_a("IfcSpatialStructureElement"):
                 decomposes = object.Decomposes
                 if decomposes:
-                    object_item.appendChild(
-                    self.newItem("Contained in", decomposes[0].RelatingObject, object_item)
+                    info_item.appendChild(
+                    self.newItem("Contained in", decomposes[0].RelatingObject, info_item)
                     )
 
-                contains_item = TreeItem(["Contains"], parent=object_item)
-                object_item.appendChild(contains_item)
+                contains_item = TreeItem(["Contains"], parent=info_item)
+                info_item.appendChild(contains_item)
                 try:
                     elements = object.ContainsElements[0].RelatedElements
                 except IndexError:
@@ -82,16 +93,6 @@ class DetailsTreeModel(TreeModelBaseclass):
                             TreeItem([obj.is_a(), obj.id(), obj.Name], parent=contains_item)
                         )
 
-
-            info_item = TreeItem(["Info"], parent=object_item)
-            object_item.appendChild(info_item)
-            
-            for k,v in info.items():
-                if k not in ["Name", "id", "GlobalId", "type", "ObjectType"]:
-                    info_item.appendChild(
-                        self.newItem(k, v, info_item)
-                    )
-            
             # Property Sets
             psets = ifcopenshell.util.element.get_psets(object)
             for pset_name, pset in psets.items():
