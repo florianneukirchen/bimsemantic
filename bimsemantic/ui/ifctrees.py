@@ -99,8 +99,8 @@ class IfcTabs(QWidget):
         self.typetab = IfcTreeTab(TypeTreeModel, self.ifc_files, self) 
         self.tabs.addTab(self.typetab, self.tr("Type"))
 
-        # self.flattab = IfcTreeTab(FlatTreeModel, self.ifc_files, self) 
-        # self.tabs.addTab(self.flattab, self.tr("Flat"))
+        self.flattab = IfcTreeTab(FlatTreeModel, self.ifc_files, self) 
+        self.tabs.addTab(self.flattab, self.tr("Flat"))
 
         self.mainwindow.statusbar.clearMessage()
 
@@ -282,24 +282,40 @@ class TypeTreeModel(IfcTreeModelBaseClass):
         
 
 class FlatTreeModel(IfcTreeModelBaseClass):
-    def setupModelData(self, data, parent):
-        self.ifc = data  # ifcopenshell ifc model
 
-        elements = self.ifc.model.by_type("IfcElement")
 
-        elements_item = TreeItem(["Elements"], parent, "Elements")
-        parent.appendChild(elements_item)
+    def addFile(self, ifc_file):
+        self.beginResetModel()
+
+        filename = ifc_file.filename
+
+        elements = ifc_file.model.by_type("IfcElement")
+        element_types = ifc_file.model.by_type("IfcElementType")
+
+        elements_item = self.get_child_by_label(self._rootItem, "IfcElement")
+        if not elements_item:
+            elements_item = TreeItem(["IfcElement"], self._rootItem, "IfcElement")
+            self._rootItem.appendChild(elements_item)
 
         for element in elements:
-            element_item = IfcTreeItem(element, elements_item, self.columntree)
+            element_item = self.get_child_by_guid(elements_item, element.GlobalId)
+            if element_item:
+                element_item.add_filename(filename)
+            else:
+                element_item = IfcTreeItem(element, elements_item, self.columntree, filename)
             elements_item.appendChild(element_item)
 
-        types_item = TreeItem(["Types"], parent, "Types")
-        parent.appendChild(types_item)
-
-        element_types = self.ifc.model.by_type("IfcElementType")
-
+        types_item = self.get_child_by_label(self._rootItem, "IfcElementType")
+        if not types_item:
+            types_item = TreeItem(["IfcElementType"], self._rootItem, "IfcElementType")
+            self._rootItem.appendChild(types_item)
 
         for element_type in element_types:
-            type_item = IfcTreeItem(element_type, types_item, self.columntree)
+            type_item = self.get_child_by_guid(types_item, element_type.GlobalId)
+            if type_item:
+                type_item.add_filename(filename)
+            else:
+                type_item = IfcTreeItem(element_type, types_item, self.columntree, filename)
             types_item.appendChild(type_item)
+
+        self.endResetModel()
