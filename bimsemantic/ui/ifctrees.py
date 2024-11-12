@@ -96,8 +96,8 @@ class IfcTabs(QWidget):
         self.locationtab = IfcTreeTab(LocationTreeModel, self.ifc_files, self)
         self.tabs.addTab(self.locationtab, self.tr("Location"))
 
-        # self.typetab = IfcTreeTab(TypeTreeModel, self.ifc_files, self) 
-        # self.tabs.addTab(self.typetab, self.tr("Type"))
+        self.typetab = IfcTreeTab(TypeTreeModel, self.ifc_files, self) 
+        self.tabs.addTab(self.typetab, self.tr("Type"))
 
         # self.flattab = IfcTreeTab(FlatTreeModel, self.ifc_files, self) 
         # self.tabs.addTab(self.flattab, self.tr("Flat"))
@@ -186,13 +186,18 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
                 return child
         return None
 
+    def get_child_by_label(self, parent, label):
+        for child in parent.children:
+            if child.data(0) == label:
+                return child
+        return None
 
 class LocationTreeModel(IfcTreeModelBaseClass):
 
 
     def addFile(self, ifc_file):
         self.beginResetModel()
-        
+
         filename = ifc_file.filename
         project = ifc_file.model.by_type("IfcProject")[0]
 
@@ -238,34 +243,43 @@ class LocationTreeModel(IfcTreeModelBaseClass):
             self.addItems(child, item, filename)
 
 class TypeTreeModel(IfcTreeModelBaseClass):
-    def setupModelData(self, data, parent):
-        self.ifc = data  # ifcopenshell ifc model
 
-        modeldict = {}
-        elements = self.ifc.model.by_type("IfcElement")
+
+    
+
+
+    def addFile(self, ifc_file):
+        self.beginResetModel()
+
+        filename = ifc_file.filename
+
+        elements = ifc_file.model.by_type("IfcElement")
 
         for element in elements:
             ifc_class = element.is_a()
-            if not ifc_class in modeldict:
-                modeldict[ifc_class] = {}
             objecttype = element.ObjectType
-            if objecttype is None:
-                objecttype = "None"
-            if not objecttype in modeldict[ifc_class]:
-                modeldict[ifc_class][objecttype] = []
-            modeldict[ifc_class][objecttype].append(element)
 
-        for ifc_class, types in modeldict.items():
-            class_item = TreeItem([ifc_class], parent, "class:" + ifc_class)
-            parent.appendChild(class_item)
+            class_item = self.get_child_by_label(self._rootItem, ifc_class)
+            if not class_item:
+                class_item = TreeItem([ifc_class], self._rootItem)
+                self._rootItem.appendChild(class_item)
 
-            for objecttype, elements in types.items():
-                objecttype_item = TreeItem([objecttype], class_item, "type:" + objecttype)
-                class_item.appendChild(objecttype_item)
-                for element in elements:
-                    element_item = IfcTreeItem(element, objecttype_item, self.columntree)
-                    objecttype_item.appendChild(element_item)
+            type_item = self.get_child_by_label(class_item, objecttype)
+            if not type_item:
+                type_item = TreeItem([objecttype], class_item)
+                class_item.appendChild(type_item)
+            
+            element_item = self.get_child_by_guid(type_item, element.GlobalId)
+            if element_item:
+                element_item.add_filename(filename)
+            else:
+                element_item = IfcTreeItem(element, type_item, self.columntree, filename)
+                type_item.appendChild(element_item)
 
+        self.endResetModel()
+
+
+        
 
 class FlatTreeModel(IfcTreeModelBaseClass):
     def setupModelData(self, data, parent):
