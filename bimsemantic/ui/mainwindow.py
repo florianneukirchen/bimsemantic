@@ -105,25 +105,36 @@ class MainWindow(QMainWindow):
 
 
     def create_dock_windows(self):
+        # Details dock
         self.detailsdock = QDockWidget(self.tr("Details"), self)
         self.detailsdock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
         self.detailsdock.setWidget(QLabel(self.tr("No open file")))
         self.addDockWidget(Qt.RightDockWidgetArea, self.detailsdock)
-        # self._view_menu.addSeparator()
         self._view_menu.addAction(self.detailsdock.toggleViewAction())
 
+        # Files Dock
+        self.filesdock = QDockWidget(self.tr("Files"), self)
+        self.filesdock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
+        self.filesdock.setWidget(QLabel(self.tr("No open file")))
+        self.addDockWidget(Qt.RightDockWidgetArea, self.filesdock)
+        self._view_menu.addAction(self.filesdock.toggleViewAction())
+
+        # Columns dock
         self.columnsdock = QDockWidget(self.tr("Columns"), self)
         self.columnsdock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
         self.columnsdock.setWidget(QLabel(self.tr("No open file")))
         self.addDockWidget(Qt.RightDockWidgetArea, self.columnsdock)
         self._view_menu.addAction(self.columnsdock.toggleViewAction())
 
+        self.tabifyDockWidget(self.detailsdock, self.columnsdock)
+        self.tabifyDockWidget(self.detailsdock, self.filesdock)
+
     def show_details(self, id, filenames=None):
         detailModel = DetailsTreeModel(id, self, filenames)
         treeview = QTreeView()
         treeview.setModel(detailModel)
-        treeview.setColumnWidth(0, 200)
-        treeview.setColumnWidth(1, 200)
+        treeview.setColumnWidth(0, 170)
+        # treeview.setColumnWidth(1, 200)
         treeview.expandAll()
         treeview.adjustSize()
         for item in detailModel.rows_spanned:
