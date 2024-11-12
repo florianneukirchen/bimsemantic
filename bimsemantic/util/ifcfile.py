@@ -81,12 +81,19 @@ class IfcFiles():
         for ifcfile in self._ifcfiles:
             yield ifcfile
 
-    def get_element_by_guid(self, guid):
-        for ifcfile in self._ifcfiles:
+    def get_element_by_guid(self, guid, filename=None):
+        if filename:
+            ifcfile = self[filename]
             element = ifcfile.model.by_guid(guid)
             if element:
                 return element
-        return None
+            return None
+        else:
+            for ifcfile in self._ifcfiles:
+                element = ifcfile.model.by_guid(guid)
+                if element:
+                    return element
+            return None
 
     def get_element(self, filename, id):
         try:

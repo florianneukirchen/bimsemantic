@@ -118,8 +118,8 @@ class MainWindow(QMainWindow):
         self.addDockWidget(Qt.RightDockWidgetArea, self.columnsdock)
         self._view_menu.addAction(self.columnsdock.toggleViewAction())
 
-    def show_details(self, ifc_objects):
-        detailModel = DetailsTreeModel(ifc_objects)
+    def show_details(self, id, filenames=None):
+        detailModel = DetailsTreeModel(id, self, filenames)
         treeview = QTreeView()
         treeview.setModel(detailModel)
         treeview.setColumnWidth(0, 200)
