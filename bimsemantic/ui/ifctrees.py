@@ -191,6 +191,8 @@ class LocationTreeModel(IfcTreeModelBaseClass):
 
 
     def addFile(self, ifc_file):
+        self.beginResetModel()
+        
         filename = ifc_file.filename
         project = ifc_file.model.by_type("IfcProject")[0]
 
@@ -204,6 +206,8 @@ class LocationTreeModel(IfcTreeModelBaseClass):
 
         for site in ifc_file.model.by_type("IfcSite"):
             self.addItems(site, project_item, filename)
+
+        self.endResetModel()
 
     def addItems(self, ifc_object, parent, filename):
         # Check if the object is already in the tree
