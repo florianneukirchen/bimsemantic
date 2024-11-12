@@ -21,7 +21,6 @@ class DetailsTreeModel(TreeModelBaseclass):
 
 
     def setupModelData(self, data, parent):
-        print("Setting up model data")
         self.rows_spanned = []
 
         if not isinstance(data, list):

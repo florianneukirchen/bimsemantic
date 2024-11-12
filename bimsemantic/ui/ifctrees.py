@@ -137,13 +137,21 @@ class IfcTreeTab(QWidget):
         if not index.isValid():
             print("Invalid index")
             return
+
         source_index = self.proxymodel.mapToSource(index)
         item = source_index.internalPointer()
-        if isinstance(item, TreeItem):
+
+        element = None
+        
+        if isinstance(item, IfcTreeItem):
             element = self.ifc_files.get_element(item.filenames[0], item.id)
-            if not element:
-                element = self.ifc_files.get_project()
-            self.mainwindow.show_details(element)
+        elif isinstance(item, TreeItem):
+            pass # Maybe add some functionality here
+
+            
+        if not element:
+            element = self.ifc_files.get_project()
+        self.mainwindow.show_details(element)
 
 
 
