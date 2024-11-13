@@ -37,12 +37,12 @@ class MainWindow(QMainWindow):
         fl = ['/media/riannek/PortableSSD/share/FranzLiszt/GE_2000_3TM_KIB_EU_003_AA_003-Franz-Liszt-Strasse.ifc',
                 '/media/riannek/PortableSSD/share/FranzLiszt/GE_2000_3TM_VEA_SB_003_AA_003-Franz-Liszt-Strasse.ifc',
                 '/media/riannek/PortableSSD/share/FranzLiszt/GE_2000_3TM_VEA_ST_003_AA_003-Franz-Liszt-Strasse.ifc']
-        filename = filenames[0]
+        filename = filenames[2]
 
-        # self.addIfcFile(filename)
+        self.addIfcFile(filename)
 
-        for filename in fl:
-            self.addIfcFile(filename)
+        # for filename in fl:
+        #     self.addIfcFile(filename)
 
 
 
@@ -53,9 +53,13 @@ class MainWindow(QMainWindow):
         pass
 
     def addIfcFile(self, filename):
+
+        self.statusbar.showMessage(self.tr("Open file %s") % filename)
         ifcfile = self.ifcfiles.add_file(filename)
+        self.statusbar.showMessage(self.tr("Add file %s to treeviews") % filename)
         self.column_treeview.addFile(ifcfile)
         self.tabs.addFile(ifcfile)
+        self.statusbar.clearMessage()
 
     def setup_menus(self):
         # File menu

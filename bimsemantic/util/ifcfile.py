@@ -60,9 +60,6 @@ class IfcFiles():
     def add_file(self, filename):
         ifcfile = IfcFile(filename)
         self._ifcfiles.append(ifcfile)
-
-        print(f"Added file {ifcfile.filename}")
-
         return ifcfile
 
 

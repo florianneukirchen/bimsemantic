@@ -84,8 +84,6 @@ class IfcTabs(QWidget):
         self.mainwindow = parent
         self.layout = QVBoxLayout(self)
 
-        self.mainwindow.statusbar.showMessage(self.tr("Creating treeviews"))
-
         self.tabs = QTabWidget()
         self.tabs.setTabPosition(QTabWidget.West)
         self.tabs.setMovable(True)
@@ -102,7 +100,6 @@ class IfcTabs(QWidget):
         self.flattab = IfcTreeTab(FlatTreeModel, self.ifcfiles, self) 
         self.tabs.addTab(self.flattab, self.tr("Flat"))
 
-        self.mainwindow.statusbar.clearMessage()
 
     def addFile(self, ifc_file):
         self.locationtab.treemodel.addFile(ifc_file)
