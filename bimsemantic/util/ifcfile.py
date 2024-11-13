@@ -63,6 +63,8 @@ class IfcFiles():
 
         print(f"Added file {ifcfile.filename}")
 
+        return ifcfile
+
 
     
     def __getitem__(self, index):
