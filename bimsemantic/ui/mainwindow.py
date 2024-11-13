@@ -87,7 +87,9 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.tabs)
 
     def setup_column_tree(self):
-        self.column_treeview = ColumnsTreeModel(self.ifcfiles)
+        # self.column_treeview = ColumnsTreeModel(self.ifcfiles)
+        self.column_treeview = ColumnsTreeModel()
+        self.column_treeview.addFile(self.ifcfiles[0])
         self.columnsdock.setWidget(self.column_treeview)
 
 

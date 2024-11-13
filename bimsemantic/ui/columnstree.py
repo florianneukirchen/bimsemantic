@@ -8,7 +8,7 @@ class ColumnsTreeModel(QTreeWidget):
     columnsChanged = Signal()
     hideInfoColumn = Signal(int, bool)
 
-    def __init__(self, data, parent=None):
+    def __init__(self, data=None, parent=None):
         super(ColumnsTreeModel, self).__init__(parent)
         self.first_cols = [
             self.tr("Type"), 
@@ -27,6 +27,8 @@ class ColumnsTreeModel(QTreeWidget):
 
     def setupModelData(self, data):
         self.infocols_item = QTreeWidgetItem(self)
+
+        # Info Columns
         self.infocols_item.setText(0, self.tr("Info Columns"))
         self.infocols_item.setFlags(self.infocols_item.flags() | Qt.ItemFlag.ItemIsAutoTristate | Qt.ItemFlag.ItemIsUserCheckable)
         
@@ -39,10 +41,16 @@ class ColumnsTreeModel(QTreeWidget):
             else:
                 col_item.setCheckState(0, Qt.CheckState.Checked)
         
+        # Pset Columns
         self.psets_item = QTreeWidgetItem(self)
         self.psets_item.setText(0, self.tr("Property Sets"))
+        if data:
+            self.addFile(data)
 
-        pset_info = data.pset_info
+    def addFile(self, ifc_file):
+
+
+        pset_info = ifc_file.pset_info
         pset_keys = list(pset_info.keys())
         pset_keys.sort()
 
@@ -58,7 +66,6 @@ class ColumnsTreeModel(QTreeWidget):
                 prop_item.setText(0, prop)
                 prop_item.setFlags(prop_item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
                 prop_item.setCheckState(0, Qt.CheckState.Unchecked)
-
 
     def col(self, column):
         column = column - self._count_first_cols
