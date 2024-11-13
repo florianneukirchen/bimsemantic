@@ -57,6 +57,7 @@ class MainWindow(QMainWindow):
         )
 
         if filenames:
+            self.ignoredfiles = []
             worker = WorkerAddFiles(self.ifcfiles, filenames)
             worker.signals.result.connect(self.add_ifcs_to_trees)
             worker.signals.error.connect(self.on_error)
@@ -74,6 +75,11 @@ class MainWindow(QMainWindow):
         self.statusbar.clearMessage()
 
     def on_error(self, error):
+        errortype = error[0]
+        errorstring = error[1]
+        if errortype == "File already open":
+            self.ignoredfiles.append(errorstring)
+            return
         msg = f"{error[0]}: {error[1]}" 
         QMessageBox.critical(self, "Error", msg)
 
@@ -84,6 +90,11 @@ class MainWindow(QMainWindow):
     def on_finished(self): 
         self.workers = [worker for worker in self.workers if not worker.isFinished()]
         self.statusbar.clearMessage()
+        if self.ignoredfiles:
+            n = len(self.ignoredfiles)
+            msg = self.tr(f"{n} files were ignored because they are already open")
+            self.ignoredfiles = []
+            self.statusbar.showMessage(msg, 5000)
 
     def closeEvent(self, event):
         """Stop running workers if main window is closed"""

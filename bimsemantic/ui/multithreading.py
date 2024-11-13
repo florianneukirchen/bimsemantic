@@ -30,7 +30,10 @@ class WorkerAddFiles(QRunnable):
                 ifc_file = self.ifcfiles.add_file(filename)
                 if self._is_interrupted:
                     break
-                results.append(ifc_file)
+                if ifc_file:
+                    results.append(ifc_file)
+                else:
+                    self.signals.error.emit(("File already open", filename))
             except FileNotFoundError as e:
                 self.signals.error.emit((type(e), str(e)))
             except ValueError as e:

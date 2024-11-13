@@ -60,6 +60,11 @@ class IfcFiles():
         self._ifcfiles = []
     
     def add_file(self, filename):
+        # Before opening, check if the file is already open
+        abspath = os.path.abspath(filename)
+        for ifcfile in self._ifcfiles:
+            if ifcfile.abspath == abspath:
+                return None
         ifcfile = IfcFile(filename)
         if len(self._ifcfiles) > 0:
             project_guid = self[0].model.by_type("IfcProject")[0].GlobalId
