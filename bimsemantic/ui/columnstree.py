@@ -49,23 +49,27 @@ class ColumnsTreeModel(QTreeWidget):
 
     def addFile(self, ifc_file):
 
-
         pset_info = ifc_file.pset_info
-        pset_keys = list(pset_info.keys())
-        pset_keys.sort()
 
-        for pset_name in pset_keys:
-            pset_props = pset_info[pset_name]
-            pset_props.sort()
+        for pset_name in pset_info.keys():
             pset_item = QTreeWidgetItem(self.psets_item)
             pset_item.setText(0, pset_name)
             pset_item.setFlags(pset_item.flags() | Qt.ItemFlag.ItemIsAutoTristate | Qt.ItemFlag.ItemIsUserCheckable)
 
-            for prop in pset_props:
+            for prop in pset_info[pset_name]:
                 prop_item = QTreeWidgetItem(pset_item)
                 prop_item.setText(0, prop)
                 prop_item.setFlags(prop_item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
                 prop_item.setCheckState(0, Qt.CheckState.Unchecked)
+
+        self.sort_psetcolumns()
+        self.expandAll()
+        
+
+    def sort_psetcolumns(self):
+        self.psets_item.sortChildren(0, Qt.SortOrder.AscendingOrder)
+        for i in range(self.psets_item.childCount()):
+            self.psets_item.child(i).sortChildren(0, Qt.SortOrder.AscendingOrder)
 
     def col(self, column):
         column = column - self._count_first_cols
