@@ -117,11 +117,12 @@ class MainWindow(QMainWindow):
     def close_all(self):
         self.statusbar.showMessage(self.tr("Close all files"))
         self.detailsdock.setWidget(QLabel(self.tr("No open file")))
-        self.column_treeview = ColumnsTreeModel()
-        self.columnsdock.setWidget(self.column_treeview)
-        self.tabs = IfcTabs(self)
-        self.setCentralWidget(self.tabs)
         self.ifcfiles = IfcFiles()
+        self.column_treeview = ColumnsTreeModel()
+        self.tabs = IfcTabs(self)
+        self.columnsdock.setWidget(self.column_treeview)
+        self.setCentralWidget(self.tabs)
+        
         self.statusbar.clearMessage()
 
 
