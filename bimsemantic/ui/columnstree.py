@@ -52,19 +52,29 @@ class ColumnsTreeModel(QTreeWidget):
         pset_info = ifc_file.pset_info
 
         for pset_name in pset_info.keys():
-            pset_item = QTreeWidgetItem(self.psets_item)
-            pset_item.setText(0, pset_name)
-            pset_item.setFlags(pset_item.flags() | Qt.ItemFlag.ItemIsAutoTristate | Qt.ItemFlag.ItemIsUserCheckable)
+            pset_item = self.get_child_by_name(self.psets_item, pset_name)
+            if pset_item is None:
+                pset_item = QTreeWidgetItem(self.psets_item)
+                pset_item.setText(0, pset_name)
+                pset_item.setFlags(pset_item.flags() | Qt.ItemFlag.ItemIsAutoTristate | Qt.ItemFlag.ItemIsUserCheckable)
 
             for prop in pset_info[pset_name]:
-                prop_item = QTreeWidgetItem(pset_item)
-                prop_item.setText(0, prop)
-                prop_item.setFlags(prop_item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
-                prop_item.setCheckState(0, Qt.CheckState.Unchecked)
+                prop_item = self.get_child_by_name(pset_item, prop)
+                if prop_item is None:
+                    prop_item = QTreeWidgetItem(pset_item)
+                    prop_item.setText(0, prop)
+                    prop_item.setFlags(prop_item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
+                    prop_item.setCheckState(0, Qt.CheckState.Unchecked)
 
         self.sort_psetcolumns()
         self.expandAll()
-        
+    
+    def get_child_by_name(self, parent, name):
+        for i in range(parent.childCount()):
+            child = parent.child(i)
+            if child.text(0) == name:
+                return child
+        return None
 
     def sort_psetcolumns(self):
         self.psets_item.sortChildren(0, Qt.SortOrder.AscendingOrder)
