@@ -27,7 +27,7 @@ class MainWindow(QMainWindow):
         # File menu
         self._file_menu = self.menuBar().addMenu(self.tr("&File"))
 
-        icon = QIcon.fromTheme("document-new")
+        icon = QIcon.fromTheme("document-open")
         self._open_act = QAction(
             icon,
             self.tr("&Open..."),
@@ -74,16 +74,16 @@ class MainWindow(QMainWindow):
         fl = ['/media/riannek/PortableSSD/share/FranzLiszt/GE_2000_3TM_KIB_EU_003_AA_003-Franz-Liszt-Strasse.ifc',
                 '/media/riannek/PortableSSD/share/FranzLiszt/GE_2000_3TM_VEA_SB_003_AA_003-Franz-Liszt-Strasse.ifc',
                 '/media/riannek/PortableSSD/share/FranzLiszt/GE_2000_3TM_VEA_ST_003_AA_003-Franz-Liszt-Strasse.ifc']
-        # filename = filenames[0]
-        # self.ifcfiles.add_file(filename)
+        filename = filenames[0]
+        self.ifcfiles.add_file(filename)
 
-        for filename in fl:
-            self.ifcfiles.add_file(filename)
+        # for filename in fl:
+        #     self.ifcfiles.add_file(filename)
 
         self.setup_column_tree()
 
 
-        self.tabs = IfcTabs(self.ifcfiles, self) 
+        self.tabs = IfcTabs(self) 
         self.setCentralWidget(self.tabs)
 
     def setup_column_tree(self):
@@ -91,17 +91,8 @@ class MainWindow(QMainWindow):
         self.columnsdock.setWidget(self.column_treeview)
 
 
-    # def select_all_columns(self):
-    #     for action in self.column_actions:
-    #         action.setChecked(True)
-    #         # First Column can't be hidden in the treeview, so add +1 to index
-    #         self.tabs.toggle_column_visibility(self.column_actions.index(action) + 1, True)
-
-    # def unselect_all_columns(self):
-    #     for action in self.column_actions:
-    #         action.setChecked(False)
-    #         # First Column can't be hidden in the treeview, so add +1 to index
-    #         self.tabs.toggle_column_visibility(self.column_actions.index(action) + 1, False)
+    def open_file(self):
+        pass
 
 
     def create_dock_windows(self):
@@ -113,11 +104,11 @@ class MainWindow(QMainWindow):
         self._view_menu.addAction(self.detailsdock.toggleViewAction())
 
         # Files Dock
-        self.filesdock = QDockWidget(self.tr("Files"), self)
-        self.filesdock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
-        self.filesdock.setWidget(QLabel(self.tr("No open file")))
-        self.addDockWidget(Qt.RightDockWidgetArea, self.filesdock)
-        self._view_menu.addAction(self.filesdock.toggleViewAction())
+        # self.filesdock = QDockWidget(self.tr("Files"), self)
+        # self.filesdock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
+        # self.filesdock.setWidget(QLabel(self.tr("No open file")))
+        # self.addDockWidget(Qt.RightDockWidgetArea, self.filesdock)
+        # self._view_menu.addAction(self.filesdock.toggleViewAction())
 
         # Columns dock
         self.columnsdock = QDockWidget(self.tr("Columns"), self)
@@ -127,7 +118,7 @@ class MainWindow(QMainWindow):
         self._view_menu.addAction(self.columnsdock.toggleViewAction())
 
         self.tabifyDockWidget(self.detailsdock, self.columnsdock)
-        self.tabifyDockWidget(self.detailsdock, self.filesdock)
+        # self.tabifyDockWidget(self.detailsdock, self.filesdock)
 
     def show_details(self, id, filenames=None):
         detailModel = DetailsTreeModel(id, self, filenames)
@@ -152,5 +143,4 @@ class MainWindow(QMainWindow):
             "Bla ",
         )
 
-    def open_file(self):
-        pass
+

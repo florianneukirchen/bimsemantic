@@ -77,9 +77,9 @@ class IfcTreeItem(TreeItem):
         return self._guid
 
 class IfcTabs(QWidget):
-    def __init__(self, ifc_files, parent):
+    def __init__(self, parent):
         super(IfcTabs, self).__init__(parent)
-        self.ifc_files = ifc_files
+        self.ifcfiles = parent.ifcfiles
 
         self.mainwindow = parent
         self.layout = QVBoxLayout(self)
@@ -93,13 +93,13 @@ class IfcTabs(QWidget):
         self.layout.addWidget(self.tabs)
         self.setLayout(self.layout)
 
-        self.locationtab = IfcTreeTab(LocationTreeModel, self.ifc_files, self)
+        self.locationtab = IfcTreeTab(LocationTreeModel, self.ifcfiles, self)
         self.tabs.addTab(self.locationtab, self.tr("Location"))
 
-        self.typetab = IfcTreeTab(TypeTreeModel, self.ifc_files, self) 
+        self.typetab = IfcTreeTab(TypeTreeModel, self.ifcfiles, self) 
         self.tabs.addTab(self.typetab, self.tr("Type"))
 
-        self.flattab = IfcTreeTab(FlatTreeModel, self.ifc_files, self) 
+        self.flattab = IfcTreeTab(FlatTreeModel, self.ifcfiles, self) 
         self.tabs.addTab(self.flattab, self.tr("Flat"))
 
         self.mainwindow.statusbar.clearMessage()
