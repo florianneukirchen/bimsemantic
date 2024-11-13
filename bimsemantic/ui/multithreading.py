@@ -2,24 +2,7 @@ from PySide6.QtCore import QRunnable, Slot, Signal, QObject
 from bimsemantic.util import IfcFile, IfcFiles
 
 class WorkerSignals(QObject):
-    """
-    Defines the signals available from a running worker thread.
 
-    Supported signals are:
-
-    finished
-        No data
-
-    error
-        tuple (exctype, value)
-
-    result
-        object data returned from processing, anything
-
-    progress
-        int indicating % progress
-
-    """
     finished = Signal()
     error = Signal(tuple)
     result = Signal(object)
@@ -33,15 +16,20 @@ class WorkerAddFiles(QRunnable):
         self.ifcfiles = ifcfiles
         self.filenames = filenames
         self.signals = WorkerSignals()
+        self._is_interrupted = False
 
     @Slot()
     def run(self):
         self.signals.feedback.emit("start")
         results = []
         for filename in self.filenames:
+            if self._is_interrupted:
+                break
             self.signals.feedback.emit(filename)
             try:
                 ifc_file = self.ifcfiles.add_file(filename)
+                if self._is_interrupted:
+                    break
                 results.append(ifc_file)
             except FileNotFoundError as e:
                 self.signals.error.emit((type(e), str(e)))
@@ -50,6 +38,9 @@ class WorkerAddFiles(QRunnable):
             self.signals.result.emit(results)
         
         self.signals.finished.emit()
+
+    def stop(self):
+        self._is_interrupted = True
 
 
 class Worker(QRunnable):

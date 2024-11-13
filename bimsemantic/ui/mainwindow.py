@@ -22,6 +22,7 @@ class MainWindow(QMainWindow):
         self.setGeometry(100, 100, 800, 600)
         self.statusbar = self.statusBar()
         self.threadpool = QThreadPool()
+        self.workers = []
         print("Multithreading with maximum %d threads" % self.threadpool.maxThreadCount())
         self.ifcfiles = IfcFiles()
         self.column_treeview = ColumnsTreeModel()
@@ -59,7 +60,7 @@ class MainWindow(QMainWindow):
             worker = WorkerAddFiles(self.ifcfiles, filenames)
             worker.signals.result.connect(self.add_ifcs_to_trees)
             worker.signals.error.connect(self.on_error)
-            worker.signals.finished.connect(self.statusbar.clearMessage)
+            worker.signals.finished.connect(self.on_finished)
             # worker.signals.feedback.connect(lambda s: self.statusbar.showMessage(self.tr("Open file %s") % s))
             worker.signals.feedback.connect(self.on_feedback)
             self.threadpool.start(worker)
@@ -77,7 +78,18 @@ class MainWindow(QMainWindow):
         QMessageBox.critical(self, "Error", msg)
 
     def on_feedback(self, feedback):
+        self.statusbar.showMessage(self.tr("Open file %s") % feedback)
         print(feedback)
+
+    def on_finished(self): 
+        self.workers = [worker for worker in self.workers if not worker.isFinished()]
+        self.statusbar.clearMessage()
+
+    def closeEvent(self, event):
+        """Stop running workers if main window is closed"""
+        for worker in self.workers:
+            worker.stop()
+        event.accept()
 
     # def openIfcFile(self, filename):
     #     ifcfile = IfcFile(filename)
