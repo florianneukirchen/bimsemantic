@@ -22,8 +22,42 @@ class MainWindow(QMainWindow):
         self.setGeometry(100, 100, 800, 600)
         self.statusbar = self.statusBar()
         self.ifcfiles = IfcFiles()
-        self.column_treeview = None
+        self.column_treeview = ColumnsTreeModel()
+        self.setup_menus()
+        self.create_dock_windows()
+        self.tabs = IfcTabs(self) 
+        self.setCentralWidget(self.tabs)
 
+        # Provisorisch ################################################################################
+        filenames = ["/media/riannek/PortableSSD/share/FranzLiszt/GE_2000_3TM_KIB_EU_003_AA_003-Franz-Liszt-Strasse.ifc",
+                     "/media/riannek/PortableSSD/share/FranzLiszt/combined.ifc",
+                     "/media/riannek/PortableSSD/share/AC20-FZK-Haus.ifc",
+                     "/media/riannek/PortableSSD/share/VST_Röntgental.ifc",
+                     "/media/riannek/PortableSSD/share/linkedin.ifc"]
+        fl = ['/media/riannek/PortableSSD/share/FranzLiszt/GE_2000_3TM_KIB_EU_003_AA_003-Franz-Liszt-Strasse.ifc',
+                '/media/riannek/PortableSSD/share/FranzLiszt/GE_2000_3TM_VEA_SB_003_AA_003-Franz-Liszt-Strasse.ifc',
+                '/media/riannek/PortableSSD/share/FranzLiszt/GE_2000_3TM_VEA_ST_003_AA_003-Franz-Liszt-Strasse.ifc']
+        filename = filenames[0]
+
+        # self.addIfcFile(filename)
+
+        for filename in fl:
+            self.addIfcFile(filename)
+
+
+
+
+    
+
+    def open_file(self):
+        pass
+
+    def addIfcFile(self, filename):
+        ifcfile = self.ifcfiles.add_file(filename)
+        self.column_treeview.addFile(ifcfile)
+        self.tabs.addFile(ifcfile)
+
+    def setup_menus(self):
         # File menu
         self._file_menu = self.menuBar().addMenu(self.tr("&File"))
 
@@ -63,40 +97,6 @@ class MainWindow(QMainWindow):
 
         self._help_menu.addAction(self._about_act)
 
-        self.create_dock_windows()
-
-        # Provisorisch ################################################################################
-        filenames = ["/media/riannek/PortableSSD/share/FranzLiszt/GE_2000_3TM_KIB_EU_003_AA_003-Franz-Liszt-Strasse.ifc",
-                     "/media/riannek/PortableSSD/share/FranzLiszt/combined.ifc",
-                     "/media/riannek/PortableSSD/share/AC20-FZK-Haus.ifc",
-                     "/media/riannek/PortableSSD/share/VST_Röntgental.ifc",
-                     "/media/riannek/PortableSSD/share/linkedin.ifc"]
-        fl = ['/media/riannek/PortableSSD/share/FranzLiszt/GE_2000_3TM_KIB_EU_003_AA_003-Franz-Liszt-Strasse.ifc',
-                '/media/riannek/PortableSSD/share/FranzLiszt/GE_2000_3TM_VEA_SB_003_AA_003-Franz-Liszt-Strasse.ifc',
-                '/media/riannek/PortableSSD/share/FranzLiszt/GE_2000_3TM_VEA_ST_003_AA_003-Franz-Liszt-Strasse.ifc']
-        filename = filenames[0]
-        self.ifcfiles.add_file(filename)
-
-        # for filename in fl:
-        #     self.ifcfiles.add_file(filename)
-
-        self.setup_column_tree()
-
-
-        self.tabs = IfcTabs(self) 
-        self.setCentralWidget(self.tabs)
-
-    def setup_column_tree(self):
-        # self.column_treeview = ColumnsTreeModel(self.ifcfiles)
-        self.column_treeview = ColumnsTreeModel()
-        self.column_treeview.addFile(self.ifcfiles[0])
-        self.columnsdock.setWidget(self.column_treeview)
-
-
-    def open_file(self):
-        pass
-
-
     def create_dock_windows(self):
         # Details dock
         self.detailsdock = QDockWidget(self.tr("Details"), self)
@@ -115,10 +115,11 @@ class MainWindow(QMainWindow):
         # Columns dock
         self.columnsdock = QDockWidget(self.tr("Columns"), self)
         self.columnsdock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
-        self.columnsdock.setWidget(QLabel(self.tr("No open file")))
+        self.columnsdock.setWidget(self.column_treeview)
         self.addDockWidget(Qt.RightDockWidgetArea, self.columnsdock)
         self._view_menu.addAction(self.columnsdock.toggleViewAction())
 
+    
         self.tabifyDockWidget(self.detailsdock, self.columnsdock)
         # self.tabifyDockWidget(self.detailsdock, self.filesdock)
 

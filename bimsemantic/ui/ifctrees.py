@@ -104,7 +104,10 @@ class IfcTabs(QWidget):
 
         self.mainwindow.statusbar.clearMessage()
 
-
+    def addFile(self, ifc_file):
+        self.locationtab.treemodel.addFile(ifc_file)
+        self.typetab.treemodel.addFile(ifc_file)
+        self.flattab.treemodel.addFile(ifc_file)
 
 
 
@@ -131,7 +134,6 @@ class IfcTreeTab(QWidget):
         for column in self.treemodel.columntree.hidden_info_columns():
             self.tree.setColumnHidden(column, True)
         
-        self.tree.expandAll()
         self.tree.clicked.connect(self.on_treeview_clicked)
         self.setLayout(self.layout)
         self.layout.addWidget(self.tree)
@@ -221,6 +223,8 @@ class LocationTreeModel(IfcTreeModelBaseClass):
             self.addItems(site, project_item, filename)
 
         self.endResetModel()
+        
+        self._parent.tree.expandAll()
 
     def addItems(self, ifc_object, parent, filename):
         # Check if the object is already in the tree
@@ -286,6 +290,8 @@ class TypeTreeModel(IfcTreeModelBaseClass):
 
         self.endResetModel()
 
+        self._parent.tree.expandAll()
+
 
         
 
@@ -327,3 +333,5 @@ class FlatTreeModel(IfcTreeModelBaseClass):
             types_item.appendChild(type_item)
 
         self.endResetModel()
+
+        self._parent.tree.expandAll()
