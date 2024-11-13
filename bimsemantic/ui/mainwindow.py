@@ -85,7 +85,6 @@ class MainWindow(QMainWindow):
 
     def on_feedback(self, feedback):
         self.statusbar.showMessage(self.tr("Open file %s") % feedback)
-        print(feedback)
 
     def on_finished(self): 
         self.workers = [worker for worker in self.workers if not worker.isFinished()]
