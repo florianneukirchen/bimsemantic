@@ -70,6 +70,17 @@ class MainWindow(QMainWindow):
         self.statusbar.clearMessage()
         print(f"Added {filename} to trees")
 
+    def close_all(self):
+        self.statusbar.showMessage(self.tr("Close all files"))
+        self.ifcfiles = IfcFiles()
+        self.detailsdock.setWidget(QLabel(self.tr("No open file")))
+        self.column_treeview = ColumnsTreeModel()
+        self.columnsdock.setWidget(self.column_treeview)
+        self.tabs = IfcTabs(self)
+        self.setCentralWidget(self.tabs)
+        self.statusbar.clearMessage()
+
+
     def setup_menus(self):
         # File menu
         self._file_menu = self.menuBar().addMenu(self.tr("&File"))
@@ -85,6 +96,20 @@ class MainWindow(QMainWindow):
         )
 
         self._file_menu.addAction(self._open_act)
+
+        icon = QIcon.fromTheme("document-close")
+        self._close_act = QAction(
+            icon,
+            self.tr("&Close all IFCs"),
+            self,
+            shortcut=self.tr("Ctrl+W"),
+            statusTip=self.tr("Close all IFC files"),
+            triggered=self.close_all,
+        )
+
+        self._file_menu.addAction(self._close_act)
+
+        self._file_menu.addSeparator()
 
         self._quit_act = QAction(
             self.tr("&Quit"),
