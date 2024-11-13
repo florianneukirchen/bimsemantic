@@ -9,8 +9,10 @@ class IfcFile():
         self._filename = os.path.basename(self._abspath)
         if not os.path.exists(self._abspath):
             raise FileNotFoundError(f"File {self._abspath} not found.")
-
-        self._model = ifcopenshell.open(self._abspath)
+        try:
+            self._model = ifcopenshell.open(self._abspath)
+        except RuntimeError:
+            raise ValueError(f"File {self._abspath} is not a valid IFC file.")
         self._pset_info = self._get_pset_info()
 
     @property
