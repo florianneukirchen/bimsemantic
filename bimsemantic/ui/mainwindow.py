@@ -62,7 +62,14 @@ class MainWindow(QMainWindow):
     def addIfcFile(self, filename):
 
         self.statusbar.showMessage(self.tr("Open file %s") % filename)
-        ifcfile = self.ifcfiles.add_file(filename)
+        try:
+            ifcfile = self.ifcfiles.add_file(filename)
+        except FileNotFoundError as e:
+            QMessageBox.critical(self, "Error", str(e))
+            return
+        except ValueError as e:
+            QMessageBox.critical(self, "Error", str(e))
+            return
         print(f"Added {filename} to ifcfiles")
         self.statusbar.showMessage(self.tr("Add file %s to treeviews") % filename)
         self.column_treeview.addFile(ifcfile)

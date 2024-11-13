@@ -59,11 +59,14 @@ class IfcFiles():
     
     def add_file(self, filename):
         ifcfile = IfcFile(filename)
+        if len(self._ifcfiles) > 0:
+            project_guid = self[0].model.by_type("IfcProject")[0].GlobalId
+            new_project_guid = ifcfile.model.by_type("IfcProject")[0].GlobalId
+            if project_guid != new_project_guid:
+                raise ValueError("All files must belong to the same project.")
         self._ifcfiles.append(ifcfile)
         return ifcfile
 
-
-    
     def __getitem__(self, index):
         if isinstance(index, int):
             return self._ifcfiles[index]
