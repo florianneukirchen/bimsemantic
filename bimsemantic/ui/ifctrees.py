@@ -1,10 +1,10 @@
-from PySide6.QtCore import QDate, QFile, Qt, QAbstractItemModel, QModelIndex, Qt, QSortFilterProxyModel
+from PySide6.QtCore import QDate, QFile, Qt, QAbstractItemModel, QModelIndex, Qt, QSortFilterProxyModel, QTimer
 from PySide6.QtGui import QAction, QFont, QIcon
 from PySide6.QtWidgets import QTreeView, QWidget, QTabWidget, QVBoxLayout, QTreeWidgetItem
 from bimsemantic.ui import TreeItem, TreeModelBaseclass
 import ifcopenshell.util.element
 
-
+import time
 
 
 class ColheaderTreeItem(TreeItem):
@@ -80,8 +80,11 @@ class IfcTabs(QWidget):
     def __init__(self, parent):
         super(IfcTabs, self).__init__(parent)
         self.ifcfiles = parent.ifcfiles
+        self.remaining_models = None
 
         self.mainwindow = parent
+        self.timer = QTimer()
+
         self.layout = QVBoxLayout(self)
 
         self.tabs = QTabWidget()
@@ -100,11 +103,34 @@ class IfcTabs(QWidget):
         self.flattab = IfcTreeTab(FlatTreeModel, self.ifcfiles, self) 
         self.tabs.addTab(self.flattab, self.tr("Flat"))
 
+        self.mainwindow.column_treeview.columnsChanged.connect(self.update_columns)
+
 
     def addFile(self, ifc_file):
         self.locationtab.treemodel.addFile(ifc_file)
         self.typetab.treemodel.addFile(ifc_file)
         self.flattab.treemodel.addFile(ifc_file)
+
+    def update_columns(self):
+        active_tab = self.tabs.currentWidget()
+        self.remaining_models = [self.tabs.widget(i).treemodel for i in range(self.tabs.count())]
+        # Add active tab to the front
+        self.remaining_models.remove(active_tab.treemodel)
+        self.remaining_models.insert(0, active_tab.treemodel)
+
+        self.timer.timeout.connect(self.update_next_model)
+        self.timer.start(50)
+
+
+    def update_next_model(self):
+        if self.remaining_models:
+            model = self.remaining_models.pop(0)
+            start = time.time()
+            model.pset_columns_changed()
+            end = time.time()
+            print(f"Time to update columns {model}: {end-start}")
+        else:
+            self.timer.stop()
 
 
 
@@ -159,7 +185,7 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
         super(IfcTreeModelBaseClass, self).__init__(data, parent)
         self._parent = parent
 
-        self.columntree.columnsChanged.connect(self.pset_columns_changed)
+        #self.columntree.columnsChanged.connect(self.pset_columns_changed)
         self.columntree.hideInfoColumn.connect(self.hide_info_column)
 
     def setupModelData(self, data, parent):
@@ -178,7 +204,6 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
         return self.columntree.count()
     
     def pset_columns_changed(self):
-        
         self.beginResetModel()
         self.layoutChanged.emit()
         self.endResetModel()
@@ -251,10 +276,13 @@ class LocationTreeModel(IfcTreeModelBaseClass):
         for child in children:
             self.addItems(child, item, filename)
 
+
+    def __repr__(self):
+        return "LocationTreeModel"
+
 class TypeTreeModel(IfcTreeModelBaseClass):
 
 
-    
 
 
     def addFile(self, ifc_file):
@@ -289,7 +317,8 @@ class TypeTreeModel(IfcTreeModelBaseClass):
 
         self._parent.tree.expandAll()
 
-
+    def __repr__(self):
+        return "TypeTreeModel"
         
 
 class FlatTreeModel(IfcTreeModelBaseClass):
@@ -332,3 +361,6 @@ class FlatTreeModel(IfcTreeModelBaseClass):
         self.endResetModel()
 
         self._parent.tree.expandAll()
+
+    def __repr__(self):
+        return "FlatTreeModel"

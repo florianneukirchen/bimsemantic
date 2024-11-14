@@ -48,6 +48,7 @@ class ColumnsTreeModel(QTreeWidget):
             self.addFile(data)
 
     def addFile(self, ifc_file):
+        self.blockSignals(True)
 
         pset_info = ifc_file.pset_info
 
@@ -68,6 +69,7 @@ class ColumnsTreeModel(QTreeWidget):
 
         self.sort_psetcolumns()
         self.expandAll()
+        self.blockSignals(False)
     
     def get_child_by_name(self, parent, name):
         for i in range(parent.childCount()):
@@ -98,7 +100,9 @@ class ColumnsTreeModel(QTreeWidget):
                 col_index = self.first_cols.index(item.text(column))
                 self.hideInfoColumn.emit(col_index, ishidden)
             else:
+                self.blockSignals(True)
                 self.update_psetcolumns()
+                self.blockSignals(False)
                 self.columnsChanged.emit()
 
     def update_psetcolumns(self):
