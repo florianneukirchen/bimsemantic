@@ -60,22 +60,31 @@ class MainWindow(QMainWindow):
         )
 
         if filenames:
+            self.progressbar.setRange(0, 0)
             self.ignoredfiles = []
             worker = WorkerAddFiles(self.ifcfiles, filenames)
             worker.signals.result.connect(self.add_ifcs_to_trees)
             worker.signals.error.connect(self.on_error)
             worker.signals.finished.connect(self.on_finished)
-            # worker.signals.feedback.connect(lambda s: self.statusbar.showMessage(self.tr("Open file %s") % s))
-            worker.signals.feedback.connect(self.on_feedback)
+            worker.signals.feedback.connect(lambda s: self.statusbar.showMessage(self.tr("Open file %s") % s))
+            worker.signals.progress.connect(self.on_progress)
+            # worker.signals.feedback.connect(self.on_feedback)
             self.threadpool.start(worker)
                 
+    def on_progress(self, progress):
+        if self.progressbar.maximum() == 0:
+            self.progressbar.setRange(0, 100)
+        self.progressbar.setValue(progress)
 
     def add_ifcs_to_trees(self, ifcfiles):
+        self.progressbar.setRange(0, len(ifcfiles))
         self.statusbar.showMessage(self.tr("Add files to treeviews"))
-        for ifcfile in ifcfiles:
+        for i, ifcfile in enumerate(ifcfiles):
             self.column_treeview.addFile(ifcfile)
             self.tabs.addFile(ifcfile)
+            self.progressbar.setValue(i + 1)
         self.statusbar.clearMessage()
+        self.progressbar.reset()
 
     def on_error(self, error):
         errortype = error[0]
@@ -86,8 +95,8 @@ class MainWindow(QMainWindow):
         msg = f"{error[0]}: {error[1]}" 
         QMessageBox.critical(self, "Error", msg)
 
-    def on_feedback(self, feedback):
-        self.statusbar.showMessage(self.tr("Open file %s") % feedback)
+    # def on_feedback(self, feedback):
+    #     self.statusbar.showMessage(self.tr("Open file %s") % feedback)
 
     def on_finished(self): 
         self.workers = [worker for worker in self.workers if not worker.isFinished()]

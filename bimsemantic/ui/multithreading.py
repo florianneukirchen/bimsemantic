@@ -15,14 +15,14 @@ class WorkerAddFiles(QRunnable):
         super(WorkerAddFiles, self).__init__()
         self.ifcfiles = ifcfiles
         self.filenames = filenames
+        self._count = len(filenames)
         self.signals = WorkerSignals()
         self._is_interrupted = False
 
     @Slot()
     def run(self):
-        self.signals.feedback.emit("start")
         results = []
-        for filename in self.filenames:
+        for i, filename in enumerate(self.filenames):
             if self._is_interrupted:
                 break
             self.signals.feedback.emit(filename)
@@ -38,8 +38,9 @@ class WorkerAddFiles(QRunnable):
                 self.signals.error.emit((type(e), str(e)))
             except ValueError as e:
                 self.signals.error.emit((type(e), str(e)))
-            self.signals.result.emit(results)
-        
+            self.signals.progress.emit((i + 1) / self._count * 100)
+
+        self.signals.result.emit(results)
         self.signals.finished.emit()
 
     def stop(self):
