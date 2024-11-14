@@ -138,8 +138,7 @@ class IfcTabs(QWidget):
 class IfcTreeTab(QWidget):
     def __init__(self, treemodelclass, ifc_files, parent):
         super(IfcTreeTab, self).__init__(parent)
-        self._parent = parent
-        self.mainwindow = self._parent.parent()
+        self.mainwindow = parent.mainwindow
         self.treemodel = treemodelclass(ifc_files, self)
         self.ifc_files = ifc_files
         self.layout = QVBoxLayout(self)
@@ -179,11 +178,11 @@ class IfcTreeTab(QWidget):
 
 class IfcTreeModelBaseClass(TreeModelBaseclass):
     def __init__(self, data, parent):
-        mainwindow = parent.mainwindow
-        self.columntree = mainwindow.column_treeview
+        self.tab = parent
+        self.columntree = self.tab.mainwindow.column_treeview
         self.first_cols = self.columntree.first_cols
         super(IfcTreeModelBaseClass, self).__init__(data, parent)
-        self._parent = parent
+        
 
         #self.columntree.columnsChanged.connect(self.pset_columns_changed)
         self.columntree.hideInfoColumn.connect(self.hide_info_column)
@@ -207,10 +206,10 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
         self.beginResetModel()
         self.layoutChanged.emit()
         self.endResetModel()
-        self._parent.tree.expandAll()
+        self.tab.tree.expandAll()
 
     def hide_info_column(self, col_index, ishidden):
-        self._parent.tree.setColumnHidden(col_index, ishidden)
+        self.tab.tree.setColumnHidden(col_index, ishidden)
 
     def get_child_by_guid(self, parent, guid):
         for child in parent.children:
@@ -246,7 +245,7 @@ class LocationTreeModel(IfcTreeModelBaseClass):
 
         self.endResetModel()
         
-        self._parent.tree.expandAll()
+        self.tab.tree.expandAll()
 
     def addItems(self, ifc_object, parent, filename):
         # Check if the object is already in the tree
@@ -315,7 +314,7 @@ class TypeTreeModel(IfcTreeModelBaseClass):
 
         self.endResetModel()
 
-        self._parent.tree.expandAll()
+        self.tab.tree.expandAll()
 
     def __repr__(self):
         return "TypeTreeModel"
@@ -360,7 +359,7 @@ class FlatTreeModel(IfcTreeModelBaseClass):
 
         self.endResetModel()
 
-        self._parent.tree.expandAll()
+        self.tab.tree.expandAll()
 
     def __repr__(self):
         return "FlatTreeModel"
