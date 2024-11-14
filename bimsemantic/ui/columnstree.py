@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem
-from PySide6.QtCore import QDate, QFile, Qt, QAbstractItemModel, QModelIndex, Qt, Signal
+from PySide6.QtCore import Qt,  Qt, Signal, QTimer
 from PySide6.QtGui import QAction, QFont, QIcon
 
 
@@ -19,10 +19,13 @@ class ColumnsTreeModel(QTreeWidget):
         self._hidden = ["ID", "GUID", self.tr("Filename")] 
         self._count_first_cols = len(self.first_cols)
         self._psetcolumns = []
+        self.timer = QTimer()
+        self.timer.setSingleShot(True) 
         self.setHeaderHidden(True)
         self.setupModelData(data)
         self.expandAll()
         self.itemChanged.connect(self.item_changed)
+        self.timer.timeout.connect(self.emit_columns_changed)
 
 
     def setupModelData(self, data):
@@ -103,7 +106,10 @@ class ColumnsTreeModel(QTreeWidget):
                 self.blockSignals(True)
                 self.update_psetcolumns()
                 self.blockSignals(False)
-                self.columnsChanged.emit()
+                self.timer.start(20)
+
+    def emit_columns_changed(self):
+        self.columnsChanged.emit()
 
     def update_psetcolumns(self):
         self._psetcolumns = []

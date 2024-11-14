@@ -112,26 +112,21 @@ class IfcTabs(QWidget):
         self.flattab.treemodel.addFile(ifc_file)
 
     def update_columns(self):
-        active_tab = self.tabs.currentWidget()
-        self.remaining_models = [self.tabs.widget(i).treemodel for i in range(self.tabs.count())]
-        # Add active tab to the front
-        self.remaining_models.remove(active_tab.treemodel)
-        self.remaining_models.insert(0, active_tab.treemodel)
 
+        active_tab = self.tabs.currentWidget()
+        active_tab.treemodel.pset_columns_changed()
+        self.remaining_models = [self.tabs.widget(i).treemodel for i in range(self.tabs.count())]
+        self.remaining_models.remove(active_tab.treemodel)
         self.timer.timeout.connect(self.update_next_model)
-        self.timer.start(50)
+        self.timer.start(500)
 
 
     def update_next_model(self):
         if self.remaining_models:
             model = self.remaining_models.pop(0)
-            start = time.time()
             model.pset_columns_changed()
-            end = time.time()
-            print(f"Time to update columns {model}: {end-start}")
         else:
             self.timer.stop()
-
 
 
 
