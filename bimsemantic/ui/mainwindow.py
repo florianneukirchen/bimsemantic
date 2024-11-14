@@ -101,6 +101,8 @@ class MainWindow(QMainWindow):
     def on_finished(self): 
         self.workers = [worker for worker in self.workers if not worker.isFinished()]
         self.statusbar.clearMessage()
+        self.progressbar.setRange(0,100)
+        self.progressbar.reset()
         if self.ignoredfiles:
             n = len(self.ignoredfiles)
             msg = self.tr(f"{n} files were ignored because they are already open")
