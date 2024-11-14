@@ -7,6 +7,7 @@ from PySide6.QtWidgets import (
     QMessageBox,
     QTreeView,
     QLabel,
+    QProgressBar,
 )
 
 import ifcopenshell
@@ -21,15 +22,17 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("BIM Semantic Viewer")
         self.setGeometry(100, 100, 800, 600)
         self.statusbar = self.statusBar()
+        self.progressbar = QProgressBar()
+        self.statusbar.addPermanentWidget(self.progressbar)
         self.threadpool = QThreadPool()
         self.workers = []
-        print("Multithreading with maximum %d threads" % self.threadpool.maxThreadCount())
         self.ifcfiles = IfcFiles()
-        self.column_treeview = ColumnsTreeModel()
+        self.column_treeview = ColumnsTreeModel(parent=self)
         self.setup_menus()
         self.create_dock_windows()
         self.tabs = IfcTabs(self) 
         self.setCentralWidget(self.tabs)
+
 
         # Provisorisch ################################################################################
         filenames = ["/media/riannek/PortableSSD/share/FranzLiszt/GE_2000_3TM_KIB_EU_003_AA_003-Franz-Liszt-Strasse.ifc",
@@ -128,7 +131,7 @@ class MainWindow(QMainWindow):
         self.statusbar.showMessage(self.tr("Close all files"))
         self.detailsdock.setWidget(QLabel(self.tr("No open file")))
         self.ifcfiles = IfcFiles()
-        self.column_treeview = ColumnsTreeModel()
+        self.column_treeview = ColumnsTreeModel(parent=self)
         self.tabs = IfcTabs(self)
         self.columnsdock.setWidget(self.column_treeview)
         self.setCentralWidget(self.tabs)

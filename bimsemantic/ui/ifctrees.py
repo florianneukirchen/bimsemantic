@@ -114,19 +114,28 @@ class IfcTabs(QWidget):
     def update_columns(self):
 
         active_tab = self.tabs.currentWidget()
+
         active_tab.treemodel.pset_columns_changed()
+
         self.remaining_models = [self.tabs.widget(i).treemodel for i in range(self.tabs.count())]
         self.remaining_models.remove(active_tab.treemodel)
+
+        self.mainwindow.progressbar.setRange(0, self.tabs.count())
+        self.mainwindow.progressbar.setValue(1)
+        
         self.timer.timeout.connect(self.update_next_model)
-        self.timer.start(500)
+        self.timer.start(200)
 
 
     def update_next_model(self):
         if self.remaining_models:
             model = self.remaining_models.pop(0)
             model.pset_columns_changed()
+            self.mainwindow.progressbar.setValue(self.mainwindow.progressbar.value() + 1)
         else:
             self.timer.stop()
+            self.mainwindow.statusbar.clearMessage()
+            self.mainwindow.progressbar.reset()
 
 
 

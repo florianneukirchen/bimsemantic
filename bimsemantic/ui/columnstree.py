@@ -19,6 +19,7 @@ class ColumnsTreeModel(QTreeWidget):
         self._hidden = ["ID", "GUID", self.tr("Filename")] 
         self._count_first_cols = len(self.first_cols)
         self._psetcolumns = []
+        self.mainwindow = parent
         self.timer = QTimer()
         self.timer.setSingleShot(True) 
         self.setHeaderHidden(True)
@@ -112,6 +113,9 @@ class ColumnsTreeModel(QTreeWidget):
         self.columnsChanged.emit()
 
     def update_psetcolumns(self):
+        self.mainwindow.statusbar.showMessage(self.tr("Update columns..."))
+        self.mainwindow.progressbar.setRange(0, 0)
+
         self._psetcolumns = []
         for i in range(self.psets_item.childCount()):
             pset_item = self.psets_item.child(i)
