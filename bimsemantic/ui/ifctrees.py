@@ -73,6 +73,9 @@ class IfcTreeItem(TreeItem):
     @property
     def guid(self):
         return self._guid
+    
+    def __repr__(self):
+        return f"IfcTreeItem: {self._ifc_item.is_a()} {self._ifc_item.id()}"
 
 class IfcTabs(QWidget):
     def __init__(self, parent):
@@ -176,7 +179,6 @@ class IfcTreeTab(QWidget):
         index = indexes[0]
         source_index = self.proxymodel.mapToSource(index)
         item = source_index.internalPointer()
-
     
         if isinstance(item, IfcTreeItem):
             self.mainwindow.show_details(item.id, item.filenames)

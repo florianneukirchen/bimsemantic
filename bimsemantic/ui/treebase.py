@@ -43,6 +43,8 @@ class TreeItem:
     def children(self):
         return self._children
 
+    def __repr__(self):
+        return f"TreeItem ({self.data(0)})"
 
     
 
