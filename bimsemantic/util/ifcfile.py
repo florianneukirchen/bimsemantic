@@ -38,6 +38,13 @@ class IfcFile():
     def count_ifc_elements(self):
         return len(self._model.by_type("IfcElement"))
     
+    def get_element(self, id):
+        try:
+            element = self.model.by_id(id)
+        except RuntimeError:
+            return None
+        return element
+    
     def _get_pset_info(self):
         pset_info = {}
         psets = self._model.by_type("IfcPropertySet")
@@ -119,7 +126,6 @@ class IfcFiles():
         try:
             ifc_file = self[filename]
         except IndexError:
-            print(f"File {filename} not found.")
             return None
         try:
             element = ifc_file.model.by_id(id)

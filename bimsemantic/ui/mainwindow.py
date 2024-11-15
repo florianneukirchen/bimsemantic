@@ -177,12 +177,24 @@ class MainWindow(QMainWindow):
                 self.statusbar.showMessage(self.tr("Invalid ID %s"), 5000)
                 return
             filename = dlg.get_combotext()
-            element = self.ifcfiles.get_element(filename, id)
+            if filename == self.tr("Any"):
+                for ifcfile in self.ifcfiles:
+                    element = ifcfile.get_element(id)
+
+                    if element and element.is_a("IfcElement"):
+                        break
+            else:
+                element = self.ifcfiles.get_element(filename, id)
             if not element:
                 self.statusbar.showMessage(self.tr("No element found with ID %i") % id, 5000)
                 return
 
-            count = self.tabs.select_item_by_guid(element.GlobalId)
+            try:
+                guid = element.GlobalId
+            except AttributeError:
+                self.statusbar.showMessage(self.tr("No element found with ID %i") % id, 5000)
+                return
+            count = self.tabs.select_item_by_guid(guid)
 
             if count == 0:
                 self.statusbar.showMessage(self.tr("No element found with ID %i") % id, 5000)
@@ -336,7 +348,7 @@ class SelectByDialog(QDialog):
         if label == "ID":
             layout.addWidget(QLabel(self.tr("IFC File")))
             layout.addWidget(self.combo)
-            self.combo.addItems(parent.ifcfiles.filenames())
+            self.combo.addItems([self.tr("Any")] + parent.ifcfiles.filenames())
 
         self.textfield = QLineEdit()
         layout.addWidget(QLabel(label))
