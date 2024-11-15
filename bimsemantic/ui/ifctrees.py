@@ -155,9 +155,13 @@ class IfcTabs(QWidget):
             self.mainwindow.progressbar.reset()
 
     def select_item_by_guid(self, guid):
+        counter = 0
         for i in range(self.tabs.count()):
             tab = self.tabs.widget(i)
-            tab.select_item_by_guid(guid)
+            found = tab.select_item_by_guid(guid)
+            if found:
+                counter += 1
+        return counter
 
     def count_ifc_elements(self):
         return self.flattab.treemodel.elements_item.childCount()
@@ -225,6 +229,8 @@ class IfcTreeTab(QWidget):
             proxy_index = self.proxymodel.mapFromSource(index)
             self.tree.setCurrentIndex(proxy_index)
             self.tree.scrollTo(proxy_index)
+            return True
+        return False
 
     def is_active_tab(self):
         return self.tabs.currentWidget() == self

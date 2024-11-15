@@ -160,7 +160,9 @@ class MainWindow(QMainWindow):
             guid = dlg.get_guid()
             if not guid:
                 return
-            self.tabs.select_item_by_guid(guid)
+            count = self.tabs.select_item_by_guid(guid)
+            if count == 0:
+                self.statusbar.showMessage(self.tr("No element found with GUID %s") % guid, 5000)
 
     def setup_menus(self):
         # File menu
