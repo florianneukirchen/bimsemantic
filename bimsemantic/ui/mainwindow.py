@@ -97,7 +97,7 @@ class MainWindow(QMainWindow):
         elementcount = self.tabs.count_ifc_elements()
         typecount = self.tabs.count_ifc_types()
         psetscount = self.column_treeview.count_psets()
-        self.infolabel.setText(self.tr(f"{filecount} files, {elementcount} elements, {typecount} types, {psetscount} psets"))
+        self.infolabel.setText(self.tr("{0} files, {1} elements, {2} types, {3} psets").format(filecount, elementcount, typecount, psetscount))
 
         overview = OverviewTreeModel(self)
         self.overviewtree.setModel(overview)
@@ -131,7 +131,7 @@ class MainWindow(QMainWindow):
         self.progressbar.reset()
         if self.ignoredfiles:
             n = len(self.ignoredfiles)
-            msg = self.tr(f"{n} files were ignored because they are already open")
+            msg = self.tr("{} files were ignored because they are already open").format(n)
             self.ignoredfiles = []
             self.statusbar.showMessage(msg, 5000)
 
