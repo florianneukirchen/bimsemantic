@@ -10,10 +10,9 @@ from PySide6.QtWidgets import (
     QProgressBar,
 )
 
-import ifcopenshell
 
-from bimsemantic.util import IfcFile, IfcFiles
-from bimsemantic.ui import IfcTabs, DetailsTreeModel, ColumnsTreeModel, WorkerAddFiles, WorkerSignals
+from bimsemantic.util import IfcFiles
+from bimsemantic.ui import IfcTabs, DetailsTreeModel, ColumnsTreeModel, WorkerAddFiles
 
 
 class MainWindow(QMainWindow):
@@ -34,22 +33,6 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.tabs)
         self.setAcceptDrops(True)
 
-
-        # Provisorisch ################################################################################
-        filenames = ["/media/riannek/PortableSSD/share/FranzLiszt/GE_2000_3TM_KIB_EU_003_AA_003-Franz-Liszt-Strasse.ifc",
-                     "/media/riannek/PortableSSD/share/FranzLiszt/combined.ifc",
-                     "/media/riannek/PortableSSD/share/AC20-FZK-Haus.ifc",
-                     "/media/riannek/PortableSSD/share/VST_Röntgental.ifc",
-                     "/media/riannek/PortableSSD/share/linkedin.ifc"]
-        fl = ['/media/riannek/PortableSSD/share/FranzLiszt/GE_2000_3TM_KIB_EU_003_AA_003-Franz-Liszt-Strasse.ifc',
-                '/media/riannek/PortableSSD/share/FranzLiszt/GE_2000_3TM_VEA_SB_003_AA_003-Franz-Liszt-Strasse.ifc',
-                '/media/riannek/PortableSSD/share/FranzLiszt/GE_2000_3TM_VEA_ST_003_AA_003-Franz-Liszt-Strasse.ifc']
-        filename = filenames[2]
-
-        # self.addIfcFile(filename)
-
-        # for filename in fl:
-        #     self.addIfcFile(filename)
 
 
     # For drag and drop
@@ -86,10 +69,6 @@ class MainWindow(QMainWindow):
             worker.signals.progress.connect(self.on_progress)
             self.threadpool.start(worker)
                 
-    def on_progress(self, progress):
-        if self.progressbar.maximum() == 0:
-            self.progressbar.setRange(0, 100)
-        self.progressbar.setValue(progress)
 
     def add_ifcs_to_trees(self, ifcfiles):
         self.progressbar.setRange(0, len(ifcfiles))
@@ -101,6 +80,11 @@ class MainWindow(QMainWindow):
         self.statusbar.clearMessage()
         self.progressbar.reset()
 
+    def on_progress(self, progress):
+        if self.progressbar.maximum() == 0:
+            self.progressbar.setRange(0, 100)
+        self.progressbar.setValue(progress)
+
     def on_error(self, error):
         errortype = error[0]
         errorstring = error[1]
@@ -109,9 +93,6 @@ class MainWindow(QMainWindow):
             return
         msg = f"{error[0]}: {error[1]}" 
         QMessageBox.critical(self, "Error", msg)
-
-    # def on_feedback(self, feedback):
-    #     self.statusbar.showMessage(self.tr("Open file %s") % feedback)
 
     def on_finished(self): 
         self.workers = [worker for worker in self.workers if not worker.isFinished()]
@@ -130,28 +111,6 @@ class MainWindow(QMainWindow):
             worker.stop()
         event.accept()
 
-    # def openIfcFile(self, filename):
-    #     ifcfile = IfcFile(filename)
-    #     return ifcfile
-
-
-    # def addIfcFile(self, filename):
-
-    #     self.statusbar.showMessage(self.tr("Open file %s") % filename)
-    #     try:
-    #         ifcfile = self.ifcfiles.add_file(filename)
-    #     except FileNotFoundError as e:
-    #         QMessageBox.critical(self, "Error", str(e))
-    #         return
-    #     except ValueError as e:
-    #         QMessageBox.critical(self, "Error", str(e))
-    #         return
-    #     print(f"Added {filename} to ifcfiles")
-    #     self.statusbar.showMessage(self.tr("Add file %s to treeviews") % filename)
-    #     self.column_treeview.addFile(ifcfile)
-    #     self.tabs.addFile(ifcfile)
-    #     self.statusbar.clearMessage()
-    #     print(f"Added {filename} to trees")
 
     def close_all(self):
         self.statusbar.showMessage(self.tr("Close all files"))
@@ -227,12 +186,6 @@ class MainWindow(QMainWindow):
         self.addDockWidget(Qt.RightDockWidgetArea, self.detailsdock)
         self._view_menu.addAction(self.detailsdock.toggleViewAction())
 
-        # Files Dock
-        # self.filesdock = QDockWidget(self.tr("Files"), self)
-        # self.filesdock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
-        # self.filesdock.setWidget(QLabel(self.tr("No open file")))
-        # self.addDockWidget(Qt.RightDockWidgetArea, self.filesdock)
-        # self._view_menu.addAction(self.filesdock.toggleViewAction())
 
         # Columns dock
         self.columnsdock = QDockWidget(self.tr("Columns"), self)
@@ -243,7 +196,6 @@ class MainWindow(QMainWindow):
 
     
         self.tabifyDockWidget(self.detailsdock, self.columnsdock)
-        # self.tabifyDockWidget(self.detailsdock, self.filesdock)
 
     def show_details(self, id, filenames=None):
         detailModel = DetailsTreeModel(id, self, filenames)

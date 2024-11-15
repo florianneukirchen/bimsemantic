@@ -1,5 +1,4 @@
 from PySide6.QtCore import QRunnable, Slot, Signal, QObject
-from bimsemantic.util import IfcFile, IfcFiles
 
 class WorkerSignals(QObject):
 

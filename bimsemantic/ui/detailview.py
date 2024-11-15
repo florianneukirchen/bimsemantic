@@ -1,6 +1,3 @@
-from PySide6.QtCore import QDate, QFile, Qt, QAbstractItemModel, QModelIndex, Qt
-from PySide6.QtGui import QAction, QFont, QIcon
-from PySide6.QtWidgets import QTreeView
 import ifcopenshell.util.element
 from .treebase import TreeItem, TreeModelBaseclass
 

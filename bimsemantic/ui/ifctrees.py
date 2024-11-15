@@ -1,10 +1,8 @@
-from PySide6.QtCore import QDate, QFile, Qt, QAbstractItemModel, QModelIndex, Qt, QSortFilterProxyModel, QTimer
-from PySide6.QtGui import QAction, QFont, QIcon
-from PySide6.QtWidgets import QTreeView, QWidget, QTabWidget, QVBoxLayout, QTreeWidgetItem
+from PySide6.QtCore import QModelIndex, QSortFilterProxyModel, QTimer
+from PySide6.QtWidgets import QTreeView, QWidget, QTabWidget, QVBoxLayout
 from bimsemantic.ui import TreeItem, TreeModelBaseclass
 import ifcopenshell.util.element
 
-import time
 
 
 class ColheaderTreeItem(TreeItem):

@@ -1,6 +1,5 @@
 from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem
 from PySide6.QtCore import Qt,  Qt, Signal, QTimer
-from PySide6.QtGui import QAction, QFont, QIcon
 
 
 class ColumnsTreeModel(QTreeWidget):

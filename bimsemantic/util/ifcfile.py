@@ -1,5 +1,4 @@
 import ifcopenshell
-# from collections import OrderedDict
 import os
 
 
