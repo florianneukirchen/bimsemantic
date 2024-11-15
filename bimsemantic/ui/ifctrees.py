@@ -1,4 +1,4 @@
-from PySide6.QtCore import QModelIndex, QSortFilterProxyModel, QTimer
+from PySide6.QtCore import QModelIndex, QSortFilterProxyModel, QTimer, QItemSelection, QItemSelectionModel
 from PySide6.QtWidgets import QTreeView, QWidget, QTabWidget, QVBoxLayout
 from bimsemantic.ui import TreeItem, TreeModelBaseclass
 import ifcopenshell.util.element
@@ -163,22 +163,27 @@ class IfcTreeTab(QWidget):
         for column in self.treemodel.columntree.hidden_info_columns():
             self.tree.setColumnHidden(column, True)
         
-        self.tree.clicked.connect(self.on_treeview_clicked)
+        self.tree.selectionModel().selectionChanged.connect(self.on_selection_changed)
         self.setLayout(self.layout)
         self.layout.addWidget(self.tree)
         
 
-    def on_treeview_clicked(self, index):
-        if not index.isValid():
-            print("Invalid index")
+    def on_selection_changed(self, selected: QItemSelection, deselected: QItemSelection):
+        indexes = selected.indexes()
+        if not indexes:
+            print("No selection")
             return
-
+        
+        index = indexes[0]
         source_index = self.proxymodel.mapToSource(index)
         item = source_index.internalPointer()
 
     
         if isinstance(item, IfcTreeItem):
             self.mainwindow.show_details(item.id, item.filenames)
+        else:
+            # TreeItem
+            print(item)
 
 
 
