@@ -139,7 +139,9 @@ class MainWindow(QMainWindow):
 
     def close_all(self):
         self.statusbar.showMessage(self.tr("Close all files"))
-        self.detailsdock.setWidget(QLabel(self.tr("No open file")))
+        label = QLabel(self.tr("No open file"))
+        label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.detailsdock.setWidget(label)
         self.ifcfiles = IfcFiles()
         self.column_treeview = ColumnsTreeModel(parent=self)
         self.tabs = IfcTabs(self)
@@ -207,7 +209,9 @@ class MainWindow(QMainWindow):
         # Details dock
         self.detailsdock = QDockWidget(self.tr("Details"), self)
         self.detailsdock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
-        self.detailsdock.setWidget(QLabel(self.tr("No open file")))
+        label = QLabel(self.tr("No open file"))
+        label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.detailsdock.setWidget(label)
         self.addDockWidget(Qt.RightDockWidgetArea, self.detailsdock)
         self._view_menu.addAction(self.detailsdock.toggleViewAction())
 
