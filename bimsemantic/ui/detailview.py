@@ -162,5 +162,41 @@ class DetailsTreeModel(TreeModelBaseclass):
 
 
 
+class OverviewTreeModel(TreeModelBaseclass):
+    def __init__(self, parent):
+        self._mainwindow = parent
+        self.ifcfiles = parent.ifcfiles
+
+        super(OverviewTreeModel, self).__init__(None, parent)
+
+    def newItem(self, key, value, parent):
+        item = TreeItem([key, value], parent)
+        return item
+
+
+    def setupModelData(self, data, parent):
+        root_item = parent
+
+        self.rows_spanned = []
+
+        for ifcfile in self.ifcfiles:
+            ifcfile_item = TreeItem([ifcfile.filename], parent=root_item)
+            root_item.appendChild(ifcfile_item)
+            self.rows_spanned.append(ifcfile_item)
+
+            ifcfile_item.appendChild(
+                self.newItem(self.tr("IFC Version"), ifcfile.model.schema, ifcfile_item)
+            )
+            ifcfile_item.appendChild(
+                self.newItem(self.tr("File size"), f"{ifcfile.megabytes} MB", ifcfile_item)
+            )
+            ifcfile_item.appendChild(
+                self.newItem(self.tr("IFC Elements"), ifcfile.count_ifc_elements(), ifcfile_item)
+            )
+            ifcfile_item.appendChild(
+                self.newItem(self.tr("Pset count"), ifcfile.pset_count(), ifcfile_item)
+            )
+
+
 
 

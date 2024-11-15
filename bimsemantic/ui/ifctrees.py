@@ -135,7 +135,7 @@ class IfcTabs(QWidget):
             self.mainwindow.statusbar.clearMessage()
             self.mainwindow.progressbar.reset()
 
-    def count_ifcelements(self):
+    def count_ifc_elements(self):
         return self.flattab.treemodel.elements_item.childCount()
     
     def count_ifc_types(self):
@@ -171,8 +171,7 @@ class IfcTreeTab(QWidget):
     def on_selection_changed(self, selected: QItemSelection, deselected: QItemSelection):
         indexes = selected.indexes()
         if not indexes:
-            print("No selection")
-            return
+            self.mainwindow.show_details()
         
         index = indexes[0]
         source_index = self.proxymodel.mapToSource(index)

@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (
 
 
 from bimsemantic.util import IfcFiles
-from bimsemantic.ui import IfcTabs, DetailsTreeModel, ColumnsTreeModel, WorkerAddFiles
+from bimsemantic.ui import IfcTabs, DetailsTreeModel, OverviewTreeModel, ColumnsTreeModel, WorkerAddFiles
 
 
 class MainWindow(QMainWindow):
@@ -20,16 +20,21 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("BIM Semantic Viewer")
         self.setGeometry(100, 100, 800, 600)
+
+        self.ifcfiles = IfcFiles()
+
         self.statusbar = self.statusBar()
         self.progressbar = QProgressBar()
         self.progressbar.setMaximumWidth(150)
         self.infolabel = QLabel(self.tr("No open file"))
         self.statusbar.addPermanentWidget(self.infolabel)
         self.statusbar.addPermanentWidget(self.progressbar)
+        self.overviewtree = QTreeView()
+        self.column_treeview = ColumnsTreeModel(parent=self)
+
         self.threadpool = QThreadPool()
         self.workers = []
-        self.ifcfiles = IfcFiles()
-        self.column_treeview = ColumnsTreeModel(parent=self)
+
         self.setup_menus()
         self.create_dock_windows()
         self.tabs = IfcTabs(self) 
@@ -84,10 +89,21 @@ class MainWindow(QMainWindow):
         self.progressbar.reset()
 
         filecount = self.ifcfiles.count()
-        elementcount = self.tabs.count_ifcelements()
+        elementcount = self.tabs.count_ifc_elements()
         typecount = self.tabs.count_ifc_types()
         psetscount = self.column_treeview.count_psets()
         self.infolabel.setText(self.tr(f"{filecount} files, {elementcount} elements, {typecount} types, {psetscount} psets"))
+
+        overview = OverviewTreeModel(self)
+        self.overviewtree.setModel(overview)
+        self.overviewtree.expandAll()
+        self.overviewtree.setColumnWidth(0, 170)
+
+        for item in overview.rows_spanned:
+            self.overviewtree.setFirstColumnSpanned(item.row(), self.overviewtree.rootIndex(), True)
+
+        if isinstance(self.detailsdock.widget(), QLabel):
+            self.show_details()
 
     def on_progress(self, progress):
         if self.progressbar.maximum() == 0:
@@ -206,11 +222,17 @@ class MainWindow(QMainWindow):
     
         self.tabifyDockWidget(self.detailsdock, self.columnsdock)
 
-    def show_details(self, id, filenames=None):
+    def show_details(self, id=None, filenames=None):
+        if self.ifcfiles.count() == 0:
+            return
+        if not id:
+            self.detailsdock.setWidget(self.overviewtree)
+            return
         detailModel = DetailsTreeModel(id, self, filenames)
         treeview = QTreeView()
         treeview.setModel(detailModel)
         treeview.setColumnWidth(0, 170)
+
         # treeview.setColumnWidth(1, 200)
         treeview.expandAll()
         # treeview.adjustSize()

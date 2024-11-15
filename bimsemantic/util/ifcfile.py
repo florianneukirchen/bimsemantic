@@ -8,6 +8,7 @@ class IfcFile():
         self._filename = os.path.basename(self._abspath)
         if not os.path.exists(self._abspath):
             raise FileNotFoundError(f"File {self._abspath} not found.")
+        self._megabytes = round(os.path.getsize(self._abspath) / 1048576, 1)
         try:
             self._model = ifcopenshell.open(self._abspath)
         except RuntimeError:
@@ -30,6 +31,13 @@ class IfcFile():
     def pset_info(self):
         return self._pset_info
     
+    @property
+    def megabytes(self):
+        return self._megabytes
+
+    def count_ifc_elements(self):
+        return len(self._model.by_type("IfcElement"))
+    
     def _get_pset_info(self):
         pset_info = {}
         psets = self._model.by_type("IfcPropertySet")
@@ -40,6 +48,10 @@ class IfcFile():
                 if not prop.Name in pset_info[pset.Name]:
                     pset_info[pset.Name].append(prop.Name)
         return pset_info
+    
+    
+    def pset_count(self):
+        return len(self.pset_info)
     
     # def get_pset_cols(self):
     #     cols = []
@@ -123,6 +135,9 @@ class IfcFiles():
 
     def count(self):
         return len(self._ifcfiles)
+    
+    def filenames(self):
+        return [ifcfile.filename for ifcfile in self._ifcfiles]
 
     @property
     def pset_info(self):
