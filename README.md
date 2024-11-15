@@ -112,7 +112,7 @@ pip3 install --upgrade PyInstaller pyinstaller-hooks-contrib
 
 
 ### Translation
-(Commands in the root direcory of the project with venv enabled)
+(Commands in the root directory of the project with venv enabled)
 
 Update translations:
 ```
@@ -123,3 +123,9 @@ Edit the translations in QtLinguist and then release translation with:
 ```
 pyside6-lrelease bimsemantic/i18n/bimsemantic_de.ts
 ```
+
+### Todo
+- Column Tag
+- Select by ID, Tag, Object Type, Description
+- Quantities
+- View Menu Overview
