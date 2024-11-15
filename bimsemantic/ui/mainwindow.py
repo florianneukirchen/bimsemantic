@@ -1,5 +1,5 @@
 from PySide6.QtCore import Qt, QThreadPool
-from PySide6.QtGui import QAction, QIcon, QKeySequence
+from PySide6.QtGui import QAction, QIcon, QKeySequence, QDragEnterEvent, QDropEvent
 from PySide6.QtWidgets import (
     QDockWidget,
     QFileDialog,
@@ -32,6 +32,7 @@ class MainWindow(QMainWindow):
         self.create_dock_windows()
         self.tabs = IfcTabs(self) 
         self.setCentralWidget(self.tabs)
+        self.setAcceptDrops(True)
 
 
         # Provisorisch ################################################################################
@@ -51,14 +52,29 @@ class MainWindow(QMainWindow):
         #     self.addIfcFile(filename)
 
 
-    def open_file(self):
+    # For drag and drop
+    def dragEnterEvent(self, event: QDragEnterEvent):
+        if event.mimeData().hasUrls():
+            event.acceptProposedAction()
+
+    def dropEvent(self, event: QDropEvent):
+        urls = event.mimeData().urls()
+        filenames = [url.toLocalFile() for url in urls if url.isLocalFile()]
+        if filenames:
+            ifc_filenames = [filename for filename in filenames if filename.endswith(".ifc")]
+            self.open_ifc_files(ifc_filenames)
+
+
+    def open_file_dlg(self):
         filenames, _ = QFileDialog.getOpenFileNames(
             self,
             self.tr("Open IFC file"),
             "",
             self.tr("IFC Files (*.ifc)"),
         )
+        self.open_ifc_files(filenames)
 
+    def open_ifc_files(self, filenames):
         if filenames:
             self.progressbar.setRange(0, 0)
             self.ignoredfiles = []
@@ -68,7 +84,6 @@ class MainWindow(QMainWindow):
             worker.signals.finished.connect(self.on_finished)
             worker.signals.feedback.connect(lambda s: self.statusbar.showMessage(self.tr("Open file %s") % s))
             worker.signals.progress.connect(self.on_progress)
-            # worker.signals.feedback.connect(self.on_feedback)
             self.threadpool.start(worker)
                 
     def on_progress(self, progress):
@@ -161,7 +176,7 @@ class MainWindow(QMainWindow):
             self,
             shortcut=QKeySequence.Open,
             statusTip=self.tr("Open IFC files"),
-            triggered=self.open_file,
+            triggered=self.open_file_dlg,
         )
 
         self._file_menu.addAction(self._open_act)
