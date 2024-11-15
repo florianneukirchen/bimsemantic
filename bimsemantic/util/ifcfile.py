@@ -119,7 +119,8 @@ class IfcFiles():
         try:
             ifc_file = self[filename]
         except IndexError:
-            None
+            print(f"File {filename} not found.")
+            return None
         try:
             element = ifc_file.model.by_id(id)
         except RuntimeError:

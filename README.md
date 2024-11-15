@@ -125,7 +125,7 @@ pyside6-lrelease bimsemantic/i18n/bimsemantic_de.ts
 ```
 
 ### Todo
-- Column Tag
-- Select by ID, Tag, Object Type, Description
+- Column Tag, Object Type, Description
+- Select by ID, Tag, 
 - Quantities
 - View Menu Overview

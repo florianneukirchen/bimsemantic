@@ -12,6 +12,7 @@ from PySide6.QtWidgets import (
     QProgressBar,
     QVBoxLayout,
     QLineEdit,
+    QComboBox,
 )
 
 
@@ -155,14 +156,36 @@ class MainWindow(QMainWindow):
         self.statusbar.clearMessage()
 
     def select_by_guid(self):
-        dlg = SelectByDialog(self)
+        dlg = SelectByDialog("GUID", self)
         if dlg.exec():
-            guid = dlg.get_guid()
+            guid = dlg.get_text()
             if not guid:
                 return
             count = self.tabs.select_item_by_guid(guid)
             if count == 0:
                 self.statusbar.showMessage(self.tr("No element found with GUID %s") % guid, 5000)
+
+    def select_by_id(self):
+        dlg = SelectByDialog("ID", self)
+        if dlg.exec():
+            id = dlg.get_text()
+            if not id:
+                return
+            try:
+                id = int(id)
+            except ValueError:
+                self.statusbar.showMessage(self.tr("Invalid ID %s"), 5000)
+                return
+            filename = dlg.get_combotext()
+            element = self.ifcfiles.get_element(filename, id)
+            if not element:
+                self.statusbar.showMessage(self.tr("No element found with ID %i") % id, 5000)
+                return
+
+            count = self.tabs.select_item_by_guid(element.GlobalId)
+
+            if count == 0:
+                self.statusbar.showMessage(self.tr("No element found with ID %i") % id, 5000)
 
     def setup_menus(self):
         # File menu
@@ -217,6 +240,15 @@ class MainWindow(QMainWindow):
         )
 
         self._edit_selection_menu.addAction(self._select_by_guid_act)
+
+        self._select_by_id_act = QAction(
+            self.tr("Select by ID"),
+            self,
+            statusTip=self.tr("Select IFC element by ID and filename"),
+            triggered=self.select_by_id,
+        )
+
+        self._edit_selection_menu.addAction(self._select_by_id_act)
 
         # View menu
         self._view_menu = self.menuBar().addMenu(self.tr("&View"))
@@ -284,26 +316,38 @@ class MainWindow(QMainWindow):
 
 
 class SelectByDialog(QDialog):
-    def __init__(self, parent):
+    def __init__(self, label, parent):
         super().__init__(parent=parent)
 
-        self.setWindowTitle(self.tr("Select element by GUID"))
+        self.setWindowTitle(self.tr("Select element by {label}"))
 
         QBtn = (
             QDialogButtonBox.Ok | QDialogButtonBox.Cancel
         )
+
+        self.label = label
 
         self.buttonBox = QDialogButtonBox(QBtn)
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
 
         layout = QVBoxLayout()
-        self.label = QLabel(self.tr("GUID"))
+        self.combo = QComboBox()
+        if label == "ID":
+            layout.addWidget(QLabel(self.tr("IFC File")))
+            layout.addWidget(self.combo)
+            self.combo.addItems(parent.ifcfiles.filenames())
+
         self.textfield = QLineEdit()
-        layout.addWidget(self.label)
+        layout.addWidget(QLabel(label))
         layout.addWidget(self.textfield)
         layout.addWidget(self.buttonBox)
         self.setLayout(layout)
 
-    def get_guid(self):
+    def get_text(self):
         return self.textfield.text().strip()
+    
+    def get_combotext(self):
+        if self.label != "ID":
+            return None
+        return self.combo.currentText()
