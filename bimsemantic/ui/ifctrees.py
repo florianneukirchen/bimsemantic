@@ -35,6 +35,13 @@ class IfcTreeItem(TreeItem):
         if column < 0 or column >= self._columntree.count():
             return None
         if column == 0:
+            count_children = self.childCount()
+            if count_children > 0:
+                count_leaves = self.leavesCount()
+                if count_leaves != count_children:
+                    return f"{self._ifc_item.is_a()} ({count_children}/{count_leaves})"
+                else:
+                    return f"{self._ifc_item.is_a()} ({count_children})"
             return self._ifc_item.is_a()
         if column == 1:
             return self._ifc_item.id()
@@ -232,7 +239,7 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
 
     def get_child_by_label(self, parent, label):
         for child in parent.children:
-            if child.data(0) == label:
+            if child._data[0] == label:
                 return child
         return None
 

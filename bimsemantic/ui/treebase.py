@@ -21,10 +21,26 @@ class TreeItem:
 
     def childCount(self):
         return len(self._children)
+    
+    def leavesCount(self):
+        leaves = 0
+        for child in self._children:
+            leaves += child.leavesCount()
+        if leaves == 0:
+            return 1
+        return leaves
 
     def data(self, column):
         if column < 0 or column >= len(self._data):
             return None
+        if column == 0:
+            count_children = self.childCount()
+            if count_children > 0:
+                count_leaves = self.leavesCount()
+                if count_leaves != count_children:
+                    return f"{self._data[0]} ({count_children}/{count_leaves})"
+                else:
+                    return f"{self._data[0]} ({count_children})"
         return self._data[column]
 
     def parent(self):
