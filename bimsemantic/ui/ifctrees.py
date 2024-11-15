@@ -135,6 +135,11 @@ class IfcTabs(QWidget):
             self.mainwindow.statusbar.clearMessage()
             self.mainwindow.progressbar.reset()
 
+    def count_ifcelements(self):
+        return self.flattab.treemodel.elements_item.childCount()
+    
+    def count_ifc_types(self):
+        return self.typetab.treemodel._rootItem.childCount()
 
 
 class IfcTreeTab(QWidget):
@@ -333,18 +338,18 @@ class FlatTreeModel(IfcTreeModelBaseClass):
         elements = ifc_file.model.by_type("IfcElement")
         element_types = ifc_file.model.by_type("IfcElementType")
 
-        elements_item = self.get_child_by_label(self._rootItem, "IfcElement")
-        if not elements_item:
-            elements_item = TreeItem(["IfcElement"], self._rootItem, "IfcElement")
-            self._rootItem.appendChild(elements_item)
+        self.elements_item = self.get_child_by_label(self._rootItem, "IfcElement")
+        if not self.elements_item:
+            self.elements_item = TreeItem(["IfcElement"], self._rootItem, "IfcElement")
+            self._rootItem.appendChild(self.elements_item)
 
         for element in elements:
-            element_item = self.get_child_by_guid(elements_item, element.GlobalId)
+            element_item = self.get_child_by_guid(self.elements_item, element.GlobalId)
             if element_item:
                 element_item.add_filename(filename)
             else:
-                element_item = IfcTreeItem(element, elements_item, self.columntree, filename)
-            elements_item.appendChild(element_item)
+                element_item = IfcTreeItem(element, self.elements_item, self.columntree, filename)
+            self.elements_item.appendChild(element_item)
 
         types_item = self.get_child_by_label(self._rootItem, "IfcElementType")
         if not types_item:

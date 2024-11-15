@@ -121,6 +121,8 @@ class IfcFiles():
             return None
         return project
 
+    def count(self):
+        return len(self._ifcfiles)
 
     @property
     def pset_info(self):

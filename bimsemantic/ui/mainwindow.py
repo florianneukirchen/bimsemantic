@@ -22,6 +22,9 @@ class MainWindow(QMainWindow):
         self.setGeometry(100, 100, 800, 600)
         self.statusbar = self.statusBar()
         self.progressbar = QProgressBar()
+        self.progressbar.setMaximumWidth(150)
+        self.infolabel = QLabel(self.tr("No open file"))
+        self.statusbar.addPermanentWidget(self.infolabel)
         self.statusbar.addPermanentWidget(self.progressbar)
         self.threadpool = QThreadPool()
         self.workers = []
@@ -80,6 +83,12 @@ class MainWindow(QMainWindow):
         self.statusbar.clearMessage()
         self.progressbar.reset()
 
+        filecount = self.ifcfiles.count()
+        elementcount = self.tabs.count_ifcelements()
+        typecount = self.tabs.count_ifc_types()
+        psetscount = self.column_treeview.count_psets()
+        self.infolabel.setText(self.tr(f"{filecount} files, {elementcount} elements, {typecount} types, {psetscount} psets"))
+
     def on_progress(self, progress):
         if self.progressbar.maximum() == 0:
             self.progressbar.setRange(0, 100)
@@ -120,7 +129,7 @@ class MainWindow(QMainWindow):
         self.tabs = IfcTabs(self)
         self.columnsdock.setWidget(self.column_treeview)
         self.setCentralWidget(self.tabs)
-        
+        self.infolabel.setText(self.tr("No open file"))
         self.statusbar.clearMessage()
 
 
@@ -204,7 +213,7 @@ class MainWindow(QMainWindow):
         treeview.setColumnWidth(0, 170)
         # treeview.setColumnWidth(1, 200)
         treeview.expandAll()
-        treeview.adjustSize()
+        # treeview.adjustSize()
         for item in detailModel.rows_spanned:
             treeview.setFirstColumnSpanned(item.row(), treeview.rootIndex(), True)
         self.detailsdock.setWidget(treeview)

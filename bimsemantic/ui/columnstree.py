@@ -140,5 +140,6 @@ class ColumnsTreeModel(QTreeWidget):
         return self._count_first_cols + len(self._psetcolumns)
     
     
-
+    def count_psets(self):
+        return self.psets_item.childCount()
 
