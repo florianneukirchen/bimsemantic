@@ -157,11 +157,7 @@ class IfcTabs(QWidget):
     def select_item_by_guid(self, guid):
         for i in range(self.tabs.count()):
             tab = self.tabs.widget(i)
-            index = tab.treemodel.find_index_by_guid(guid)
-            if index.isValid():
-                proxy_index = tab.proxymodel.mapFromSource(index)
-                tab.tree.setCurrentIndex(proxy_index)
-                tab.tree.scrollTo(proxy_index)
+            tab.select_item_by_guid(guid)
 
     def count_ifc_elements(self):
         return self.flattab.treemodel.elements_item.childCount()
@@ -174,6 +170,7 @@ class IfcTreeTab(QWidget):
     def __init__(self, treemodelclass, ifc_files, parent):
         super(IfcTreeTab, self).__init__(parent)
         self.mainwindow = parent.mainwindow
+        self.tabs = parent.tabs
         self.treemodel = treemodelclass(ifc_files, self)
         self.ifc_files = ifc_files
         self.layout = QVBoxLayout(self)
@@ -197,6 +194,9 @@ class IfcTreeTab(QWidget):
         
 
     def on_selection_changed(self, selected: QItemSelection, deselected: QItemSelection):
+        if not self.is_active_tab():
+            return
+
         indexes = selected.indexes()
         if not indexes:
             self.mainwindow.show_details()
@@ -209,11 +209,25 @@ class IfcTreeTab(QWidget):
         if isinstance(item, IfcTreeItem):
             print(item)
             self.mainwindow.show_details(item.id, item.filenames)
+            guid = item.guid
+            for i in range(self.tabs.count()):
+                tab = self.tabs.widget(i)
+                if tab != self:
+                    tab.select_item_by_guid(guid)
         else:
             # TreeItem
             print(item)
 
 
+    def select_item_by_guid(self, guid):
+        index = self.treemodel.find_index_by_guid(guid)
+        if index.isValid():
+            proxy_index = self.proxymodel.mapFromSource(index)
+            self.tree.setCurrentIndex(proxy_index)
+            self.tree.scrollTo(proxy_index)
+
+    def is_active_tab(self):
+        return self.tabs.currentWidget() == self
 
 
 class IfcTreeModelBaseClass(TreeModelBaseclass):
