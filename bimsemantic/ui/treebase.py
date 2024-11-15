@@ -51,6 +51,14 @@ class TreeItem:
             return self._parent.children.index(self)
         return 0
 
+    def find_item_by_guid(self, guid):
+        # Just pass on to the children, for iteration in an IfcTreeModel
+        for child in self._children:
+            result = child.find_item_by_guid(guid)
+            if result:
+                return result
+        return None
+    
     @property
     def id(self):
         return self._id

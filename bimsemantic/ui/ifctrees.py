@@ -64,7 +64,16 @@ class IfcTreeItem(TreeItem):
 
     def remove_filename(self, filename):
         self._filenames.remove(filename)
-        
+    
+    def find_item_by_guid(self, guid):
+        if self._guid == guid:
+            return self
+        for child in self._children:
+            result = child.find_item_by_guid(guid)
+            if result:
+                return result
+        return None
+    
     @property
     def filenames(self):
         return self._filenames
@@ -145,6 +154,15 @@ class IfcTabs(QWidget):
             self.mainwindow.statusbar.clearMessage()
             self.mainwindow.progressbar.reset()
 
+    def select_item_by_guid(self, guid):
+        for i in range(self.tabs.count()):
+            tab = self.tabs.widget(i)
+            index = tab.treemodel.find_index_by_guid(guid)
+            if index.isValid():
+                proxy_index = tab.proxymodel.mapFromSource(index)
+                tab.tree.setCurrentIndex(proxy_index)
+                tab.tree.scrollTo(proxy_index)
+
     def count_ifc_elements(self):
         return self.flattab.treemodel.elements_item.childCount()
     
@@ -182,12 +200,14 @@ class IfcTreeTab(QWidget):
         indexes = selected.indexes()
         if not indexes:
             self.mainwindow.show_details()
+            print("n")
         
         index = indexes[0]
         source_index = self.proxymodel.mapToSource(index)
         item = source_index.internalPointer()
     
         if isinstance(item, IfcTreeItem):
+            print(item)
             self.mainwindow.show_details(item.id, item.filenames)
         else:
             # TreeItem
@@ -242,6 +262,12 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
             if child._data[0] == label:
                 return child
         return None
+    
+    def find_index_by_guid(self, guid):
+        item = self._rootItem.find_item_by_guid(guid)
+        if item:
+            return self.createIndex(item.row(), 0, item)
+        return QModelIndex()
 
 class LocationTreeModel(IfcTreeModelBaseClass):
 

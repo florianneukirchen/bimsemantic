@@ -3,11 +3,15 @@ from PySide6.QtGui import QAction, QIcon, QKeySequence, QDragEnterEvent, QDropEv
 from PySide6.QtWidgets import (
     QDockWidget,
     QFileDialog,
+    QDialog,
+    QDialogButtonBox,
     QMainWindow,
     QMessageBox,
     QTreeView,
     QLabel,
     QProgressBar,
+    QVBoxLayout,
+    QLineEdit,
 )
 
 
@@ -150,6 +154,13 @@ class MainWindow(QMainWindow):
         self.infolabel.setText(self.tr("No open file"))
         self.statusbar.clearMessage()
 
+    def select_by_guid(self):
+        dlg = SelectByDialog(self)
+        if dlg.exec():
+            guid = dlg.get_guid()
+            if not guid:
+                return
+            self.tabs.select_item_by_guid(guid)
 
     def setup_menus(self):
         # File menu
@@ -190,6 +201,20 @@ class MainWindow(QMainWindow):
         )
 
         self._file_menu.addAction(self._quit_act)
+
+        # Edit menu
+        self._edit_menu = self.menuBar().addMenu(self.tr("&Edit"))
+
+        self._edit_selection_menu = self._edit_menu.addMenu(self.tr("&Selection"))
+
+        self._select_by_guid_act = QAction(
+            self.tr("Select by GUID"),
+            self,
+            statusTip=self.tr("Select IFC element by GUID"),
+            triggered=self.select_by_guid,
+        )
+
+        self._edit_selection_menu.addAction(self._select_by_guid_act)
 
         # View menu
         self._view_menu = self.menuBar().addMenu(self.tr("&View"))
@@ -256,3 +281,27 @@ class MainWindow(QMainWindow):
         )
 
 
+class SelectByDialog(QDialog):
+    def __init__(self, parent):
+        super().__init__(parent=parent)
+
+        self.setWindowTitle(self.tr("Select element by GUID"))
+
+        QBtn = (
+            QDialogButtonBox.Ok | QDialogButtonBox.Cancel
+        )
+
+        self.buttonBox = QDialogButtonBox(QBtn)
+        self.buttonBox.accepted.connect(self.accept)
+        self.buttonBox.rejected.connect(self.reject)
+
+        layout = QVBoxLayout()
+        self.label = QLabel(self.tr("GUID"))
+        self.textfield = QLineEdit()
+        layout.addWidget(self.label)
+        layout.addWidget(self.textfield)
+        layout.addWidget(self.buttonBox)
+        self.setLayout(layout)
+
+    def get_guid(self):
+        return self.textfield.text().strip()
