@@ -47,6 +47,7 @@ class ColumnsTreeModel(QTreeWidget):
         # Pset Columns
         self.psets_item = QTreeWidgetItem(self)
         self.psets_item.setText(0, self.tr("Property Sets"))
+        self.psets_item.setFlags(self.psets_item.flags() | Qt.ItemFlag.ItemIsAutoTristate | Qt.ItemFlag.ItemIsUserCheckable)
         if data:
             self.addFile(data)
 
