@@ -1,6 +1,16 @@
 from PySide6.QtCore import QRunnable, Slot, Signal, QObject
 
 class WorkerSignals(QObject):
+    """Helper class to transport signals from Workers to the main thread
+    
+    QRunnable is not derived from QObject and therefore does not have signals.
+    Enables workers to emit the signals: 
+        finished 
+        error (as tuple of type and errormessage)
+        progress (int, percentage) 
+        feedback (str)
+        result (object with the result)
+    """
 
     finished = Signal()
     error = Signal(tuple)
@@ -10,6 +20,18 @@ class WorkerSignals(QObject):
 
 
 class WorkerAddFiles(QRunnable):
+    """
+    Worker to open IFC files
+
+    Opens the IFC files passed as filenames using IfcOpenShell by adding them
+    to the IfcFiles object used by the main window to manage the opened files.
+    The worker is supposed to run by QThreadpool. Opening large files takes
+    a long time, multithreading keeps the GUI responsive.
+
+    :param ifcfiles: IfcFiles object of the main window
+    :type ifcfiles: IfcFiles instance
+    :return: List of IfcFile instances of the opened files
+    """
     def __init__(self, ifcfiles, filenames):
         super(WorkerAddFiles, self).__init__()
         self.ifcfiles = ifcfiles
@@ -20,6 +42,7 @@ class WorkerAddFiles(QRunnable):
 
     @Slot()
     def run(self):
+        """Run the worker"""
         results = []
         for i, filename in enumerate(self.filenames):
             if self._is_interrupted:

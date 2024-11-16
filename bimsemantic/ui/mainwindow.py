@@ -21,6 +21,7 @@ from bimsemantic.ui import IfcTabs, DetailsTreeModel, OverviewTreeModel, Columns
 
 
 class MainWindow(QMainWindow):
+    """Main window of the application"""
     def __init__(self):
         super().__init__()
         self.setWindowTitle("BIM Semantic Viewer")
@@ -48,12 +49,14 @@ class MainWindow(QMainWindow):
 
 
 
-    # For drag and drop
+
     def dragEnterEvent(self, event: QDragEnterEvent):
+        """Required to accept drag and drop events"""
         if event.mimeData().hasUrls():
             event.acceptProposedAction()
 
     def dropEvent(self, event: QDropEvent):
+        """Open files dropped on the main window"""
         urls = event.mimeData().urls()
         filenames = [url.toLocalFile() for url in urls if url.isLocalFile()]
         if filenames:
@@ -62,15 +65,21 @@ class MainWindow(QMainWindow):
 
 
     def open_file_dlg(self):
+        """Open file dialog for IFC files"""
         filenames, _ = QFileDialog.getOpenFileNames(
             self,
-            self.tr("Open IFC file"),
+            self.tr("Open IFC files"),
             "",
             self.tr("IFC Files (*.ifc)"),
         )
         self.open_ifc_files(filenames)
 
     def open_ifc_files(self, filenames):
+        """Open IFC files
+        
+        Open the files passed as filenames as IfcFile objects (based on IfcOpenShell)
+        using multithreading to keep the GUI responsive.
+        """
         if filenames:
             self.progressbar.setRange(0, 0)
             self.ignoredfiles = []
@@ -84,6 +93,14 @@ class MainWindow(QMainWindow):
                 
 
     def add_ifcs_to_trees(self, ifcfiles):
+        """Add data of IfcFile objects to the treeviews
+        
+        Callback of the WorkerAddFiles worker. Adds the data of the IfcFile objects
+        to the column treeview and all IFC treeviews in self.tabs.
+        If no file was open before, the details dock is set to show an overview.
+
+        :param ifcfiles: List of IfcFile objects
+        """
         self.progressbar.setRange(0, len(ifcfiles))
         self.statusbar.showMessage(self.tr("Add files to treeviews"))
         for i, ifcfile in enumerate(ifcfiles):
@@ -111,11 +128,13 @@ class MainWindow(QMainWindow):
             self.show_details()
 
     def on_progress(self, progress):
+        """Callback for progress bar updates of the WorkerAddFiles worker"""
         if self.progressbar.maximum() == 0:
             self.progressbar.setRange(0, 100)
         self.progressbar.setValue(progress)
 
     def on_error(self, error):
+        """Callback for error messages of the WorkerAddFiles worker"""
         errortype = error[0]
         errorstring = error[1]
         if errortype == "File already open":
@@ -125,6 +144,7 @@ class MainWindow(QMainWindow):
         QMessageBox.critical(self, "Error", msg)
 
     def on_finished(self): 
+        """Callback for the finished signal of the WorkerAddFiles worker"""
         self.workers = [worker for worker in self.workers if not worker.isFinished()]
         self.statusbar.clearMessage()
         self.progressbar.setRange(0,100)
@@ -143,6 +163,7 @@ class MainWindow(QMainWindow):
 
 
     def close_all(self):
+        """Close all IFC files"""
         self.statusbar.showMessage(self.tr("Close all files"))
         label = QLabel(self.tr("No open file"))
         label.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -156,6 +177,7 @@ class MainWindow(QMainWindow):
         self.statusbar.clearMessage()
 
     def select_by_guid(self):
+        """Dialog to select an IFC element by GUID and call the algorithm to select it"""
         dlg = SelectByDialog("GUID", self)
         if dlg.exec():
             guid = dlg.get_text()
@@ -166,6 +188,12 @@ class MainWindow(QMainWindow):
                 self.statusbar.showMessage(self.tr("No element found with GUID %s") % guid, 5000)
 
     def select_by_id(self):
+        """Dialog to select an IFC element by ID and filename and call the algorithm to select it
+        
+        The dialog also contains a combobox to select the filename. If the filename is set to "Any",
+        the item from the first file in the list containing an IfcElement with the given ID is used.
+        Note that the ID may not be unique between different IFC files of the same project.
+        """
         dlg = SelectByDialog("ID", self)
         if dlg.exec():
             id = dlg.get_text()
@@ -200,6 +228,7 @@ class MainWindow(QMainWindow):
                 self.statusbar.showMessage(self.tr("No element found with ID %i") % id, 5000)
 
     def setup_menus(self):
+        """Setup the menu and actions of the main window"""
         # File menu
         self._file_menu = self.menuBar().addMenu(self.tr("&File"))
 
@@ -277,6 +306,7 @@ class MainWindow(QMainWindow):
         self._help_menu.addAction(self._about_act)
 
     def create_dock_windows(self):
+        """Create the dock widgets"""
         # Details dock
         self.detailsdock = QDockWidget(self.tr("Details"), self)
         self.detailsdock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
@@ -298,6 +328,17 @@ class MainWindow(QMainWindow):
         self.tabifyDockWidget(self.detailsdock, self.columnsdock)
 
     def show_details(self, id=None, filenames=None):
+        """Show the details of an IFC element
+        
+        ID is the ID of the element, as in the first file of the list of filenames.
+        Filenames is the list of filenames of all files containing the element.
+        If ID is None, the overview tree is shown.
+        
+        :param id: The ID of the element
+        :type id: int
+        :param filenames: The list of filenames
+        :type filenames: list of str
+        """
         if self.ifcfiles.count() == 0:
             return
         if not id:
@@ -328,6 +369,14 @@ class MainWindow(QMainWindow):
 
 
 class SelectByDialog(QDialog):
+    """Dialog for selecting an IFC element by GUID or ID
+
+    If searching for ID, a combobox is shown to select the filename.
+    
+    :param label: The label of the input field: "GUID" or "ID"
+    :type label: str
+    :param parent: The parent widget (main window)
+    """
     def __init__(self, label, parent):
         super().__init__(parent=parent)
 
@@ -357,9 +406,11 @@ class SelectByDialog(QDialog):
         self.setLayout(layout)
 
     def get_text(self):
+        """Get the text from the input field"""
         return self.textfield.text().strip()
     
     def get_combotext(self):
+        """Get the text from the combobox"""
         if self.label != "ID":
             return None
         return self.combo.currentText()

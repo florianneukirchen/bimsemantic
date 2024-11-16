@@ -3,6 +3,16 @@ import os
 
 
 class IfcFile():
+    """Represents an IFC file that is opened with ifcopenshell.
+    
+    Includes attributes such as file name and path and some methods as shortcuts
+    to the ifcopenshell model.
+
+    :param filename: The path to the IFC file to be opened.
+    :type filename: str
+    :raises FileNotFoundError: File does not exist
+    :raises ValueError: File is not a valid IFC file
+    """
     def __init__(self, filename):
         self._abspath = os.path.abspath(filename)
         self._filename = os.path.basename(self._abspath)
@@ -17,28 +27,35 @@ class IfcFile():
 
     @property
     def model(self):
+        """The ifcopenshell file object"""
         return self._model
     
     @property
     def filename(self):
+        """The name of the file"""
         return self._filename
     
     @property
     def abspath(self):
+        """The absolute path of the file"""
         return self._abspath
     
     @property
     def pset_info(self):
+        """A dictionary with the property sets and their properties"""
         return self._pset_info
     
     @property
     def megabytes(self):
+        """The size of the file in megabytes"""
         return self._megabytes
 
     def count_ifc_elements(self):
+        """Returns the number of IfcElement objects in the file"""
         return len(self._model.by_type("IfcElement"))
     
     def get_element(self, id):
+        """Returns an IFC object by its ID"""
         try:
             element = self.model.by_id(id)
         except RuntimeError:
@@ -58,6 +75,7 @@ class IfcFile():
     
     
     def pset_count(self):
+        """The number of property sets in the file"""
         return len(self.pset_info)
     
     # def get_pset_cols(self):
@@ -74,10 +92,45 @@ class IfcFile():
 
 
 class IfcFiles():
+    """A collection of IfcFile objects 
+
+    Used to represent all opened IFC files as IfcFile objects.
+    Files are added with add_file().
+    It is possible to iterate over the IfcFile objects or to get
+    a specific file by its index or filename.
+
+    Example::
+
+        ifcfiles = IfcFiles()
+        ifcfiles.add_file("file1.ifc")
+        ifcfiles.add_file("file2.ifc")
+
+        ifcfiles[0] # returns the first file
+        ifcfiles["file1.ifc"] # returns the first file
+
+        for ifcfile in ifcfiles:
+            print(ifcfile.filename)
+
+
+    
+    """
     def __init__(self):
         self._ifcfiles = []
     
     def add_file(self, filename):
+        """Adds an IFC file to the collection
+
+        Opens the file and returns the IfcFile object that contains the 
+        IfcOpenShell file object.
+        
+        If the file is already open, it is not added again. If the GUID of the
+        IfcProject object is different from the first file, a ValueError is raised.
+        
+        :raises FileNotFoundError: File does not exist
+        :raises ValueError: File is not a valid IFC file
+        :raises ValueError: All files must belong to the same project
+
+        """
         # Before opening, check if the file is already open
         abspath = os.path.abspath(filename)
         for ifcfile in self._ifcfiles:
@@ -109,6 +162,19 @@ class IfcFiles():
             yield ifcfile
 
     def get_element_by_guid(self, guid, filename=None):
+        """Returns an IFC object by its GUID
+        
+        If filename is provided, the search is limited to that file.
+        Otherwise the element is returned from the first file that contains it.
+        Returns None if the element is not found.
+
+        :param guid: The GUID of the element
+        :type guid: str
+        :param filename: The name of the file where the element is located
+        :type filename: str, Optional
+        :return: The IFC object
+        :rtype: ifcopenshell entity
+        """
         if filename:
             ifcfile = self[filename]
             element = ifcfile.model.by_guid(guid)
@@ -123,6 +189,15 @@ class IfcFiles():
             return None
 
     def get_element(self, filename, id):
+        """Returns an IFC object of a given file by its ID
+        
+        :param filename: The name of the file
+        :type filename: str
+        :param id: The ID of the element
+        :type id: int
+        :return: The IFC object
+        :rtype: ifcopenshell entity
+        """
         try:
             ifc_file = self[filename]
         except IndexError:
@@ -134,6 +209,11 @@ class IfcFiles():
         return element
 
     def get_project(self):
+        """Returns the IfcProject object of the first file
+        
+        :return: The IfcProject object
+        :rtype: ifcopenshell entity
+        """
         try:
             project = self._ifcfiles[0].model.by_type("IfcProject")[0]
         except IndexError:
@@ -141,13 +221,19 @@ class IfcFiles():
         return project
 
     def count(self):
+        """The number of files in the collection"""
         return len(self._ifcfiles)
     
     def filenames(self):
+        """Returns a list of the filenames of the files in the collection"""
         return [ifcfile.filename for ifcfile in self._ifcfiles]
 
     @property
     def pset_info(self):
+        """A dictionary with the property sets and their properties for all files
+        
+        The names of property sets and properties are unique.
+        """
         pset_info = {}
         for ifcfile in self._ifcfiles:
             for pset_name, pset_props in ifcfile.pset_info.items():

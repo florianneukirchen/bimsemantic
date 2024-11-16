@@ -3,6 +3,13 @@ from .treebase import TreeItem, TreeModelBaseclass
 
 
 class DetailsTreeModel(TreeModelBaseclass):
+    """Model for the tree view of the details dock widget
+    
+    :param id: The ID of the element in the first file of filenames
+    :type id: int
+    :param parent: The parent widget (main window)
+    :param filenames: The list of filenames
+    """
     def __init__(self, id, parent, filenames=None):
         self.filenames = filenames
         self._mainwindow = parent
@@ -10,6 +17,11 @@ class DetailsTreeModel(TreeModelBaseclass):
         super(DetailsTreeModel, self).__init__(element, parent)
 
     def newItem(self, key, value, parent):
+        """Helper to create new items of key-value pairs
+        :param key: The key
+        :param value: The value
+        :param parent: The parent tree item
+        """
         if isinstance(value, ifcopenshell.entity_instance):
             try:
                 name = value.Name
@@ -23,6 +35,11 @@ class DetailsTreeModel(TreeModelBaseclass):
 
 
     def setupModelData(self, data, parent):
+        """Build the tree view
+        
+        :param data: The IfcOpenShell entity
+        :parent: The root item of the tree
+        """
         self.rows_spanned = []
 
         object_item = parent
@@ -163,6 +180,10 @@ class DetailsTreeModel(TreeModelBaseclass):
 
 
 class OverviewTreeModel(TreeModelBaseclass):
+    """Overview model for the details dock widget showing info about the files
+    
+    :param parent: The parent widget (main window)
+    """
     def __init__(self, parent):
         self._mainwindow = parent
         self.ifcfiles = parent.ifcfiles
@@ -170,11 +191,17 @@ class OverviewTreeModel(TreeModelBaseclass):
         super(OverviewTreeModel, self).__init__(None, parent)
 
     def newItem(self, key, value, parent):
+        """Helper to create new items of key-value pairs"""
         item = TreeItem([key, value], parent)
         return item
 
 
     def setupModelData(self, data, parent):
+        """Build the tree view
+        
+        Data is ignored, but passed by the parent class.
+        :param parent: The root item of the tree
+        """
         root_item = parent
 
         self.rows_spanned = []
