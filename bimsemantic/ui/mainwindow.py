@@ -197,7 +197,7 @@ class MainWindow(QMainWindow):
             count = self.tabs.select_item_by_tag(tag)
             if count == 0:
                 self.statusbar.showMessage(self.tr("No element found with Tag %s") % tag, 5000)
-                
+
     def select_by_id(self):
         """Dialog to select an IFC element by ID and filename and call the algorithm to select it
         
@@ -285,7 +285,7 @@ class MainWindow(QMainWindow):
         self._edit_selection_menu = self._edit_menu.addMenu(self.tr("&Selection"))
 
         self._select_by_guid_act = QAction(
-            self.tr("Select by GUID"),
+            self.tr("Select by &GUID"),
             self,
             statusTip=self.tr("Select IFC element by GUID"),
             triggered=self.select_by_guid,
@@ -294,7 +294,7 @@ class MainWindow(QMainWindow):
         self._edit_selection_menu.addAction(self._select_by_guid_act)
 
         self._select_by_id_act = QAction(
-            self.tr("Select by ID"),
+            self.tr("Select by &ID"),
             self,
             statusTip=self.tr("Select IFC element by ID and filename"),
             triggered=self.select_by_id,
@@ -303,9 +303,9 @@ class MainWindow(QMainWindow):
         self._edit_selection_menu.addAction(self._select_by_id_act)
 
         self._select_by_tag_act = QAction(
-            self.tr("Select by Tag"),
+            self.tr("Select by &Tag"),
             self,
-            statusTip=self.tr("Select IFC element by Tag"),
+            statusTip=self.tr("Select IFC element (IfcElement) by Tag"),
             triggered=self.select_by_tag,
         )
 
@@ -313,6 +313,16 @@ class MainWindow(QMainWindow):
 
         # View menu
         self._view_menu = self.menuBar().addMenu(self.tr("&View"))
+
+        self._overview_act = QAction(
+            self.tr("&Files in details dock"),
+            self,
+            triggered=self.show_details,
+        )
+
+        self._view_menu.addAction(self._overview_act)
+
+        self._view_menu.addSeparator()
 
         # Help menu
         self._help_menu = self.menuBar().addMenu(self.tr("&Help"))
@@ -328,7 +338,7 @@ class MainWindow(QMainWindow):
     def create_dock_windows(self):
         """Create the dock widgets"""
         # Details dock
-        self.detailsdock = QDockWidget(self.tr("Details"), self)
+        self.detailsdock = QDockWidget(self.tr("&Details"), self)
         self.detailsdock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
         label = QLabel(self.tr("No open file"))
         label.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -338,7 +348,7 @@ class MainWindow(QMainWindow):
 
 
         # Columns dock
-        self.columnsdock = QDockWidget(self.tr("Columns"), self)
+        self.columnsdock = QDockWidget(self.tr("&Columns"), self)
         self.columnsdock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
         self.columnsdock.setWidget(self.column_treeview)
         self.addDockWidget(Qt.RightDockWidgetArea, self.columnsdock)
