@@ -129,6 +129,28 @@ class IfcTreeItem(TreeItem):
                 return result
         return None
     
+    def find_item_by_tag(self, tag):
+        """Find an item by its tag
+        
+        Recursively search the children for an item with the given tag.
+
+        :param tag: Tag of the item to find
+        :type tag: str
+        :return: IfcTreeItem instance or None
+        """
+        try:
+            item_tag = self._ifc_item.Tag
+        except AttributeError: # Only IfcElement instances have a tag
+            item_tag = None
+
+        if item_tag == tag:
+            return self
+        for child in self._children:
+            result = child.find_item_by_tag(tag)
+            if result:
+                return result
+        return None
+
     @property
     def filenames(self):
         """List of IFC files containing the object (list of str)"""
@@ -244,6 +266,19 @@ class IfcTabs(QWidget):
                 counter += 1
         return counter
 
+    def select_item_by_tag(self, tag):
+        """Select an item by its tag in all tree views
+        
+        Returns the number of tabs where the item with the given tag was found.
+        """
+        counter = 0
+        for i in range(self.tabs.count()):
+            tab = self.tabs.widget(i)
+            found = tab.select_item_by_tag(tag)
+            if found:
+                counter += 1
+        return counter
+
     def count_ifc_elements(self):
         """Get the number of all IFC elements of the open files"""
         return self.flattab.treemodel.elements_item.childCount()
@@ -332,6 +367,20 @@ class IfcTreeTab(QWidget):
             self.tree.scrollTo(proxy_index)
             return True
         return False
+    
+    def select_item_by_tag(self, tag):
+        """Select an item by its tag
+        
+        Select the item in the tree view and scroll to it.
+        If the item is found, return True, otherwise False.
+        """
+        index = self.treemodel.find_index_by_tag(tag)
+        if index.isValid():
+            proxy_index = self.proxymodel.mapFromSource(index)
+            self.tree.setCurrentIndex(proxy_index)
+            self.tree.scrollTo(proxy_index)
+            return True
+        return False
 
     def is_active_tab(self):
         """Check if the tab is the active tab, returns bool"""
@@ -408,6 +457,14 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
         if item:
             return self.createIndex(item.row(), 0, item)
         return QModelIndex()
+    
+    def find_index_by_tag(self, tag):
+        """Search the tree for an item by its tag and return the QModelIndex"""
+        item = self._rootItem.find_item_by_tag(tag)
+        if item:
+            return self.createIndex(item.row(), 0, item)
+        return QModelIndex()
+    
 
 class LocationTreeModel(IfcTreeModelBaseClass):
     """Model for the Location tree view

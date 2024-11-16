@@ -187,6 +187,17 @@ class MainWindow(QMainWindow):
             if count == 0:
                 self.statusbar.showMessage(self.tr("No element found with GUID %s") % guid, 5000)
 
+    def select_by_tag(self):
+        """Dialog to select an IFC element by Tag and call the algorithm to select it"""
+        dlg = SelectByDialog("Tag", self)
+        if dlg.exec():
+            tag = dlg.get_text()
+            if not tag:
+                return
+            count = self.tabs.select_item_by_tag(tag)
+            if count == 0:
+                self.statusbar.showMessage(self.tr("No element found with Tag %s") % tag, 5000)
+                
     def select_by_id(self):
         """Dialog to select an IFC element by ID and filename and call the algorithm to select it
         
@@ -290,6 +301,15 @@ class MainWindow(QMainWindow):
         )
 
         self._edit_selection_menu.addAction(self._select_by_id_act)
+
+        self._select_by_tag_act = QAction(
+            self.tr("Select by Tag"),
+            self,
+            statusTip=self.tr("Select IFC element by Tag"),
+            triggered=self.select_by_tag,
+        )
+
+        self._edit_selection_menu.addAction(self._select_by_tag_act)
 
         # View menu
         self._view_menu = self.menuBar().addMenu(self.tr("&View"))

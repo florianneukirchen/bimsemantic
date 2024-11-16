@@ -99,6 +99,18 @@ class TreeItem:
                 return result
         return None
     
+    def find_item_by_tag(self, tag):
+        """Find children of type IfcTreeItem by tag
+        
+        TreeItem does not have a tag, just pass on to the children, 
+        for iteration in an IfcTreeModel.
+        """
+        for child in self._children:
+            result = child.find_item_by_tag(tag)
+            if result:
+                return result
+        return None
+    
     @property
     def id(self):
         """The optional ID of the item"""
