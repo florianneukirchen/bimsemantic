@@ -1,5 +1,12 @@
 # BIM Semantic Viewer
 
+
+
+### Todo
+- Column Tag, Object Type, Description
+- Selection? Copy Paste as table
+
+
 ## Installation
 - Use Python 3.12 or lower
 
@@ -123,8 +130,3 @@ Edit the translations in QtLinguist and then release translation with:
 ```
 pyside6-lrelease bimsemantic/i18n/bimsemantic_de.ts
 ```
-
-### Todo
-- Column Tag, Object Type, Description
-- Quantities
-- Selection? Copy Paste as table
