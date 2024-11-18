@@ -1,6 +1,6 @@
 from PySide6.QtCore import QSortFilterProxyModel, QTimer, QItemSelection
 from PySide6.QtWidgets import QTreeView, QWidget, QTabWidget, QVBoxLayout
-from bimsemantic.ui import LocationTreeModel, TypeTreeModel, FlatTreeModel
+from bimsemantic.ui import LocationTreeModel, TypeTreeModel, FlatTreeModel, IfcTreeItem
 
 class IfcTabs(QWidget):
     """Widget containig the tabs for the different tree views

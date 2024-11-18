@@ -60,6 +60,11 @@ class ColumnsTreeModel(QTreeWidget):
         self.psets_item = QTreeWidgetItem(self)
         self.psets_item.setText(0, self.tr("Property Sets"))
         self.psets_item.setFlags(self.psets_item.flags() | Qt.ItemFlag.ItemIsAutoTristate | Qt.ItemFlag.ItemIsUserCheckable)
+
+        self.qsets_item = QTreeWidgetItem(self)
+        self.qsets_item.setText(0, self.tr("Quantity Sets"))
+        self.qsets_item.setFlags(self.psets_item.flags() | Qt.ItemFlag.ItemIsAutoTristate | Qt.ItemFlag.ItemIsUserCheckable)
+
         if data:
             self.addFile(data)
 
@@ -89,6 +94,25 @@ class ColumnsTreeModel(QTreeWidget):
                     prop_item.setFlags(prop_item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
                     prop_item.setCheckState(0, Qt.CheckState.Unchecked)
 
+        qset_info = ifc_file.qset_info
+        print(qset_info)
+
+        for qset_name in qset_info.keys():
+            qset_item = self.get_child_by_name(self.qsets_item, qset_name)
+            if qset_item is None:
+                qset_item = QTreeWidgetItem(self.qsets_item)
+                qset_item.setText(0, qset_name)
+                qset_item.setFlags(qset_item.flags() | Qt.ItemFlag.ItemIsAutoTristate | Qt.ItemFlag.ItemIsUserCheckable)
+
+            for qset in qset_info[qset_name]:
+                qto_item = self.get_child_by_name(qset_item, qset)
+                if qto_item is None:
+                    qto_item = QTreeWidgetItem(qset_item)
+                    qto_item.setText(0, qset)
+                    qto_item.setFlags(qset_item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
+                    qto_item.setCheckState(0, Qt.CheckState.Unchecked)
+
+
         self.sort_psetcolumns()
         self.expandAll()
         self.blockSignals(False)
@@ -102,10 +126,14 @@ class ColumnsTreeModel(QTreeWidget):
         return None
 
     def sort_psetcolumns(self):
-        """Sort the properties of the property sets"""
+        """Sort the properties/quantities of the property/quantity sets"""
         self.psets_item.sortChildren(0, Qt.SortOrder.AscendingOrder)
         for i in range(self.psets_item.childCount()):
             self.psets_item.child(i).sortChildren(0, Qt.SortOrder.AscendingOrder)
+
+        self.qsets_item.sortChildren(0, Qt.SortOrder.AscendingOrder)
+        for i in range(self.qsets_item.childCount()):
+            self.qsets_item.child(i).sortChildren(0, Qt.SortOrder.AscendingOrder)
 
     def col(self, column):
         """Return a tuple pset and property for a column
@@ -169,6 +197,7 @@ class ColumnsTreeModel(QTreeWidget):
         self.mainwindow.progressbar.setRange(0, 0)
 
         self._psetcolumns = []
+
         for i in range(self.psets_item.childCount()):
             pset_item = self.psets_item.child(i)
             pset_name = pset_item.text(0)
@@ -177,6 +206,13 @@ class ColumnsTreeModel(QTreeWidget):
                 if prop_item.checkState(0) == Qt.CheckState.Checked:
                     self._psetcolumns.append((pset_name, prop_item.text(0)))
 
+        for i in range(self.qsets_item.childCount()):
+            qset_item = self.qsets_item.child(i)
+            qset_name = qset_item.text(0)
+            for j in range(qset_item.childCount()):
+                qto_item = qset_item.child(j)
+                if qto_item.checkState(0) == Qt.CheckState.Checked:
+                    self._psetcolumns.append((qset_name, qto_item.text(0)))
 
     def hidden_info_columns(self):
         """Returns a list of column indexes that are hidden"""

@@ -24,6 +24,7 @@ class IfcFile():
         except RuntimeError:
             raise ValueError(f"File {self._abspath} is not a valid IFC file.")
         self._pset_info = self._get_pset_info()
+        self._qset_info = self._get_qset_info()
 
     @property
     def model(self):
@@ -45,6 +46,11 @@ class IfcFile():
         """A dictionary with the property sets and their properties"""
         return self._pset_info
     
+    @property
+    def qset_info(self):
+        """A dictionary with the quantity sets and their quantities"""
+        return self._qset_info
+
     @property
     def megabytes(self):
         """The size of the file in megabytes"""
@@ -73,10 +79,24 @@ class IfcFile():
                     pset_info[pset.Name].append(prop.Name)
         return pset_info
     
-    
+    def _get_qset_info(self):
+        qset_info = {}
+        qsets = self._model.by_type("IfcQuantitySet")
+        for qset in qsets:
+            if not qset.Name in qset_info:
+                qset_info[qset.Name] = []
+            for q in qset.Quantities:
+                if not q.Name in qset_info[qset.Name]:
+                    qset_info[qset.Name].append(q.Name)
+        return qset_info
+
     def pset_count(self):
         """The number of property sets in the file"""
         return len(self.pset_info)
+    
+    def qset_count(self):
+        """The number of quantity sets in the file"""
+        return len(self.qset_info)
     
     # def get_pset_cols(self):
     #     cols = []
