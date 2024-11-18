@@ -109,7 +109,6 @@ class ColumnsTreeModel(QTreeWidget):
                     prop_item.setCheckState(0, Qt.CheckState.Unchecked)
 
         qset_info = ifc_file.qset_info
-        print(qset_info)
 
         for qset_name in qset_info.keys():
             qset_item = self.get_child_by_name(self.qsets_item, qset_name)

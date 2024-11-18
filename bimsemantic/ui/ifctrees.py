@@ -255,6 +255,10 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
     def get_child_by_label(self, parent, label):
         """Get the child item with a given label (data of first column) if already present, otherwise None"""
         for child in parent.children:
+            try:
+                childlabel = child._data[0]
+            except AttributeError:
+                continue
             if child._data[0] == label:
                 return child
         return None
@@ -285,7 +289,6 @@ class LocationTreeModel(IfcTreeModelBaseClass):
     :param parent: Parent widget should be the IfcTreeTab instance
     """
 
-
     def addFile(self, ifc_file):
         """Add data of an IfcFile instance to the tree view
         
@@ -310,6 +313,22 @@ class LocationTreeModel(IfcTreeModelBaseClass):
 
         for site in ifc_file.model.by_type("IfcSite"):
             self.addItems(site, project_item, filename)
+
+        label = self.tr("Elements without spatial container")
+        notcontained_item = self.get_child_by_label(self._rootItem, label)
+        if not notcontained_item:
+            notcontained_item = TreeItem([label], self._rootItem)
+            self._rootItem.appendChild(notcontained_item)
+
+        # Also add the elements that don't have a spatial container
+        for element in ifc_file.model.by_type("IfcElement"):
+            if not element.ContainedInStructure:
+                element_item = self.get_child_by_guid(notcontained_item, element.GlobalId)
+                if element_item:
+                    element_item.add_filename(filename)
+                else:
+                    element_item = IfcTreeItem(element, notcontained_item, self.columntree, filename)
+                    notcontained_item.appendChild(element_item)
 
         self.endResetModel()
         
