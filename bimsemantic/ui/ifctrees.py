@@ -1,4 +1,4 @@
-from PySide6.QtCore import QModelIndex
+from PySide6.QtCore import Qt, QModelIndex
 from bimsemantic.ui import TreeItem, TreeModelBaseclass
 import ifcopenshell.util.element
 
@@ -314,7 +314,7 @@ class LocationTreeModel(IfcTreeModelBaseClass):
         for site in ifc_file.model.by_type("IfcSite"):
             self.addItems(site, project_item, filename)
 
-        label = self.tr("Not in storey")
+        label = self.tr("Without container")
         notcontained_item = self.get_child_by_label(self._rootItem, label)
         if not notcontained_item:
             notcontained_item = TreeItem([label], self._rootItem)
@@ -331,7 +331,8 @@ class LocationTreeModel(IfcTreeModelBaseClass):
                     notcontained_item.appendChild(element_item)
 
         self.endResetModel()
-        
+
+        self.tab.proxymodel.sort(0, Qt.SortOrder.AscendingOrder)
         self.tab.tree.expandAll()
 
     def addItems(self, ifc_object, parent, filename):
