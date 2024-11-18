@@ -314,7 +314,7 @@ class LocationTreeModel(IfcTreeModelBaseClass):
         for site in ifc_file.model.by_type("IfcSite"):
             self.addItems(site, project_item, filename)
 
-        label = self.tr("Elements without spatial container")
+        label = self.tr("Not in storey")
         notcontained_item = self.get_child_by_label(self._rootItem, label)
         if not notcontained_item:
             notcontained_item = TreeItem([label], self._rootItem)
