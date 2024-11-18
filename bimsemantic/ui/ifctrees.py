@@ -73,6 +73,7 @@ class IfcTreeItem(TreeItem):
         if column < 0 or column >= self._columntree.count():
             return None
         if column == 0:
+            # IFC-class and counters
             count_children = self.childCount()
             if count_children > 0:
                 count_leaves = self.leavesCount()
@@ -88,7 +89,26 @@ class IfcTreeItem(TreeItem):
         if column == 3:
             return self._ifc_item.GlobalId
         if column == 4:
+            try:
+                tag = self._ifc_item.Tag
+            except AttributeError:
+                tag = None
+            return tag
+        if column == 5:
+            return self._ifc_item.ObjectType
+        if column == 6:
+            return self._ifc_item.Description
+        if column == 7:
             return self.filenames_str
+        if column == 8:
+            try:
+                container = self._ifc_item.ContainedInStructure[0].RelatingStructure.Name
+            except (IndexError, AttributeError):
+                container = None
+            return container
+        if column == 9:
+            # Validation
+            return None
         
         psets = ifcopenshell.util.element.get_psets(self._ifc_item)
         pset_name, attribute = self._columntree.col(column)

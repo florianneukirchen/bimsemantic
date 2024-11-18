@@ -22,11 +22,25 @@ class ColumnsTreeModel(QTreeWidget):
         super(ColumnsTreeModel, self).__init__(parent)
         self.first_cols = [
             self.tr("Type"), 
-            "ID", self.tr("Name"), 
+            "ID", 
+            self.tr("Name"), 
             "GUID", 
-            self.tr("Filename")
+            "Tag",
+            self.tr("Object Type"),
+            self.tr("Description"),
+            self.tr("Filename"), 
+            self.tr("Contained In"),
+            self.tr("Validation"),
             ]
-        self._hidden = ["ID", "GUID", self.tr("Filename")] 
+        self._hidden = [
+            "ID", 
+            "GUID", 
+            "Tag", 
+            self.tr("Object Type"), 
+            self.tr("Description"), 
+            self.tr("Filename"), 
+            self.tr("Contained In"),
+            self.tr("Validation")] 
         self._count_first_cols = len(self.first_cols)
         self._psetcolumns = []
         self.mainwindow = parent
