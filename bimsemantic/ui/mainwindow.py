@@ -410,7 +410,7 @@ class SelectByDialog(QDialog):
     def __init__(self, label, parent):
         super().__init__(parent=parent)
 
-        self.setWindowTitle(self.tr("Select element by {label}"))
+        self.setWindowTitle(self.tr("Select element by %s") % label)
 
         QBtn = (
             QDialogButtonBox.Ok | QDialogButtonBox.Cancel

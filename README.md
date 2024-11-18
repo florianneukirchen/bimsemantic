@@ -42,7 +42,7 @@ pip install PyInstaller
 To create a spec file, run with activated venv:
 ```
 cd bimsemanticviewer
-pyinstaller app.spec
+pyinstaller app.py
 ```
 
 Edit spec file: We need to add the IfcOpenSell IFC rules manually
