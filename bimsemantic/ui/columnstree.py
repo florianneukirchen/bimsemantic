@@ -196,12 +196,12 @@ class ColumnsTreeModel(QTreeWidget):
                 self.hideInfoColumn.emit(col_index, ishidden)
             else:
                 self.blockSignals(True)
-                self.update_psetcolumns()
                 self.blockSignals(False)
-                self.timer.start(20)
+                self.timer.start(10)
 
     def emit_columns_changed(self):
         """Callback of the timer that is used in item_changed"""
+        self.update_psetcolumns()
         self.columnsChanged.emit()
 
     def update_psetcolumns(self):

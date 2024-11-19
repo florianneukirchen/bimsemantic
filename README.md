@@ -3,8 +3,9 @@
 
 
 ### Todo
-- Slabs
+- Spalten umsortieren in allen tabs
 - Selection? Copy Paste as table
+- tabs: Material, Psets
 
 
 ## Installation
