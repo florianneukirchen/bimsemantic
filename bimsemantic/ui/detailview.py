@@ -78,7 +78,7 @@ class DetailsTreeModel(TreeModelBaseclass):
         )
 
 
-        info_item = TreeItem(["Info"], parent=object_item)
+        info_item = TreeItem([self.tr("Info")], parent=object_item)
         object_item.appendChild(info_item)
         
         for k,v in info.items():
