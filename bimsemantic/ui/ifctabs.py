@@ -160,7 +160,7 @@ class IfcTreeTab(QWidget):
         self.tree.setSortingEnabled(True)
         self.tree.setAlternatingRowColors(True)
 
-        self.tree.setColumnWidth(0, 200)
+        self.tree.setColumnWidth(0, 250)
         self.tree.setColumnWidth(2, 250)
         
         for column in self.treemodel.columntree.hidden_info_columns():
