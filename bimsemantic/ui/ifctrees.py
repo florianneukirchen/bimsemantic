@@ -19,6 +19,7 @@ class ColheaderTreeItem(TreeItem):
         self._columntree = data
         self._parent = parent
         self._children = []
+        self._id = None
 
     def data(self, column):
         """Get the column name at the column index
