@@ -240,6 +240,10 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
         self.beginResetModel()
         self.layoutChanged.emit()
         self.endResetModel()
+        self.expand_default()
+
+    def expand_default(self):
+        """Called when the tree view is updated to expand the tree"""
         self.tab.tree.expandAll()
 
     def hide_info_column(self, col_index, ishidden):
@@ -334,7 +338,7 @@ class LocationTreeModel(IfcTreeModelBaseClass):
         self.endResetModel()
 
         self.tab.proxymodel.sort(0, Qt.SortOrder.AscendingOrder)
-        self.tab.tree.expandAll()
+        self.expand_default()
 
     def addItems(self, ifc_object, parent, filename):
         """Helper method for addFile to add items to the tree recursively"""
@@ -417,6 +421,9 @@ class TypeTreeModel(IfcTreeModelBaseClass):
 
         self.endResetModel()
 
+        self.expand_default()
+
+    def expand_default(self):
         self.tab.tree.expandToDepth(0)
 
     def __repr__(self):
@@ -492,6 +499,9 @@ class FlatTreeModel(IfcTreeModelBaseClass):
 
         self.endResetModel()
 
+    def expand_default(self):
+        """Do not expand the treeview in this case"""
+        pass
         
 
     def __repr__(self):
@@ -591,7 +601,7 @@ class IfcCustomTreeModel(IfcTreeModelBaseClass):
 
         self.endResetModel()
 
-        self.tab.tree.expandAll()
+        self.expand_default()
 
     def __repr__(self):
         return f"CustomTreeModel {self.name}"
