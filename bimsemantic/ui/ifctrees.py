@@ -426,13 +426,27 @@ class TypeTreeModel(IfcTreeModelBaseClass):
 class FlatTreeModel(IfcTreeModelBaseClass):
     """Model for the Flat tree view
     
-    The tree view only has two top level nodes, for IfcElements and IfcElementTypes.
+    The tree view has top level nodes for IfcElements, IfcElementTypes,
+    and IfcSpatialElemements.
     The data of several IFC files can be added to the tree with addFile().
 
     :param data: Instance if IfcFiles 
     :param parent: Parent widget should be the IfcTreeTab instance
     """
 
+    def setupRootItem(self):
+        """"Setup the root item and top level nodes of the tree"""
+        self._rootItem = ColheaderTreeItem(self.columntree, parent=None)
+
+        self.elements_item = TreeItem(["IfcElement"], self._rootItem, "IfcElement")
+        self._rootItem.appendChild(self.elements_item)
+
+        self.types_item = TreeItem(["IfcElementType"], self._rootItem, "IfcElementType")
+        self._rootItem.appendChild(self.types_item)
+
+        self.spatialelements_item = TreeItem(["IfcSpatialElement"], self._rootItem, "IfcSpatialElement")
+        self._rootItem.appendChild(self.spatialelements_item)
+        
     def addFile(self, ifc_file):
         """Add data of an IfcFile instance to the tree view
         
@@ -447,12 +461,6 @@ class FlatTreeModel(IfcTreeModelBaseClass):
         filename = ifc_file.filename
 
         elements = ifc_file.model.by_type("IfcElement")
-        element_types = ifc_file.model.by_type("IfcElementType")
-
-        self.elements_item = self.get_child_by_label(self._rootItem, "IfcElement")
-        if not self.elements_item:
-            self.elements_item = TreeItem(["IfcElement"], self._rootItem, "IfcElement")
-            self._rootItem.appendChild(self.elements_item)
 
         for element in elements:
             element_item = self.get_child_by_guid(self.elements_item, element.GlobalId)
@@ -460,24 +468,31 @@ class FlatTreeModel(IfcTreeModelBaseClass):
                 element_item.add_filename(filename)
             else:
                 element_item = IfcTreeItem(element, self.elements_item, self.columntree, filename)
-            self.elements_item.appendChild(element_item)
+                self.elements_item.appendChild(element_item)
 
-        types_item = self.get_child_by_label(self._rootItem, "IfcElementType")
-        if not types_item:
-            types_item = TreeItem(["IfcElementType"], self._rootItem, "IfcElementType")
-            self._rootItem.appendChild(types_item)
+        element_types = ifc_file.model.by_type("IfcElementType")
 
         for element_type in element_types:
-            type_item = self.get_child_by_guid(types_item, element_type.GlobalId)
+            type_item = self.get_child_by_guid(self.types_item, element_type.GlobalId)
             if type_item:
                 type_item.add_filename(filename)
             else:
-                type_item = IfcTreeItem(element_type, types_item, self.columntree, filename)
-            types_item.appendChild(type_item)
+                type_item = IfcTreeItem(element_type, self.types_item, self.columntree, filename)
+                self.types_item.appendChild(type_item)
+
+        spatialelements = ifc_file.model.by_type("IfcSpatialElement")
+
+        for spatialelement in spatialelements:
+            spatial_item = self.get_child_by_guid(self.spatialelements_item, spatialelement.GlobalId)
+            if spatial_item:
+                spatial_item.add_filename(filename)
+            else:
+                spatial_item = IfcTreeItem(spatialelement, self.spatialelements_item, self.columntree, filename)
+                self.spatialelements_item.appendChild(spatial_item)
 
         self.endResetModel()
 
-        #self.tab.tree.expandToDepth(0)
+        
 
     def __repr__(self):
         return "FlatTreeModel"
