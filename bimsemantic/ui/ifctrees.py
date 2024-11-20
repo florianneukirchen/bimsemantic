@@ -527,7 +527,7 @@ class IfcCustomTreeModel(IfcTreeModelBaseClass):
         :type ifc_file: IfcFile
         """
         if not self._customfields:
-            print("No custom fields defined")
+            # This happens because addFile is called on init
             return
         
         self.beginResetModel()

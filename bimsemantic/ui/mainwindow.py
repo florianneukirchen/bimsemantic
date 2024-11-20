@@ -242,10 +242,11 @@ class MainWindow(QMainWindow):
         """Add a custom tree view to the IFC tabs"""
         dlg = CustomTreeDialog(self)
         if dlg.exec():
-            print(dlg.get_name())
+            name = dlg.get_name()
             items = dlg.get_items()
-            for item in items:
-                print(item)
+            if not items:
+                return
+            self.tabs.make_custom_tab(name, items)
 
     def setup_menus(self):
         """Setup the menu and actions of the main window"""

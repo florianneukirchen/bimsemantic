@@ -123,6 +123,21 @@ class IfcTabs(QWidget):
         """Get the number of all IFC element types of the open files"""
         return self.typetab.treemodel._rootItem.childCount()
 
+    def make_custom_tab(self, name, custom_fields):
+
+        ifc_files = self.mainwindow.ifcfiles
+
+        custom_tab = IfcTreeTab(IfcCustomTreeModel, ifc_files, self)
+        custom_tab.treemodel.set_custom_fields(custom_fields)
+        
+        for ifc_file in ifc_files:
+            custom_tab.treemodel.addFile(ifc_file)
+        
+        custom_tab.treemodel.name = name
+
+        self.tabs.addTab(custom_tab, custom_tab.treemodel.name)
+        self.customtabs.append(custom_tab)
+        return custom_tab
 
 class IfcTreeTab(QWidget):
     """Class for the tabs with different IFC tree views

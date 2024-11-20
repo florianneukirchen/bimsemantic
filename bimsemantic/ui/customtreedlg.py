@@ -47,16 +47,28 @@ class CustomTreeMaker:
 
 
 class PropertyListItem(QListWidgetItem):
-    def __init__(self, text, pset_name):
-        super().__init__(text)
+    def __init__(self, name, fieldtype, pset_name=None):
+        super().__init__(name)
+        self.fieldtype = fieldtype
         self.pset_name = pset_name
+        self.name = name
+
+class PropertyTreeItem(QTreeWidgetItem):
+    def __init__(self, parent, name, fieldtype, pset_name=None):
+        super().__init__(parent)
+        self.setText(0, name)
+        self.name = name
+        self.fieldtype = fieldtype
+        self.pset_name = pset_name        
 
 
 class CustomTreeDialog(QDialog):
-    def __init__(self, parent=None):
+    def __init__(self, parent):
         super().__init__(parent=parent)
+        ifcfiles = parent.ifcfiles
+        current_count = len(parent.tabs.customtabs)
 
-        name = "Bla"
+        self.defaultname = self.tr("Custom Treeview") + f" {current_count + 1}"
 
         self.setWindowTitle(self.tr("Create Custom Treeview"))
 
@@ -64,7 +76,7 @@ class CustomTreeDialog(QDialog):
 
         name_layout = QHBoxLayout()
         name_layout.addWidget(QLabel(self.tr("Name")))
-        self.name = QLineEdit(name)
+        self.name = QLineEdit(self.defaultname)
         name_layout.addWidget(self.name)
         layout.addLayout(name_layout)
 
@@ -76,13 +88,38 @@ class CustomTreeDialog(QDialog):
         self.right_list.setMinimumWidth(200)
         self.left_list.setMinimumHeight(300)
 
-        for i in range(3):
-            pset_item = QTreeWidgetItem(self.left_list)
-            pset_item.setText(0, f"Property Set {i}")
-            for j in range(5):
-                prop_item = QTreeWidgetItem(pset_item)
-                prop_item.setText(0, f"Property {i}.{j}")
+        self.info_item = QTreeWidgetItem(self.left_list)
+        self.info_item.setText(0, self.tr("Main attributes"))
 
+        PropertyTreeItem(
+            self.info_item, 
+            self.tr("Type"), 
+            CustomFieldType.TYPE)
+        PropertyTreeItem(
+            self.info_item, 
+            self.tr("Object Type"), 
+            CustomFieldType.OBJECTTYPE)
+        PropertyTreeItem(
+            self.info_item, 
+            self.tr("Filename"), 
+            CustomFieldType.FILENAME)
+        PropertyTreeItem(
+            self.info_item, 
+            self.tr("Contained in"), 
+            CustomFieldType.CONTAINEDIN)
+
+        pset_info = ifcfiles.pset_info
+
+        for pset_name in pset_info.keys():
+            pset_item = QTreeWidgetItem(self.left_list)
+            pset_item.setText(0, pset_name)
+            for prop in pset_info[pset_name]:
+                PropertyTreeItem(
+                    pset_item, 
+                    prop, 
+                    CustomFieldType.PSET,
+                    pset_name)
+                
         self.left_list.expandAll()
         self.left_list.setHeaderHidden(True)
 
@@ -139,7 +176,7 @@ class CustomTreeDialog(QDialog):
         selected_items = self.left_list.selectedItems()
         for item in selected_items:
             if item.parent() is not None:  
-                prop_item = PropertyListItem(item.text(0), item.parent().text(0))
+                prop_item = PropertyListItem(item.name, item.fieldtype, item.pset_name)
                 self.right_list.addItem(prop_item)
                 item.parent().removeChild(item)
 
@@ -147,13 +184,20 @@ class CustomTreeDialog(QDialog):
         selected_items = self.right_list.selectedItems()
         for item in selected_items:
             self.right_list.takeItem(self.right_list.row(item))
-            pset_text = item.pset_name
-            for i in range(self.left_list.topLevelItemCount()):
-                pset_item = self.left_list.topLevelItem(i)
-                if pset_item.text(0) == pset_text:
-                    prop_item = QTreeWidgetItem(pset_item)
-                    prop_item.setText(0, item.text())
-                    pset_item.sortChildren(0, Qt.AscendingOrder)
+            if item.fieldtype == CustomFieldType.PSET:
+                # pset_text = item.pset_name
+                for i in range(1, self.left_list.topLevelItemCount()):
+                    pset_item = self.left_list.topLevelItem(i)
+                    if pset_item.text(0) == item.pset_name:
+                        parent_item = pset_item
+                        break
+            else:
+                parent_item = self.info_item
+            PropertyTreeItem(
+                parent_item, 
+                item.name, 
+                item.fieldtype, 
+                item.pset_name)
 
     def move_item_up(self):
         current_row = self.right_list.currentRow()
@@ -171,38 +215,22 @@ class CustomTreeDialog(QDialog):
 
     def get_name(self):
         """Get the text from the input field"""
-        return self.name.text().strip()
+        name = self.name.text().strip()
+        if name == "":
+            return self.defaultname
+        return name
 
     def get_items(self):
         items = []
         for i in range(self.right_list.count()):
             item = self.right_list.item(i)
-            items.append((item.pset_name, item.text()))
+            custom_field = CustomTreeMaker(
+                item.fieldtype,
+                (item.pset_name, item.name))
+            items.append(custom_field)
         return items
 
-if __name__ == "__main__":
-    from PySide6.QtWidgets import QApplication
-    import sys
 
-    class MainWindow(QMainWindow):
-        def __init__(self):
-            super().__init__()
-            button = QPushButton("Press me")
-            button.clicked.connect(self.button_clicked)
-            self.setCentralWidget(button)
-
-        def button_clicked(self, s):
-            dlg = CustomTreeDialog(self)
-            if dlg.exec() == QDialog.Accepted:
-                print(dlg.get_name())
-                items = dlg.get_items()
-                for item in items:
-                    print(item)
-
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    app.exec()
 
 
 
