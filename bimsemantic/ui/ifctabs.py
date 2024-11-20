@@ -234,4 +234,5 @@ class IfcTreeTab(QWidget):
         """Check if the tab is the active tab, returns bool"""
         return self.tabs.currentWidget() == self
 
-
+    def __repr__(self):
+        return f"IfcTreeTab({self.treemodel.__class__.__name__})"
