@@ -58,7 +58,7 @@ class ColumnsTreeModel(QTreeWidget):
         self.infocols_item = QTreeWidgetItem(self)
 
         # Info Columns
-        self.infocols_item.setText(0, self.tr("Info Columns"))
+        self.infocols_item.setText(0, self.tr("Main Attributes"))
         self.infocols_item.setFlags(self.infocols_item.flags() | Qt.ItemFlag.ItemIsAutoTristate | Qt.ItemFlag.ItemIsUserCheckable)
         
         for col in self.first_cols[1:]:
