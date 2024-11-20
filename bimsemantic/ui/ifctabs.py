@@ -260,12 +260,8 @@ def make_custom_tab2(ifc_files, parent):
                 "type"
             ),
             CustomTreeMaker(
-                CustomFieldType.OBJECTTYPE,
+                CustomFieldType.CONTAINEDIN,
                 "ObjectType"
-            ),
-            CustomTreeMaker(
-                CustomFieldType.PSET,
-                ('_6238B_Klassifizierung', 'Bauteil')
             ),
 
         ]

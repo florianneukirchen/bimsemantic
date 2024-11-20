@@ -488,6 +488,7 @@ class CustomFieldType(Enum):
     OBJECTTYPE = 2
     PSET = 3
     FILENAME = 4
+    CONTAINEDIN = 5
 
 
 class CustomTreeMaker:
@@ -579,6 +580,11 @@ class IfcCustomTreeModel(IfcTreeModelBaseClass):
                         data = self.nan
                 elif customfield.fieldtype == CustomFieldType.FILENAME:
                     data = filename
+                elif customfield.fieldtype == CustomFieldType.CONTAINEDIN:
+                    try:
+                        data = element.ContainedInStructure[0].RelatingStructure.Name
+                    except (IndexError, AttributeError):
+                        data = self.nan
                 else:
                     raise ValueError("Invalid field type")
 
