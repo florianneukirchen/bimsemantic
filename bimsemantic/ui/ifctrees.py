@@ -1,7 +1,6 @@
 from PySide6.QtCore import Qt, QModelIndex
-from bimsemantic.ui import TreeItem, TreeModelBaseclass
+from bimsemantic.ui import TreeItem, TreeModelBaseclass, CustomTreeMaker, CustomFieldType
 import ifcopenshell.util.element
-from enum import Enum
 
 
 
@@ -482,35 +481,6 @@ class FlatTreeModel(IfcTreeModelBaseClass):
 
     def __repr__(self):
         return "FlatTreeModel"
-
-class CustomFieldType(Enum):
-    """Enum for the type used by CustomTreeMaker"""
-    TYPE = 1
-    OBJECTTYPE = 2
-    PSET = 3
-    FILENAME = 4
-    CONTAINEDIN = 5
-
-
-class CustomTreeMaker:
-    def __init__(self, fieldtype, keys=None):
-        self.fieldtype = fieldtype
-        self.keys = keys
-        if self.fieldtype == CustomFieldType.PSET:
-            assert isinstance(self.keys, tuple), "PSET must have two keys, keys should be tuple"
-            assert len(self.keys) == 2, "PSET must have two keys, keys should be tuple" 
-        else:
-            self.keys = None
-
-    def __eq__(self, other):
-        if not isinstance(other, self.__class__):
-            return False
-        return self.__dict__ == other.__dict__
-
-    def __repr__(self):
-        if self.fieldtype == CustomFieldType.PSET:
-            return f"CustomTreeMaker {self.fieldtype.name} {self.keys}"
-        return f"CustomTreeMaker {self.fieldtype.name}"
     
 
 class IfcCustomTreeModel(IfcTreeModelBaseClass):

@@ -17,7 +17,7 @@ from PySide6.QtWidgets import (
 
 
 from bimsemantic.util import IfcFiles
-from bimsemantic.ui import IfcTabs, DetailsTreeModel, OverviewTreeModel, ColumnsTreeModel, WorkerAddFiles
+from bimsemantic.ui import IfcTabs, DetailsTreeModel, OverviewTreeModel, ColumnsTreeModel, WorkerAddFiles, CustomTreeDialog
 
 
 class MainWindow(QMainWindow):
@@ -238,6 +238,15 @@ class MainWindow(QMainWindow):
             if count == 0:
                 self.statusbar.showMessage(self.tr("No element found with ID %i") % id, 5000)
 
+    def add_custom_tree(self):
+        """Add a custom tree view to the IFC tabs"""
+        dlg = CustomTreeDialog(self)
+        if dlg.exec():
+            print(dlg.get_name())
+            items = dlg.get_items()
+            for item in items:
+                print(item)
+
     def setup_menus(self):
         """Setup the menu and actions of the main window"""
         # File menu
@@ -319,8 +328,14 @@ class MainWindow(QMainWindow):
             self,
             triggered=self.show_details,
         )
-
         self._view_menu.addAction(self._overview_act)
+
+        self._addcustomtree_act = QAction(
+            self.tr("&Add custom IFC treeview"),
+            self,
+            triggered=self.add_custom_tree,
+        )
+        self._view_menu.addAction(self._addcustomtree_act)
 
         self._view_menu.addSeparator()
 
