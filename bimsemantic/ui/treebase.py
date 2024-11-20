@@ -73,6 +73,11 @@ class TreeItem:
                     return f"{self._data[0]} ({count_children})"
         return self._data[column]
 
+    @property
+    def label(self):
+        """Get the label of the item"""
+        return self._data[0]
+
     def parent(self):
         """Get the parent item
         

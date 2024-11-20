@@ -256,10 +256,10 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
         """Get the child item with a given label (data of first column) if already present, otherwise None"""
         for child in parent.children:
             try:
-                childlabel = child._data[0]
+                childlabel = child.label
             except AttributeError:
                 continue
-            if child._data[0] == label:
+            if child.label == label:
                 return child
         return None
     
