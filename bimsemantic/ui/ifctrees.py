@@ -417,7 +417,7 @@ class TypeTreeModel(IfcTreeModelBaseClass):
 
         self.endResetModel()
 
-        self.tab.tree.expandAll()
+        self.tab.tree.expandToDepth(0)
 
     def __repr__(self):
         return "TypeTreeModel"
@@ -477,7 +477,7 @@ class FlatTreeModel(IfcTreeModelBaseClass):
 
         self.endResetModel()
 
-        self.tab.tree.expandAll()
+        #self.tab.tree.expandToDepth(0)
 
     def __repr__(self):
         return "FlatTreeModel"
