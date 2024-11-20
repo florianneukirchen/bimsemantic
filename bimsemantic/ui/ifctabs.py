@@ -39,6 +39,7 @@ class IfcTabs(QWidget):
         self.tabs.addTab(self.flattab, self.tr("Flat"))
 
         make_custom_tab(self.ifcfiles, self) # PROVISORISCH #####################
+        make_custom_tab2(self.ifcfiles, self) # PROVISORISCH #####################
 
         self.mainwindow.column_treeview.columnsChanged.connect(self.update_columns)
 
@@ -224,7 +225,6 @@ class IfcTreeTab(QWidget):
 
 def make_custom_tab(ifc_files, parent):
 
-
     custom_fields = [
             CustomTreeMaker(
                 CustomFieldType.PSET,
@@ -252,3 +252,30 @@ def make_custom_tab(ifc_files, parent):
 
 
 
+def make_custom_tab2(ifc_files, parent):
+
+    custom_fields = [
+            CustomTreeMaker(
+                CustomFieldType.TYPE,
+                "type"
+            ),
+            CustomTreeMaker(
+                CustomFieldType.OBJECTTYPE,
+                "ObjectType"
+            ),
+            CustomTreeMaker(
+                CustomFieldType.PSET,
+                ('_6238B_Klassifizierung', 'Bauteil')
+            ),
+
+        ]
+
+
+    custom_tab = IfcTreeTab(IfcCustomTreeModel, ifc_files, parent)
+    custom_tab.treemodel.set_custom_fields(custom_fields)
+    custom_tab.treemodel.name = "Blub"
+
+    # custom_tab.treemodel.pset_columns_changed()
+    parent.tabs.addTab(custom_tab, custom_tab.treemodel.name)
+    parent.customtabs.append(custom_tab)
+    return custom_tab

@@ -484,24 +484,21 @@ class FlatTreeModel(IfcTreeModelBaseClass):
 
 class CustomFieldType(Enum):
     """Enum for the type used by CustomTreeMaker"""
-    INFO = 1
-    PSET = 2
-    FILENAME = 3
+    TYPE = 1
+    OBJECTTYPE = 2
+    PSET = 3
+    FILENAME = 4
 
 
 class CustomTreeMaker:
     def __init__(self, fieldtype, keys=None):
         self.fieldtype = fieldtype
         self.keys = keys
-        if self.fieldtype == CustomFieldType.INFO:
-            assert isinstance(self.keys, str), "INFO must have one key, keys should be str"
-        elif self.fieldtype == CustomFieldType.PSET:
+        if self.fieldtype == CustomFieldType.PSET:
             assert isinstance(self.keys, tuple), "PSET must have two keys, keys should be tuple"
-            assert len(self.keys) == 2, "PSET must have two keys, keys should be tuple"
-        elif self.fieldtype == CustomFieldType.FILENAME:
-            self.keys = None
+            assert len(self.keys) == 2, "PSET must have two keys, keys should be tuple" 
         else:
-            raise ValueError("Invalid fieldname")
+            self.keys = None
 
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
@@ -509,9 +506,9 @@ class CustomTreeMaker:
         return self.__dict__ == other.__dict__
 
     def __repr__(self):
-        if self.fieldtype == CustomFieldType.FILENAME:
-            return f"CustomTreeMaker {self.fieldtype.name}"
-        return f"CustomTreeMaker {self.fieldtype.name} {self.keys}"
+        if self.fieldtype == CustomFieldType.PSET:
+            return f"CustomTreeMaker {self.fieldtype.name} {self.keys}"
+        return f"CustomTreeMaker {self.fieldtype.name}"
     
 
 class IfcCustomTreeModel(IfcTreeModelBaseClass):
@@ -529,7 +526,7 @@ class IfcCustomTreeModel(IfcTreeModelBaseClass):
         self.name = self.tr("Custom")
         self._customfields = []
         super(IfcCustomTreeModel, self).__init__(data, parent)
-        self.nan = self.tr("<None>")
+        self.nan = self.tr("<NULL>")
 
     def set_custom_fields(self, customfields):
         """Set the custom fields for the tree view
@@ -570,8 +567,10 @@ class IfcCustomTreeModel(IfcTreeModelBaseClass):
         for element in elements:
             parent_item = self._rootItem
             for customfield in self._customfields:
-                if customfield.fieldtype == CustomFieldType.INFO:
-                    data = getattr(element, self.customfield.keys, self.nan)
+                if customfield.fieldtype == CustomFieldType.TYPE:
+                    data = element.is_a()
+                elif customfield.fieldtype == CustomFieldType.OBJECTTYPE:
+                    data = element.ObjectType
                 elif customfield.fieldtype == CustomFieldType.PSET:
                     psets = ifcopenshell.util.element.get_psets(element)
                     try:
