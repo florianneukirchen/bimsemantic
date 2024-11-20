@@ -1,6 +1,7 @@
 from PySide6.QtCore import Qt, QModelIndex
 from bimsemantic.ui import TreeItem, TreeModelBaseclass
 import ifcopenshell.util.element
+from enum import Enum
 
 
 
@@ -480,3 +481,126 @@ class FlatTreeModel(IfcTreeModelBaseClass):
 
     def __repr__(self):
         return "FlatTreeModel"
+
+class CustomFieldType(Enum):
+    """Enum for the type used by CustomTreeMaker"""
+    INFO = 1
+    PSET = 2
+    FILENAME = 3
+
+
+class CustomTreeMaker:
+    def __init__(self, fieldtype, keys=None):
+        self.fieldtype = fieldtype
+        self.keys = keys
+        if self.fieldtype == CustomFieldType.INFO:
+            assert isinstance(self.keys, str), "INFO must have one key, keys should be str"
+        elif self.fieldtype == CustomFieldType.PSET:
+            assert isinstance(self.keys, tuple), "PSET must have two keys, keys should be tuple"
+            assert len(self.keys) == 2, "PSET must have two keys, keys should be tuple"
+        elif self.fieldtype == CustomFieldType.FILENAME:
+            self.keys = None
+        else:
+            raise ValueError("Invalid fieldname")
+
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __repr__(self):
+        if self.fieldtype == CustomFieldType.FILENAME:
+            return f"CustomTreeMaker {self.fieldtype.name}"
+        return f"CustomTreeMaker {self.fieldtype.name} {self.keys}"
+    
+
+class IfcCustomTreeModel(IfcTreeModelBaseClass):
+    """Model for the Custom tree view
+    
+    The tree view is organized by the custom fields specified in the CustomTreeMaker.
+    The data of several IFC files can be added to the tree with addFile().
+
+    :param data: Instance if IfcFiles 
+    :param parent: Parent widget should be the IfcTreeTab instance
+    :param customfields: List of instances of CustomTreeMaker
+    """
+
+    def __init__(self, data, parent):
+        self.name = self.tr("Custom")
+        self._customfields = []
+        super(IfcCustomTreeModel, self).__init__(data, parent)
+        self.nan = self.tr("<None>")
+
+    def set_custom_fields(self, customfields):
+        """Set the custom fields for the tree view
+        
+        :param customfields: List of instances of CustomTreeMaker
+        """
+        if not isinstance(customfields, list):
+            raise ValueError("Customfields must be a list of CustomTreeMaker instances")
+        for customfield in customfields:
+            if not isinstance(customfield, CustomTreeMaker):
+                raise ValueError("Customfields must be a list of CustomTreeMaker instances")
+        self._customfields = customfields
+
+    def get_custom_fields(self):
+        """Get the custom fields"""
+        return self._customfields
+
+
+    def addFile(self, ifc_file):
+        """Add data of an IfcFile instance to the tree view
+        
+        If an element with a certain GUID is already present in the tree, 
+        the existing item is used (and the filename is added to the list of filenames),
+        otherwise a new item is created.
+        :param ifc_file: bimsemantic IFC file instance
+        :type ifc_file: IfcFile
+        """
+        if not self._customfields:
+            print("No custom fields defined")
+            return
+        
+        self.beginResetModel()
+
+        filename = ifc_file.filename
+
+        elements = ifc_file.model.by_type("IfcElement")
+
+        for element in elements:
+            parent_item = self._rootItem
+            for customfield in self._customfields:
+                if customfield.fieldtype == CustomFieldType.INFO:
+                    data = getattr(element, self.customfield.keys, self.nan)
+                elif customfield.fieldtype == CustomFieldType.PSET:
+                    psets = ifcopenshell.util.element.get_psets(element)
+                    try:
+                        data = psets[customfield.keys[0]][customfield.keys[1]]
+                    except KeyError:
+                        data = self.nan
+                elif customfield.fieldtype == CustomFieldType.FILENAME:
+                    data = filename
+                else:
+                    raise ValueError("Invalid field type")
+
+                customfield_item = self.get_child_by_label(parent_item, data)
+                if not customfield_item:
+                    customfield_item = TreeItem([data], parent_item)
+                    parent_item.appendChild(customfield_item)
+
+                parent_item = customfield_item
+
+            item = self.get_child_by_guid(parent_item, element.GlobalId)
+            if item:
+                item.add_filename(filename)
+            else:
+                item = IfcTreeItem(element, parent_item, self.columntree, filename)
+                parent_item.appendChild(item)
+
+
+        self.endResetModel()
+
+        self.tab.tree.expandAll()
+
+    def __repr__(self):
+        return f"CustomTreeModel {self.name}"

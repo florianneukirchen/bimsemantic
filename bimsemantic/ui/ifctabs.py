@@ -1,6 +1,6 @@
 from PySide6.QtCore import QSortFilterProxyModel, QTimer, QItemSelection
 from PySide6.QtWidgets import QTreeView, QWidget, QTabWidget, QVBoxLayout
-from bimsemantic.ui import LocationTreeModel, TypeTreeModel, FlatTreeModel, IfcTreeItem
+from bimsemantic.ui import LocationTreeModel, TypeTreeModel, FlatTreeModel, IfcTreeItem, CustomFieldType, CustomTreeMaker, IfcCustomTreeModel
 
 
 class IfcTabs(QWidget):
@@ -27,6 +27,8 @@ class IfcTabs(QWidget):
         self.layout.addWidget(self.tabs)
         self.setLayout(self.layout)
 
+        self.customtabs = []
+
         self.locationtab = IfcTreeTab(LocationTreeModel, self.ifcfiles, self)
         self.tabs.addTab(self.locationtab, self.tr("Location"))
 
@@ -35,6 +37,8 @@ class IfcTabs(QWidget):
 
         self.flattab = IfcTreeTab(FlatTreeModel, self.ifcfiles, self) 
         self.tabs.addTab(self.flattab, self.tr("Flat"))
+
+        make_custom_tab(self.ifcfiles, self) # PROVISORISCH #####################
 
         self.mainwindow.column_treeview.columnsChanged.connect(self.update_columns)
 
@@ -48,6 +52,8 @@ class IfcTabs(QWidget):
         self.locationtab.treemodel.addFile(ifc_file)
         self.typetab.treemodel.addFile(ifc_file)
         self.flattab.treemodel.addFile(ifc_file)
+        for tab in self.customtabs:
+            tab.treemodel.addFile(ifc_file)
 
     def update_columns(self):
         """Update the columns in all tree views
@@ -214,3 +220,35 @@ class IfcTreeTab(QWidget):
     def is_active_tab(self):
         """Check if the tab is the active tab, returns bool"""
         return self.tabs.currentWidget() == self
+
+
+def make_custom_tab(ifc_files, parent):
+
+
+    custom_fields = [
+            CustomTreeMaker(
+                CustomFieldType.PSET,
+                ('_6238B_Klassifizierung', 'Fachmodell')
+            ),
+            CustomTreeMaker(
+                CustomFieldType.PSET,
+                ('_6238B_Klassifizierung', 'Bauteilgruppe')
+            ),
+            CustomTreeMaker(
+                CustomFieldType.PSET,
+                ('_6238B_Klassifizierung', 'Bauteil')
+            ),
+        ]
+
+
+    custom_tab = IfcTreeTab(IfcCustomTreeModel, ifc_files, parent)
+    custom_tab.treemodel.set_custom_fields(custom_fields)
+    custom_tab.treemodel.name = "Fachmodell"
+
+    # custom_tab.treemodel.pset_columns_changed()
+    parent.tabs.addTab(custom_tab, custom_tab.treemodel.name)
+    parent.customtabs.append(custom_tab)
+    return custom_tab
+
+
+
