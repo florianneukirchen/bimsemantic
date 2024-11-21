@@ -188,8 +188,11 @@ class IfcTabs(QWidget):
         active_tab = self.tabs.currentWidget()
         if not active_tab:
             return
+        
+        add_header = self.mainwindow.chk_copy_with_headers.isChecked()
+
         clipboard = QApplication.clipboard()
-        clipboard.setText(active_tab.rows_to_csv(sep="\t"))
+        clipboard.setText(active_tab.rows_to_csv(sep="\t", add_header=add_header))
 
     def copy_active_cell_to_clipboard(self):
         """Copy the active cell to the clipboard"""
@@ -342,7 +345,7 @@ class IfcTreeTab(QWidget):
         return self.tabs.currentWidget() == self
 
 
-    def rows_to_csv(self, sep=";", all=False):
+    def rows_to_csv(self, sep=";", all=False, add_header=False, add_level=False):
         """Get the selected rows as CSV string
         
         The columns are separated by the given separator.
@@ -354,8 +357,10 @@ class IfcTreeTab(QWidget):
             # Sort the indexes by the visual order in the tree view
             indexes.sort(key=lambda index: self.tree.visualRect(index).top())
         rows = []
-        headerrow = [self.treemodel.headerData(i) for i in range(self.treemodel.columnCount()) if not self.tree.isColumnHidden(i)]
-        rows.append(sep.join(headerrow))
+
+        if add_header:
+            headerrow = [self.treemodel.headerData(i) for i in range(self.treemodel.columnCount()) if not self.tree.isColumnHidden(i)]
+            rows.append(sep.join(headerrow))
 
         for index in indexes:
             source_index = self.proxymodel.mapToSource(index)

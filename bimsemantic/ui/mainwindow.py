@@ -13,6 +13,8 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QLineEdit,
     QComboBox,
+    QCheckBox,
+    QWidgetAction,
 )
 
 from ifcopenshell import entity_instance
@@ -309,6 +311,16 @@ class MainWindow(QMainWindow):
         )
         self._edit_menu.addAction(self._copy_cell_act)
 
+        self.chk_copy_with_headers = QAction(self.tr("Copy with headers"), self, checkable=True)
+        self.chk_copy_with_headers.setChecked(False)
+        self._edit_menu.addAction(self.chk_copy_with_headers)
+
+        # self.chk_copy_with_level = QAction(self.tr("Copy with column of hierarchic level"), self, checkable=True)
+        # self.chk_copy_with_level.setChecked(False)
+        # self._edit_menu.addAction(self.chk_copy_with_level)
+
+        self._edit_menu.addSeparator()
+
         self._edit_selection_menu = self._edit_menu.addMenu(self.tr("&Selection"))
 
         self._select_by_guid_act = QAction(
@@ -334,6 +346,8 @@ class MainWindow(QMainWindow):
             triggered=self.select_by_tag
         )
         self._edit_selection_menu.addAction(self._select_by_tag_act)
+
+        self._edit_selection_menu.addSeparator()
 
         self._clearselection_act = QAction(
             self.tr("Clear selection"),
