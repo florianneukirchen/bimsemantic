@@ -221,14 +221,14 @@ class IfcTreeTab(QWidget):
         # Note: using selected.indexes() is not enough: after selecting multiple rows, 
         # and pressing arrow or clicking on a row, one row is still selected, but 
         # no index is passed. The following line works.
-        indexes = self.tree.selectionModel().selectedIndexes()
+        indexes = self.tree.selectionModel().selectedRows()
         if not indexes:
             self.mainwindow.show_details()
             print("n")
             return
         
         # Only use the indexes of the first column
-        indexes = [index for index in indexes if index.column() == 0]
+        # indexes = [index for index in indexes if index.column() == 0]
         items = []
 
         for index in indexes:
@@ -248,6 +248,8 @@ class IfcTreeTab(QWidget):
         # Synchronize the selection in the other tabs
         if len(items) > 1:
             self.mainwindow.statusbar.showMessage(self.tr("%i items selected") % len(items))
+        else:
+            self.mainwindow.statusbar.clearMessage()
 
         for i in range(self.tabs.count()):
             tab = self.tabs.widget(i)
