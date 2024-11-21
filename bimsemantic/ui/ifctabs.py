@@ -1,5 +1,5 @@
 from PySide6.QtCore import QSortFilterProxyModel, QTimer, QItemSelection
-from PySide6.QtWidgets import QTreeView, QWidget, QTabWidget, QVBoxLayout
+from PySide6.QtWidgets import QTreeView, QWidget, QTabWidget, QTabBar, QVBoxLayout, QPushButton, QStyle
 from bimsemantic.ui import LocationTreeModel, TypeTreeModel, FlatTreeModel, IfcTreeItem, CustomFieldType, CustomTreeMaker, IfcCustomTreeModel
 
 
@@ -121,7 +121,14 @@ class IfcTabs(QWidget):
         return self.typetab.treemodel._rootItem.childCount()
 
     def make_custom_tab(self, name, custom_fields):
-
+        """Create a custom tab with
+        
+        The hierarchy of the tree view is defined by the custom_fields list,
+        which contains instances of CustomFieldType.
+        :param name: The name of the tab
+        :param custom_fields: List of CustomFieldType instances
+        :return: The created tab
+        """
         ifc_files = self.mainwindow.ifcfiles
 
         custom_tab = IfcTreeTab(IfcCustomTreeModel, ifc_files, self)
@@ -134,7 +141,27 @@ class IfcTabs(QWidget):
 
         self.tabs.addTab(custom_tab, custom_tab.treemodel.name)
         self.customtabs.append(custom_tab)
+
+        custom_tab.close_button = QPushButton("")
+        icon = self.style().standardIcon(QStyle.StandardPixmap.SP_DockWidgetCloseButton)
+        custom_tab.close_button.setIcon(icon)
+        custom_tab.close_button.setFixedSize(16, 16)
+
+        custom_tab.close_button.clicked.connect(lambda: self.remove_custom_tab(custom_tab))
+
+        tab_index = self.tabs.indexOf(custom_tab)
+        self.tabs.tabBar().setTabButton(tab_index, QTabBar.RightSide, custom_tab.close_button)
+
         return custom_tab
+
+    def remove_custom_tab(self, custom_tab):
+        """Remove a custom tab after clicking the close button"""
+        tab_index = self.tabs.indexOf(custom_tab)
+        if tab_index != -1:
+            self.tabs.removeTab(tab_index)
+            self.customtabs.remove(custom_tab)
+            custom_tab.deleteLater()
+
 
 class IfcTreeTab(QWidget):
     """Class for the tabs with different IFC tree views
@@ -169,6 +196,8 @@ class IfcTreeTab(QWidget):
         self.tree.selectionModel().selectionChanged.connect(self.on_selection_changed)
         self.setLayout(self.layout)
         self.layout.addWidget(self.tree)
+
+        self.closebutton = None
         
 
     def on_selection_changed(self, selected: QItemSelection, deselected: QItemSelection):
