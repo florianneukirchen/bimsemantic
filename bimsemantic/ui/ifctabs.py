@@ -1,4 +1,5 @@
-from PySide6.QtCore import QSortFilterProxyModel, QTimer, QItemSelection, QItemSelectionModel, QModelIndex
+from PySide6.QtCore import QSortFilterProxyModel, QTimer, QItemSelection, QItemSelectionModel, QModelIndex, QEvent
+from PySide6.QtGui import QKeySequence
 from PySide6.QtWidgets import QTreeView, QAbstractItemView, QWidget, QTabWidget, QTabBar, QVBoxLayout, QPushButton, QStyle, QApplication
 from bimsemantic.ui import LocationTreeModel, TypeTreeModel, FlatTreeModel, IfcTreeItem, CustomFieldType, CustomTreeMaker, IfcCustomTreeModel
 
@@ -40,6 +41,20 @@ class IfcTabs(QWidget):
 
         self.mainwindow.column_treeview.columnsChanged.connect(self.update_columns)
 
+        self.installEventFilter(self)
+
+    def eventFilter(self, source, event):
+        """Event filter to catch the copy event
+        
+        Otherwise Ctrl+C would copy only the active cell.
+        """
+
+        #https://stackoverflow.com/questions/40225270/copy-paste-multiple-items-from-qtableview-in-pyqt4
+        if event.type() == QEvent.KeyPress:
+            if event.matches(QKeySequence.Copy):
+                self.copy_selection_to_clipboard()
+                return True
+        return super(IfcTabs, self).eventFilter(source, event)
 
     def addFile(self, ifc_file):
         """Add data of an IFC file to the tree views
@@ -175,6 +190,17 @@ class IfcTabs(QWidget):
             return
         clipboard = QApplication.clipboard()
         clipboard.setText(active_tab.rows_to_csv(sep="\t"))
+
+    def copy_active_cell_to_clipboard(self):
+        """Copy the active cell to the clipboard"""
+        active_tab = self.tabs.currentWidget()
+        if not active_tab:
+            return
+        index = active_tab.tree.currentIndex()
+        if index.isValid():
+            data = index.data()
+            clipboard = QApplication.clipboard()
+            clipboard.setText(data)    
 
 class IfcTreeTab(QWidget):
     """Class for the tabs with different IFC tree views

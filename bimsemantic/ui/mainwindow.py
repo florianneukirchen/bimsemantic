@@ -292,12 +292,22 @@ class MainWindow(QMainWindow):
         self._edit_menu = self.menuBar().addMenu(self.tr("&Edit"))
 
         self._copy_rows_act = QAction(
-            self.tr("Copy rows"),
+            self.tr("&Copy rows"),
             self,
+            shortcut=self.tr("Ctrl+C"),
             statusTip=self.tr("Copy selected rows to clipboard"),
             triggered=self.tabs.copy_selection_to_clipboard,
         )
         self._edit_menu.addAction(self._copy_rows_act)
+
+        self._copy_cell_act = QAction(
+            self.tr("Copy cell"),
+            self,
+            shortcut=self.tr("Shift+Ctrl+C"),
+            statusTip=self.tr("Copy selected cell to clipboard"),
+            triggered=self.tabs.copy_active_cell_to_clipboard,
+        )
+        self._edit_menu.addAction(self._copy_cell_act)
 
         self._edit_selection_menu = self._edit_menu.addMenu(self.tr("&Selection"))
 
