@@ -15,9 +15,9 @@ from PySide6.QtWidgets import (
     QComboBox,
 )
 
-
+from ifcopenshell import entity_instance
 from bimsemantic.util import IfcFiles
-from bimsemantic.ui import IfcTabs, DetailsTreeModel, OverviewTreeModel, ColumnsTreeModel, WorkerAddFiles, CustomTreeDialog
+from bimsemantic.ui import IfcTabs, IfcDetailsTreeModel, OverviewTreeModel, ColumnsTreeModel, WorkerAddFiles, CustomTreeDialog
 
 
 class MainWindow(QMainWindow):
@@ -377,7 +377,7 @@ class MainWindow(QMainWindow):
     
         self.tabifyDockWidget(self.detailsdock, self.columnsdock)
 
-    def show_details(self, id=None, filenames=None):
+    def show_details(self, data=None, filenames=None):
         """Show the details of an IFC element
         
         ID is the ID of the element, as in the first file of the list of filenames.
@@ -391,10 +391,12 @@ class MainWindow(QMainWindow):
         """
         if self.ifcfiles.count() == 0:
             return
-        if not id:
+        print(type(data), data)
+        if isinstance(data, entity_instance):
+            detailModel = IfcDetailsTreeModel(data, self, filenames)
+        else:
             self.detailsdock.setWidget(self.overviewtree)
             return
-        detailModel = DetailsTreeModel(id, self, filenames)
         treeview = QTreeView()
         treeview.setModel(detailModel)
         treeview.setColumnWidth(0, 170)

@@ -2,7 +2,7 @@ import ifcopenshell.util.element
 from .treebase import TreeItem, TreeModelBaseclass
 
 
-class DetailsTreeModel(TreeModelBaseclass):
+class IfcDetailsTreeModel(TreeModelBaseclass):
     """Model for the tree view of the details dock widget
     
     :param id: The ID of the element in the first file of filenames
@@ -10,11 +10,11 @@ class DetailsTreeModel(TreeModelBaseclass):
     :param parent: The parent widget (main window)
     :param filenames: The list of filenames
     """
-    def __init__(self, id, parent, filenames=None):
+    def __init__(self, ifc_element, parent, filenames=None):
         self.filenames = filenames
         self._mainwindow = parent
-        element = parent.ifcfiles.get_element(self.filenames[0], id)
-        super(DetailsTreeModel, self).__init__(element, parent)
+        element = ifc_element
+        super(IfcDetailsTreeModel, self).__init__(element, parent)
 
     def newItem(self, key, value, parent):
         """Helper to create new items of key-value pairs

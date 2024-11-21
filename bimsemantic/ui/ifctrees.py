@@ -191,6 +191,11 @@ class IfcTreeItem(TreeItem):
         """Global unique ID (GlobalID) of the object (str)"""
         return self._guid
     
+    @property
+    def ifc(self):
+        """IFC entity instance from IfcOpenShell"""
+        return self._ifc_item
+    
     def __repr__(self):
         return f"IfcTreeItem: {self._ifc_item.is_a()} {self._ifc_item.id()}"
 

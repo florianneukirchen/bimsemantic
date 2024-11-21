@@ -233,15 +233,15 @@ class IfcTreeTab(QWidget):
     
         if isinstance(item, IfcTreeItem):
             print(item)
-            self.mainwindow.show_details(item.id, item.filenames)
+            self.mainwindow.show_details(item.ifc, item.filenames)
             guid = item.guid
             for i in range(self.tabs.count()):
                 tab = self.tabs.widget(i)
                 if tab != self:
                     tab.select_item_by_guid(guid)
         else:
-            # TreeItem
-            print(item)
+            self.mainwindow.show_details(item.id)
+            print(item, item.id)
 
     def clear_selection(self):
         """Clear the selection in the QTreeView"""
