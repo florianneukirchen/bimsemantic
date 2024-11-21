@@ -162,6 +162,11 @@ class IfcTabs(QWidget):
             self.customtabs.remove(custom_tab)
             custom_tab.deleteLater()
 
+    def clear_selection(self):
+        """Clear the selection in all tree views"""
+        for i in range(self.tabs.count()):
+            tab = self.tabs.widget(i)
+            tab.clear_selection()
 
 class IfcTreeTab(QWidget):
     """Class for the tabs with different IFC tree views
@@ -237,6 +242,10 @@ class IfcTreeTab(QWidget):
         else:
             # TreeItem
             print(item)
+
+    def clear_selection(self):
+        """Clear the selection in the QTreeView"""
+        self.tree.selectionModel().clearSelection()
 
 
     def select_item_by_guid(self, guid):

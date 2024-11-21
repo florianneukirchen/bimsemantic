@@ -37,13 +37,14 @@ class MainWindow(QMainWindow):
         self.statusbar.addPermanentWidget(self.progressbar)
         self.overviewtree = QTreeView()
         self.column_treeview = ColumnsTreeModel(parent=self)
+        self.tabs = IfcTabs(self)
 
         self.threadpool = QThreadPool()
         self.workers = []
 
         self.setup_menus()
         self.create_dock_windows()
-        self.tabs = IfcTabs(self) 
+         
         self.setCentralWidget(self.tabs)
         self.setAcceptDrops(True)
 
@@ -262,7 +263,6 @@ class MainWindow(QMainWindow):
             statusTip=self.tr("Open IFC files"),
             triggered=self.open_file_dlg,
         )
-
         self._file_menu.addAction(self._open_act)
 
         icon = QIcon.fromTheme("document-close")
@@ -274,7 +274,6 @@ class MainWindow(QMainWindow):
             statusTip=self.tr("Close all IFC files"),
             triggered=self.close_all,
         )
-
         self._file_menu.addAction(self._close_act)
 
         self._file_menu.addSeparator()
@@ -300,26 +299,31 @@ class MainWindow(QMainWindow):
             statusTip=self.tr("Select IFC element by GUID"),
             triggered=self.select_by_guid,
         )
-
         self._edit_selection_menu.addAction(self._select_by_guid_act)
 
         self._select_by_id_act = QAction(
             self.tr("Select by &ID"),
             self,
             statusTip=self.tr("Select IFC element by ID and filename"),
-            triggered=self.select_by_id,
+            triggered=self.select_by_id
         )
-
         self._edit_selection_menu.addAction(self._select_by_id_act)
 
         self._select_by_tag_act = QAction(
             self.tr("Select by &Tag"),
             self,
             statusTip=self.tr("Select IFC element (IfcElement) by Tag"),
-            triggered=self.select_by_tag,
+            triggered=self.select_by_tag
         )
-
         self._edit_selection_menu.addAction(self._select_by_tag_act)
+
+        self._clearselection_act = QAction(
+            self.tr("Clear selection"),
+            self,
+            statusTip=self.tr("Clear selection in all IFC tabs"),
+            triggered=self.tabs.clear_selection
+        )
+        self._edit_selection_menu.addAction(self._clearselection_act)
 
         # View menu
         self._view_menu = self.menuBar().addMenu(self.tr("&View"))
