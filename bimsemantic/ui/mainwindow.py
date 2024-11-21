@@ -311,13 +311,15 @@ class MainWindow(QMainWindow):
         )
         self._edit_menu.addAction(self._copy_cell_act)
 
+        self._copyoptions_menu = self._edit_menu.addMenu(self.tr("Copy options"))
+
         self.chk_copy_with_headers = QAction(self.tr("Copy with headers"), self, checkable=True)
         self.chk_copy_with_headers.setChecked(False)
-        self._edit_menu.addAction(self.chk_copy_with_headers)
+        self._copyoptions_menu.addAction(self.chk_copy_with_headers)
 
-        # self.chk_copy_with_level = QAction(self.tr("Copy with column of hierarchic level"), self, checkable=True)
-        # self.chk_copy_with_level.setChecked(False)
-        # self._edit_menu.addAction(self.chk_copy_with_level)
+        self.chk_copy_with_level = QAction(self.tr("Copy with column of hierarchic level"), self, checkable=True)
+        self.chk_copy_with_level.setChecked(False)
+        self._copyoptions_menu.addAction(self.chk_copy_with_level)
 
         self._edit_menu.addSeparator()
 

@@ -50,6 +50,15 @@ class TreeItem:
         if leaves == 0:
             return 1
         return leaves
+    
+    def level(self):
+        """Get the level of the item in the tree"""
+        level = -1 # Do not include the root item
+        parent = self._parent
+        while parent:
+            level += 1
+            parent = parent.parent()
+        return level
 
     def data(self, column):
         """Get the data for a column

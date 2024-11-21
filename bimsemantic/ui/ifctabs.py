@@ -190,9 +190,10 @@ class IfcTabs(QWidget):
             return
         
         add_header = self.mainwindow.chk_copy_with_headers.isChecked()
+        add_level = self.mainwindow.chk_copy_with_level.isChecked()
 
         clipboard = QApplication.clipboard()
-        clipboard.setText(active_tab.rows_to_csv(sep="\t", add_header=add_header))
+        clipboard.setText(active_tab.rows_to_csv(sep="\t", add_header=add_header, add_level=add_level))
 
     def copy_active_cell_to_clipboard(self):
         """Copy the active cell to the clipboard"""
@@ -360,6 +361,8 @@ class IfcTreeTab(QWidget):
 
         if add_header:
             headerrow = [self.treemodel.headerData(i) for i in range(self.treemodel.columnCount()) if not self.tree.isColumnHidden(i)]
+            if add_level:
+                headerrow.insert(0, "Level")
             rows.append(sep.join(headerrow))
 
         for index in indexes:
@@ -370,9 +373,10 @@ class IfcTreeTab(QWidget):
             # Empty cells are returned as str "None"
             for i in range(len(row)):
                 if row[i] == "None":
-                    print(row[i])
                     row[i] = ""
 
+            if add_level:
+                row.insert(0, str(item.level()))
             rows.append(sep.join(row))
         return "\n".join(rows)
 
