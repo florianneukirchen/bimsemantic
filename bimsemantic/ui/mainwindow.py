@@ -391,7 +391,6 @@ class MainWindow(QMainWindow):
         """
         if self.ifcfiles.count() == 0:
             return
-        print(type(data), data)
         if isinstance(data, entity_instance):
             detailModel = IfcDetailsTreeModel(data, self, filenames)
         else:

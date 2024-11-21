@@ -190,13 +190,15 @@ class ColumnsTreeModel(QTreeWidget):
         :param column: The column of the checkbox
         """
         if item.checkState(column) in (Qt.CheckState.Checked, Qt.CheckState.Unchecked) and item.parent() is not None:
-            if item.parent().text(column) == self.tr("Info Columns"):
+            top_level_index = self.indexOfTopLevelItem(item.parent())
+            if top_level_index == 0:
+                # Columns of the main attributes can only be hidden, not added/removed
                 ishidden = item.checkState(column) == Qt.CheckState.Unchecked
                 col_index = self.first_cols.index(item.text(column))
                 self.hideInfoColumn.emit(col_index, ishidden)
             else:
-                self.blockSignals(True)
-                self.blockSignals(False)
+                # self.blockSignals(True)
+                # self.blockSignals(False)
                 self.timer.start(10)
 
     def emit_columns_changed(self):

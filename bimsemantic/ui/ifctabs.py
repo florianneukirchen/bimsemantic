@@ -1,4 +1,4 @@
-from PySide6.QtCore import QSortFilterProxyModel, QTimer, QItemSelection
+from PySide6.QtCore import QSortFilterProxyModel, QTimer, QItemSelection, QItemSelectionModel
 from PySide6.QtWidgets import QTreeView, QAbstractItemView, QWidget, QTabWidget, QTabBar, QVBoxLayout, QPushButton, QStyle
 from bimsemantic.ui import LocationTreeModel, TypeTreeModel, FlatTreeModel, IfcTreeItem, CustomFieldType, CustomTreeMaker, IfcCustomTreeModel
 
@@ -227,28 +227,42 @@ class IfcTreeTab(QWidget):
             print("n")
             return
         
-        index = indexes[0]
-        source_index = self.proxymodel.mapToSource(index)
-        item = source_index.internalPointer()
+        items = []
+
+        for index in indexes:
+            source_index = self.proxymodel.mapToSource(index)
+            item = source_index.internalPointer()
+            items.append(item)
     
-        if isinstance(item, IfcTreeItem):
+        # Show the details of the first selected item
+        if isinstance(items[0], IfcTreeItem):
             print(item)
             self.mainwindow.show_details(item.ifc, item.filenames)
-            guid = item.guid
-            for i in range(self.tabs.count()):
-                tab = self.tabs.widget(i)
-                if tab != self:
-                    tab.select_item_by_guid(guid)
         else:
             self.mainwindow.show_details(item.id)
             print(item, item.id)
+
+        # Synchronize the selection in the other tabs
+        for i in range(self.tabs.count()):
+            tab = self.tabs.widget(i)
+            if tab != self:
+                tab.clear_selection()
+                
+        for item in items:
+            if isinstance(item, IfcTreeItem):    
+                guid = item.guid
+                for i in range(self.tabs.count()):
+                    tab = self.tabs.widget(i)
+                    if tab != self:
+                        tab.select_item_by_guid(guid, add=True)
+
 
     def clear_selection(self):
         """Clear the selection in the QTreeView"""
         self.tree.selectionModel().clearSelection()
 
 
-    def select_item_by_guid(self, guid):
+    def select_item_by_guid(self, guid, add=False):
         """Select an item by its GUID
         
         Select the item in the tree view and scroll to it.
@@ -257,7 +271,12 @@ class IfcTreeTab(QWidget):
         index = self.treemodel.find_index_by_guid(guid)
         if index.isValid():
             proxy_index = self.proxymodel.mapFromSource(index)
-            self.tree.setCurrentIndex(proxy_index)
+            if add:
+                selection_model = self.tree.selectionModel()
+                selection_model.select(proxy_index, QItemSelectionModel.Select | QItemSelectionModel.Rows)
+            else:
+                # Only select the new item
+                self.tree.setCurrentIndex(proxy_index)
             self.tree.scrollTo(proxy_index)
             return True
         return False
