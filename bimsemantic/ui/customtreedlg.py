@@ -17,7 +17,11 @@ from PySide6.QtWidgets import (
 )
 
 class CustomFieldType(Enum):
-    """Enum for the type used by CustomTreeMaker"""
+    """Enum for the type used by CustomTreeMaker
+    
+    These define where the data comes from: from the property sets,
+    from attributes of the Ifc element etc.
+    """
     TYPE = 1
     OBJECTTYPE = 2
     PSET = 3
@@ -26,6 +30,15 @@ class CustomFieldType(Enum):
 
 
 class CustomTreeMaker:
+    """Definition for one of the hierarchy levels of a custom tree
+    
+    A list of CustomTreeMaker instances can be passed to IfcCustomTreeModel.
+
+    :param fieldtype: Defines how to get the data
+    :type fieldtype: CustomFieldType
+    :param keys: Tuple of two keys for the PSET dictionary, only needed for CustomFieldType.PSET.
+    :type keys: Tuple of str, optional
+    """
     def __init__(self, fieldtype, keys=None):
         self.fieldtype = fieldtype
         self.keys = keys
@@ -47,6 +60,10 @@ class CustomTreeMaker:
 
 
 class PropertyListItem(QListWidgetItem):
+    """Helper class for CustomTreeDialog
+    
+    Used in the list view on the right side of the dialog.
+    """
     def __init__(self, name, fieldtype, pset_name=None):
         super().__init__(name)
         self.fieldtype = fieldtype
@@ -54,6 +71,10 @@ class PropertyListItem(QListWidgetItem):
         self.name = name
 
 class PropertyTreeItem(QTreeWidgetItem):
+    """Helper class for CustomTreeDialog
+    
+    Used in the tree view on the left side of the dialog.
+    """
     def __init__(self, parent, name, fieldtype, pset_name=None):
         super().__init__(parent)
         self.setText(0, name)
@@ -63,6 +84,10 @@ class PropertyTreeItem(QTreeWidgetItem):
 
 
 class CustomTreeDialog(QDialog):
+    """Dialog to define a custom tree view
+    
+    :param parent: Parent widget (main window)
+    """
     def __init__(self, parent):
         super().__init__(parent=parent)
         ifcfiles = parent.ifcfiles
@@ -173,6 +198,7 @@ class CustomTreeDialog(QDialog):
         self.setLayout(layout)
 
     def add_item(self):
+        """Takes an item of the treeview on the left and adds it in the list on the right"""
         selected_items = self.left_list.selectedItems()
         for item in selected_items:
             if item.parent() is not None:  
@@ -181,6 +207,7 @@ class CustomTreeDialog(QDialog):
                 item.parent().removeChild(item)
 
     def remove_item(self):
+        """Removes an item in the list on the right and adds it again on the left"""
         selected_items = self.right_list.selectedItems()
         for item in selected_items:
             self.right_list.takeItem(self.right_list.row(item))
@@ -200,6 +227,7 @@ class CustomTreeDialog(QDialog):
                 item.pset_name)
 
     def move_item_up(self):
+        """Move item up in the list on the right side"""
         current_row = self.right_list.currentRow()
         if current_row > 0:
             item = self.right_list.takeItem(current_row)
@@ -207,6 +235,7 @@ class CustomTreeDialog(QDialog):
             self.right_list.setCurrentItem(item)
 
     def move_item_down(self):
+        """Move item up the list on the right side"""
         current_row = self.right_list.currentRow()
         if current_row < self.right_list.count() - 1:
             item = self.right_list.takeItem(current_row)
@@ -214,13 +243,19 @@ class CustomTreeDialog(QDialog):
             self.right_list.setCurrentItem(item)
 
     def get_name(self):
-        """Get the text from the input field"""
+        """Get the text from the name input field"""
         name = self.name.text().strip()
         if name == "":
             return self.defaultname
         return name
 
     def get_items(self):
+        """Get CustomTreeMaker items
+        
+        Turns the items of the listview to CustomTreeMaker instances
+        and returns them
+        :rtype: list of CustomTreeMaker
+        """
         items = []
         for i in range(self.right_list.count()):
             item = self.right_list.item(i)

@@ -243,7 +243,10 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
         self.expand_default()
 
     def expand_default(self):
-        """Called when the tree view is updated to expand the tree"""
+        """Called when the tree view is updated to expand the tree
+        
+        If not overwritten in derived classes, expand all levels
+        """
         self.tab.tree.expandAll()
 
     def hide_info_column(self, col_index, ishidden):
@@ -511,8 +514,9 @@ class FlatTreeModel(IfcTreeModelBaseClass):
 class IfcCustomTreeModel(IfcTreeModelBaseClass):
     """Model for the Custom tree view
     
-    The tree view is organized by the custom fields specified in the CustomTreeMaker.
-    The data of several IFC files can be added to the tree with addFile().
+    The tree view is organized by the custom fields specified as a list of  
+    CustomTreeMaker instances. After init, the data must be added to the tree 
+    with addFile().
 
     :param data: Instance if IfcFiles 
     :param parent: Parent widget should be the IfcTreeTab instance

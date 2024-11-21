@@ -75,7 +75,7 @@ class TreeItem:
 
     @property
     def label(self):
-        """Get the label of the item"""
+        """Get the the data of the first column without the count of children"""
         return self._data[0]
 
     def parent(self):

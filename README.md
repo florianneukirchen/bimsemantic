@@ -6,6 +6,7 @@
 - Spalten umsortieren in allen tabs
 - Selection? Copy Paste as table
 - tabs: Material, Psets
+- Ausklappen bis Ebene x
 
 
 ## Installation
