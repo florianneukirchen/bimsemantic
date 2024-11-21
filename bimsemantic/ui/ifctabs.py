@@ -1,5 +1,5 @@
 from PySide6.QtCore import QSortFilterProxyModel, QTimer, QItemSelection
-from PySide6.QtWidgets import QTreeView, QWidget, QTabWidget, QTabBar, QVBoxLayout, QPushButton, QStyle
+from PySide6.QtWidgets import QTreeView, QAbstractItemView, QWidget, QTabWidget, QTabBar, QVBoxLayout, QPushButton, QStyle
 from bimsemantic.ui import LocationTreeModel, TypeTreeModel, FlatTreeModel, IfcTreeItem, CustomFieldType, CustomTreeMaker, IfcCustomTreeModel
 
 
@@ -180,15 +180,19 @@ class IfcTreeTab(QWidget):
         self.ifc_files = ifc_files
         self.layout = QVBoxLayout(self)
 
+        # Use a Proxy model to enable sorting
         self.proxymodel = QSortFilterProxyModel(self)
         self.proxymodel.setSourceModel(self.treemodel)
+
         self.tree = QTreeView()
         self.tree.setModel(self.proxymodel)
         self.tree.setSortingEnabled(True)
         self.tree.setAlternatingRowColors(True)
-
         self.tree.setColumnWidth(0, 250)
         self.tree.setColumnWidth(2, 250)
+
+        # Allow selection of multiple rows instead of only one row
+        self.tree.setSelectionMode(QAbstractItemView.ExtendedSelection)
         
         for column in self.treemodel.columntree.hidden_info_columns():
             self.tree.setColumnHidden(column, True)
@@ -209,10 +213,14 @@ class IfcTreeTab(QWidget):
         if not self.is_active_tab():
             return
 
-        indexes = selected.indexes()
+        # Note: using selected.indexes() is not enough: after selecting multiple rows, 
+        # and pressing arrow or clicking on a row, one row is still selected, but 
+        # no index is passed. The following line works.
+        indexes = self.tree.selectionModel().selectedIndexes()
         if not indexes:
             self.mainwindow.show_details()
             print("n")
+            return
         
         index = indexes[0]
         source_index = self.proxymodel.mapToSource(index)
