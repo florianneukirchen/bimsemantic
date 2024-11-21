@@ -237,7 +237,8 @@ class IfcTreeTab(QWidget):
             items.append(item)
     
         # Show the details of the first selected item
-        if isinstance(items[0], IfcTreeItem):
+        item = items[0]
+        if isinstance(item, IfcTreeItem):
             self.mainwindow.show_details(item.ifc, item.filenames)
         else:
             self.mainwindow.show_details(item.id)
