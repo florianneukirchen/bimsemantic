@@ -227,6 +227,8 @@ class IfcTreeTab(QWidget):
             print("n")
             return
         
+        # Only use the indexes of the first column
+        indexes = [index for index in indexes if index.column() == 0]
         items = []
 
         for index in indexes:
@@ -236,25 +238,28 @@ class IfcTreeTab(QWidget):
     
         # Show the details of the first selected item
         if isinstance(items[0], IfcTreeItem):
-            print(item)
             self.mainwindow.show_details(item.ifc, item.filenames)
         else:
             self.mainwindow.show_details(item.id)
-            print(item, item.id)
+            print("selected", item, item.id)
+
+        items = [item for item in items if isinstance(item, IfcTreeItem)]
 
         # Synchronize the selection in the other tabs
+        if len(items) > 1:
+            self.mainwindow.statusbar.showMessage(self.tr("%i items selected") % len(items))
+
         for i in range(self.tabs.count()):
             tab = self.tabs.widget(i)
             if tab != self:
                 tab.clear_selection()
-                
-        for item in items:
-            if isinstance(item, IfcTreeItem):    
-                guid = item.guid
-                for i in range(self.tabs.count()):
-                    tab = self.tabs.widget(i)
-                    if tab != self:
-                        tab.select_item_by_guid(guid, add=True)
+
+        for item in items:  
+            guid = item.guid
+            for i in range(self.tabs.count()):
+                tab = self.tabs.widget(i)
+                if tab != self:
+                    tab.select_item_by_guid(guid, add=True)
 
 
     def clear_selection(self):
