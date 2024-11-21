@@ -1,5 +1,5 @@
-from PySide6.QtCore import QSortFilterProxyModel, QTimer, QItemSelection, QItemSelectionModel
-from PySide6.QtWidgets import QTreeView, QAbstractItemView, QWidget, QTabWidget, QTabBar, QVBoxLayout, QPushButton, QStyle
+from PySide6.QtCore import QSortFilterProxyModel, QTimer, QItemSelection, QItemSelectionModel, QModelIndex
+from PySide6.QtWidgets import QTreeView, QAbstractItemView, QWidget, QTabWidget, QTabBar, QVBoxLayout, QPushButton, QStyle, QApplication
 from bimsemantic.ui import LocationTreeModel, TypeTreeModel, FlatTreeModel, IfcTreeItem, CustomFieldType, CustomTreeMaker, IfcCustomTreeModel
 
 
@@ -168,6 +168,14 @@ class IfcTabs(QWidget):
             tab = self.tabs.widget(i)
             tab.clear_selection()
 
+    def copy_selection_to_clipboard(self):
+        """Copy the selected rows of the active tab to the clipboard"""
+        active_tab = self.tabs.currentWidget()
+        if not active_tab:
+            return
+        clipboard = QApplication.clipboard()
+        clipboard.setText(active_tab.rows_to_csv(sep="\t"))
+
 class IfcTreeTab(QWidget):
     """Class for the tabs with different IFC tree views
     
@@ -306,6 +314,52 @@ class IfcTreeTab(QWidget):
     def is_active_tab(self):
         """Check if the tab is the active tab, returns bool"""
         return self.tabs.currentWidget() == self
+
+
+    def rows_to_csv(self, sep=";", all=False):
+        """Get the selected rows as CSV string
+        
+        The columns are separated by the given separator.
+        """
+        if all:
+            indexes = self.get_all_row_indexes()
+        else:
+            indexes = self.tree.selectionModel().selectedRows()
+            # Sort the indexes by the visual order in the tree view
+            indexes.sort(key=lambda index: self.tree.visualRect(index).top())
+        rows = []
+        headerrow = [self.treemodel.headerData(i) for i in range(self.treemodel.columnCount()) if not self.tree.isColumnHidden(i)]
+        rows.append(sep.join(headerrow))
+
+        for index in indexes:
+            source_index = self.proxymodel.mapToSource(index)
+            item = source_index.internalPointer()
+            row = [str(item.data(i)) for i in range(self.treemodel.columnCount()) if not self.tree.isColumnHidden(i)]
+
+            # Empty cells are returned as str "None"
+            for i in range(len(row)):
+                if row[i] == "None":
+                    print(row[i])
+                    row[i] = ""
+
+            rows.append(sep.join(row))
+        return "\n".join(rows)
+
+    def get_all_row_indexes(self, parent_index=QModelIndex()):
+        """Recursively get all row indexes of the tree view
+        
+        These indexes are required to serialize the complete tree view.
+        :param parent_index: The parent index, default is the root of the tree view.
+        :return: List of QModelIndex instances
+        """
+        indexes = []
+        for row in range(self.proxymodel.rowCount(parent_index)):
+            index = self.proxymodel.index(row, 0, parent_index)
+            print(index)
+            indexes.append(index)
+            if self.proxymodel.hasChildren(index):
+                indexes.extend(self.get_all_row_indexes(index))
+        return indexes
 
     def __repr__(self):
         return f"IfcTreeTab({self.treemodel.__class__.__name__})"

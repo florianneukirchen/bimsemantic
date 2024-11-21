@@ -291,6 +291,14 @@ class MainWindow(QMainWindow):
         # Edit menu
         self._edit_menu = self.menuBar().addMenu(self.tr("&Edit"))
 
+        self._copy_rows_act = QAction(
+            self.tr("Copy rows"),
+            self,
+            statusTip=self.tr("Copy selected rows to clipboard"),
+            triggered=self.tabs.copy_selection_to_clipboard,
+        )
+        self._edit_menu.addAction(self._copy_rows_act)
+
         self._edit_selection_menu = self._edit_menu.addMenu(self.tr("&Selection"))
 
         self._select_by_guid_act = QAction(

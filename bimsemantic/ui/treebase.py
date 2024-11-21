@@ -138,7 +138,7 @@ class TreeModelBaseclass(QAbstractItemModel):
     set up in setupModelData(). These functions are supposed to be overridden
     in derived classes.
 
-    The other methods are required for the model to work with a QTreeView,
+    Most methods are required for the model to work with a QTreeView,
     some may be overwritten in derived classes, e.g. columnCount().
 
     :param data: The data for the model
@@ -183,7 +183,7 @@ class TreeModelBaseclass(QAbstractItemModel):
         item = index.internalPointer()
         return item.data(index.column())
 
-    def headerData(self, section, orientation, role=Qt.DisplayRole):
+    def headerData(self, section, orientation=Qt.Horizontal, role=Qt.DisplayRole):
         """Get the header data from the root item of the model"""
         if role == Qt.DisplayRole and orientation == Qt.Horizontal:
             return self._rootItem.data(section)
@@ -208,3 +208,4 @@ class TreeModelBaseclass(QAbstractItemModel):
         if parentItem == self._rootItem:
             return QModelIndex()
         return self.createIndex(parentItem.row(), 0, parentItem)
+
