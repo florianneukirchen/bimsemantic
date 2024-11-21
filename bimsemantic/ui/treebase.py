@@ -127,7 +127,7 @@ class TreeItem:
         return self._children
 
     def __repr__(self):
-        return f"TreeItem ({self.data(0)})"
+        return f"TreeItem ({self.label})"
 
     
 
