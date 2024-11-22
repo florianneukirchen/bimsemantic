@@ -88,7 +88,7 @@ class MainWindow(QMainWindow):
         using multithreading to keep the GUI responsive.
         """
         if filenames:
-            self.progressbar.setRange(0, 0)
+            self.progressbar.setRange(0, 0) # Range 0,0 means indeterminate but active
             self.ignoredfiles = []
             worker = WorkerAddFiles(self.ifcfiles, filenames)
             worker.signals.result.connect(self.add_ifcs_to_trees)
@@ -224,16 +224,25 @@ class MainWindow(QMainWindow):
             csv_file = dialog.selectedFiles()[0]
             if not csv_file.lower().endswith(".csv"):
                 csv_file += ".csv"
-            separator = separator_combo.currentText()
-            if separator == "TAB":
-                separator = "\t"
-            with_level = chk_with_level.isChecked()
+            sep = separator_combo.currentText()
+            if sep == "TAB":
+                sep = "\t"
+            add_level = chk_with_level.isChecked()
             if selected_rows > 1:
                 all = not only_selected.isChecked()
             else:
                 all = True
 
-            print(csv_file, separator, all, with_level)
+            csv_lines = active_tab.rows_to_csv(sep=sep, all=all, add_header=True, add_level=add_level)
+            self.progressbar.setRange(0, 0)
+
+            with open(csv_file, "w") as f:
+                for line in csv_lines:
+                    f.write(line)
+
+            self.progressbar.setRange(0, 100)
+            self.statusbar.showMessage(self.tr("Exported to %s") % csv_file, 5000)
+
 
     def select_by_guid(self):
         """Dialog to select an IFC element by GUID and call the algorithm to select it"""

@@ -192,8 +192,11 @@ class IfcTabs(QWidget):
         add_header = self.mainwindow.chk_copy_with_headers.isChecked()
         add_level = self.mainwindow.chk_copy_with_level.isChecked()
 
+        # rows_to_csv is a generator
+        txt = "".join(active_tab.rows_to_csv(sep=";", add_header=add_header, add_level=add_level))
+
         clipboard = QApplication.clipboard()
-        clipboard.setText(active_tab.rows_to_csv(sep="\t", add_header=add_header, add_level=add_level))
+        clipboard.setText(txt)
 
     def copy_active_cell_to_clipboard(self):
         """Copy the active cell to the clipboard"""
@@ -347,9 +350,10 @@ class IfcTreeTab(QWidget):
 
 
     def rows_to_csv(self, sep=";", all=False, add_header=False, add_level=False):
-        """Get the selected rows as CSV string
+        """Generator, yields the selected rows as CSV string
         
         The columns are separated by the given separator.
+        Using a generator allows to write the rows to a file line by line.
         """
         if all:
             indexes = self.get_all_row_indexes()
@@ -357,13 +361,12 @@ class IfcTreeTab(QWidget):
             indexes = self.tree.selectionModel().selectedRows()
             # Sort the indexes by the visual order in the tree view
             indexes.sort(key=lambda index: self.tree.visualRect(index).top())
-        rows = []
 
         if add_header:
             headerrow = [self.treemodel.headerData(i) for i in range(self.treemodel.columnCount()) if not self.tree.isColumnHidden(i)]
             if add_level:
                 headerrow.insert(0, "Level")
-            rows.append(sep.join(headerrow))
+            yield sep.join(headerrow) + "\n"
 
         for index in indexes:
             source_index = self.proxymodel.mapToSource(index)
@@ -377,8 +380,8 @@ class IfcTreeTab(QWidget):
 
             if add_level:
                 row.insert(0, str(item.level()))
-            rows.append(sep.join(row))
-        return "\n".join(rows)
+            yield sep.join(row) + "\n"
+
 
     def get_all_row_indexes(self, parent_index=QModelIndex()):
         """Recursively get all row indexes of the tree view
@@ -390,7 +393,6 @@ class IfcTreeTab(QWidget):
         indexes = []
         for row in range(self.proxymodel.rowCount(parent_index)):
             index = self.proxymodel.index(row, 0, parent_index)
-            print(index)
             indexes.append(index)
             if self.proxymodel.hasChildren(index):
                 indexes.extend(self.get_all_row_indexes(index))
