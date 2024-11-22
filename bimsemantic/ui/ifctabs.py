@@ -248,7 +248,7 @@ class IfcTreeTab(QWidget):
         self.setLayout(self.layout)
         self.layout.addWidget(self.tree)
 
-        self.closebutton = None
+        self.close_button = None
         
 
     def on_selection_changed(self, selected: QItemSelection, deselected: QItemSelection):
