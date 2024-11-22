@@ -300,11 +300,39 @@ class OverviewTreeModel(TreeModelBaseclass):
             ifcfile_item.appendChild(
                 self.new_item(self.tr("File size"), f"{ifcfile.megabytes} MB", ifcfile_item)
             )
+
+            ifcfile_item.appendChild(
+                self.new_item(self.tr("Project name"), ifcfile.project.Name, ifcfile_item)
+            )
+
+            longname = ifcfile.project.LongName
+            if longname:
+                ifcfile_item.appendChild(
+                    self.new_item(self.tr("Long name"), longname, ifcfile_item)
+                )
+
+            phase = ifcfile.project.Phase
+            if phase:
+                ifcfile_item.appendChild(
+                    self.new_item(self.tr("Project phase"), phase, ifcfile_item)
+                )
+
+            ifcfile_item.appendChild(
+                self.new_item(self.tr("Project owner"), ifcfile.project.OwnerHistory.OwningUser.ThePerson.GivenName, ifcfile_item)
+            )
+
+            ifcfile_item.appendChild(
+                self.new_item(self.tr("Application"), ifcfile.project.OwnerHistory.OwningApplication.ApplicationFullName, ifcfile_item)
+            )
+
             ifcfile_item.appendChild(
                 self.new_item(self.tr("IFC Elements"), ifcfile.count_ifc_elements(), ifcfile_item)
             )
             ifcfile_item.appendChild(
                 self.new_item(self.tr("Pset count"), ifcfile.pset_count(), ifcfile_item)
+            )
+            ifcfile_item.appendChild(
+                self.new_item(self.tr("Qset count"), ifcfile.qset_count(), ifcfile_item)
             )
 
 

@@ -19,10 +19,14 @@ class IfcFile():
         if not os.path.exists(self._abspath):
             raise FileNotFoundError(f"File {self._abspath} not found.")
         self._megabytes = round(os.path.getsize(self._abspath) / 1048576, 1)
+
+        # Open the file with ifcopenshell
         try:
             self._model = ifcopenshell.open(self._abspath)
         except RuntimeError:
             raise ValueError(f"File {self._abspath} is not a valid IFC file.")
+        
+        self._project = self._model.by_type("IfcProject")[0]
         self._pset_info = self._get_pset_info()
         self._qset_info = self._get_qset_info()
 
@@ -30,6 +34,11 @@ class IfcFile():
     def model(self):
         """The ifcopenshell file object"""
         return self._model
+    
+    @property
+    def project(self):
+        """The IfcProject object"""
+        return self._project
     
     @property
     def filename(self):
