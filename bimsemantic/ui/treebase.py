@@ -38,15 +38,15 @@ class TreeItem:
             return None
         return self._children[row]
 
-    def childCount(self):
+    def child_count(self):
         """Get the number of children"""
         return len(self._children)
     
-    def leavesCount(self):
+    def leaves_count(self):
         """Recursively get the number of leave nodes connected to/as children of this item"""
         leaves = 0
         for child in self._children:
-            leaves += child.leavesCount()
+            leaves += child.leaves_count()
         if leaves == 0:
             return 1
         return leaves
@@ -73,9 +73,9 @@ class TreeItem:
         if column < 0 or column >= len(self._data):
             return None
         if column == 0:
-            count_children = self.childCount()
+            count_children = self.child_count()
             if count_children > 0:
-                count_leaves = self.leavesCount()
+                count_leaves = self.leaves_count()
                 if count_leaves != count_children:
                     return f"{self._data[0]} ({count_children}/{count_leaves})"
                 else:
@@ -158,14 +158,14 @@ class TreeModelBaseclass(QAbstractItemModel):
         super(TreeModelBaseclass, self).__init__(parent)
         self.column_count = 2
 
-        self.setupRootItem()
-        self.setupModelData(data, self._rootItem)
+        self.setup_root_item()
+        self.setup_model_data(data, self._rootItem)
 
-    def setupRootItem(self):
+    def setup_root_item(self):
         """Set up the root item for the model, can be overridden in derived classes"""
         self._rootItem = TreeItem()
        
-    def setupModelData(self, data, parent):
+    def setup_model_data(self, data, parent):
         """Set up the model data, must be overridden in derived classes"""
         pass
 
@@ -174,7 +174,7 @@ class TreeModelBaseclass(QAbstractItemModel):
         if parent.column() > 0:
             return 0
         parentItem = parent.internalPointer() if parent.isValid() else self._rootItem
-        return parentItem.childCount()
+        return parentItem.child_count()
 
     def columnCount(self, parent=QModelIndex()):
         """Get the number of columns of the model"""

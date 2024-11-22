@@ -16,7 +16,7 @@ class IfcDetailsTreeModel(TreeModelBaseclass):
         element = ifc_element
         super(IfcDetailsTreeModel, self).__init__(element, parent)
 
-    def newItem(self, key, value, parent):
+    def new_item(self, key, value, parent):
         """Helper to create new items of key-value pairs
         :param key: The key
         :param value: The value
@@ -34,7 +34,7 @@ class IfcDetailsTreeModel(TreeModelBaseclass):
         return item
 
 
-    def setupModelData(self, data, parent):
+    def setup_model_data(self, data, parent):
         """Build the tree view
         
         :param data: The IfcOpenShell entity
@@ -84,7 +84,7 @@ class IfcDetailsTreeModel(TreeModelBaseclass):
         for k,v in info.items():
             if k not in ["Name", "id", "GlobalId", "type", "ObjectType"]:
                 info_item.appendChild(
-                    self.newItem(k, v, info_item)
+                    self.new_item(k, v, info_item)
                 )
 
         # Filenames
@@ -105,7 +105,7 @@ class IfcDetailsTreeModel(TreeModelBaseclass):
         if object.is_a("IfcElement"):
             try:
                 info_item.appendChild(
-                    self.newItem("Contained in", object.ContainedInStructure[0].RelatingStructure, info_item)
+                    self.new_item("Contained in", object.ContainedInStructure[0].RelatingStructure, info_item)
                 )
             except IndexError:
                 pass
@@ -114,7 +114,7 @@ class IfcDetailsTreeModel(TreeModelBaseclass):
             decomposes = object.Decomposes
             if decomposes:
                 info_item.appendChild(
-                self.newItem("Contained in", decomposes[0].RelatingObject, info_item)
+                self.new_item("Contained in", decomposes[0].RelatingObject, info_item)
                 )
 
             contains_item = TreeItem(["Contains"], parent=info_item)
@@ -163,7 +163,7 @@ class IfcDetailsTreeModel(TreeModelBaseclass):
                     for k,v in material.get_info().items():
                         if k not in ["Name"]:
                             mat_item.appendChild(
-                                self.newItem(k, v, mat_item)
+                                self.new_item(k, v, mat_item)
                         )
                 elif material.is_a("IfcMaterialConstituentSet"):
                     for constituent in material.MaterialConstituents:
@@ -172,7 +172,7 @@ class IfcDetailsTreeModel(TreeModelBaseclass):
                         for k,v in constituent.get_info().items():
                             if k not in ["Name"]:
                                 mat_item.appendChild(
-                                    self.newItem(k, v, mat_item)
+                                    self.new_item(k, v, mat_item)
                             )
                                 
 
@@ -190,13 +190,13 @@ class OverviewTreeModel(TreeModelBaseclass):
 
         super(OverviewTreeModel, self).__init__(None, parent)
 
-    def newItem(self, key, value, parent):
+    def new_item(self, key, value, parent):
         """Helper to create new items of key-value pairs"""
         item = TreeItem([key, value], parent)
         return item
 
 
-    def setupModelData(self, data, parent):
+    def setup_model_data(self, data, parent):
         """Build the tree view
         
         Data is ignored, but passed by the parent class.
@@ -212,16 +212,16 @@ class OverviewTreeModel(TreeModelBaseclass):
             self.rows_spanned.append(ifcfile_item)
 
             ifcfile_item.appendChild(
-                self.newItem(self.tr("IFC Version"), ifcfile.model.schema, ifcfile_item)
+                self.new_item(self.tr("IFC Version"), ifcfile.model.schema, ifcfile_item)
             )
             ifcfile_item.appendChild(
-                self.newItem(self.tr("File size"), f"{ifcfile.megabytes} MB", ifcfile_item)
+                self.new_item(self.tr("File size"), f"{ifcfile.megabytes} MB", ifcfile_item)
             )
             ifcfile_item.appendChild(
-                self.newItem(self.tr("IFC Elements"), ifcfile.count_ifc_elements(), ifcfile_item)
+                self.new_item(self.tr("IFC Elements"), ifcfile.count_ifc_elements(), ifcfile_item)
             )
             ifcfile_item.appendChild(
-                self.newItem(self.tr("Pset count"), ifcfile.pset_count(), ifcfile_item)
+                self.new_item(self.tr("Pset count"), ifcfile.pset_count(), ifcfile_item)
             )
 
 

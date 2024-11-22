@@ -56,17 +56,17 @@ class IfcTabs(QWidget):
                 return True
         return super(IfcTabs, self).eventFilter(source, event)
 
-    def addFile(self, ifc_file):
+    def add_file(self, ifc_file):
         """Add data of an IFC file to the tree views
         
         :param ifc_file: bimsemantic IFC file instance
         :type ifc_file: IfcFile
         """
-        self.locationtab.treemodel.addFile(ifc_file)
-        self.typetab.treemodel.addFile(ifc_file)
-        self.flattab.treemodel.addFile(ifc_file)
+        self.locationtab.treemodel.add_file(ifc_file)
+        self.typetab.treemodel.add_file(ifc_file)
+        self.flattab.treemodel.add_file(ifc_file)
         for tab in self.customtabs:
-            tab.treemodel.addFile(ifc_file)
+            tab.treemodel.add_file(ifc_file)
 
     def update_columns(self):
         """Update the columns in all tree views
@@ -129,11 +129,11 @@ class IfcTabs(QWidget):
 
     def count_ifc_elements(self):
         """Get the number of all IFC elements of the open files"""
-        return self.flattab.treemodel.elements_item.childCount()
+        return self.flattab.treemodel.elements_item.child_count()
     
     def count_ifc_types(self):
         """Get the number of all IFC element types of the open files"""
-        return self.typetab.treemodel._rootItem.childCount()
+        return self.typetab.treemodel._rootItem.child_count()
 
     def make_custom_tab(self, name, custom_fields):
         """Create a custom tab with
@@ -150,7 +150,7 @@ class IfcTabs(QWidget):
         custom_tab.treemodel.set_custom_fields(custom_fields)
         
         for ifc_file in ifc_files:
-            custom_tab.treemodel.addFile(ifc_file)
+            custom_tab.treemodel.add_file(ifc_file)
         
         custom_tab.treemodel.name = name
 

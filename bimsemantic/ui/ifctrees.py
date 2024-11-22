@@ -75,9 +75,9 @@ class IfcTreeItem(TreeItem):
             return None
         if column == 0:
             # IFC-class and counters
-            count_children = self.childCount()
+            count_children = self.child_count()
             if count_children > 0:
-                count_leaves = self.leavesCount()
+                count_leaves = self.leaves_count()
                 if count_leaves != count_children:
                     return f"{self._ifc_item.is_a()} ({count_children}/{count_leaves})"
                 else:
@@ -205,7 +205,7 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
     """Base class for the different IFC tree models
     
     Implements the basic functionality for the tree models, based on TreeModelBaseclass.
-    At least the addFile method has to be implemented in the derived classes.
+    At least the add_file method has to be implemented in the derived classes.
 
     :param data: Instance if IfcFiles (from bimsemantic), contains references to the IfcFile objects.
     :type data: IfcFiles
@@ -221,18 +221,18 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
         #self.columntree.columnsChanged.connect(self.pset_columns_changed)
         self.columntree.hideInfoColumn.connect(self.hide_info_column)
 
-    def setupModelData(self, data, parent):
-        """Setup the model data by calling addFile for each IFC file instance"""
+    def setup_model_data(self, data, parent):
+        """Setup the model data by calling add_file for each IFC file instance"""
         self.ifc_files = data  
 
         for file in self.ifc_files:
-            self.addFile(file)
+            self.add_file(file)
 
-    def addFile(self, ifc_file):
+    def add_file(self, ifc_file):
         """To be implemented in derived classes"""
         pass
 
-    def setupRootItem(self):
+    def setup_root_item(self):
         """"Setup the root item of the tree, containing the column headers"""
         self._rootItem = ColheaderTreeItem(self.columntree, parent=None)
         
@@ -296,13 +296,13 @@ class LocationTreeModel(IfcTreeModelBaseClass):
 
     The tree view is organized by the location of elements in the project,
     i.e. IfcProject, IfcSite, IfcBuilding, IfcBuildingStorey, IfcSpace, etc.
-    The data of several IFC files can be added to the tree with addFile().
+    The data of several IFC files can be added to the tree with add_file().
 
     :param data: Instance if IfcFiles 
     :param parent: Parent widget should be the IfcTreeTab instance
     """
 
-    def addFile(self, ifc_file):
+    def add_file(self, ifc_file):
         """Add data of an IfcFile instance to the tree view
         
         If an element with a certain GUID is already present in the tree, 
@@ -325,7 +325,7 @@ class LocationTreeModel(IfcTreeModelBaseClass):
             self._rootItem.appendChild(project_item)
 
         for site in ifc_file.model.by_type("IfcSite"):
-            self.addItems(site, project_item, filename)
+            self.add_items(site, project_item, filename)
 
         label = self.tr("Without container")
         notcontained_item = self.get_child_by_label(self._rootItem, label)
@@ -348,8 +348,8 @@ class LocationTreeModel(IfcTreeModelBaseClass):
         self.tab.proxymodel.sort(0, Qt.SortOrder.AscendingOrder)
         self.expand_default()
 
-    def addItems(self, ifc_object, parent, filename):
-        """Helper method for addFile to add items to the tree recursively"""
+    def add_items(self, ifc_object, parent, filename):
+        """Helper method for add_file to add items to the tree recursively"""
         # Check if the object is already in the tree
         item = self.get_child_by_guid(parent, ifc_object.GlobalId)
         if item:
@@ -375,7 +375,7 @@ class LocationTreeModel(IfcTreeModelBaseClass):
                 item.appendChild(element_item)
 
         for child in children:
-            self.addItems(child, item, filename)
+            self.add_items(child, item, filename)
 
 
     def __repr__(self):
@@ -385,13 +385,13 @@ class TypeTreeModel(IfcTreeModelBaseClass):
     """Model for the Type tree view
     
     The tree view is organized by the IFC-class and object type of elements.
-    The data of several IFC files can be added to the tree with addFile().
+    The data of several IFC files can be added to the tree with add_file().
 
     :param data: Instance if IfcFiles 
     :param parent: Parent widget should be the IfcTreeTab instance
     """
 
-    def addFile(self, ifc_file):
+    def add_file(self, ifc_file):
         """Add data of an IfcFile instance to the tree view
         
         If an element with a certain GUID is already present in the tree, 
@@ -443,13 +443,13 @@ class FlatTreeModel(IfcTreeModelBaseClass):
     
     The tree view has top level nodes for IfcElements, IfcElementTypes,
     and IfcSpatialElemements.
-    The data of several IFC files can be added to the tree with addFile().
+    The data of several IFC files can be added to the tree with add_file().
 
     :param data: Instance if IfcFiles 
     :param parent: Parent widget should be the IfcTreeTab instance
     """
 
-    def setupRootItem(self):
+    def setup_root_item(self):
         """"Setup the root item and top level nodes of the tree"""
         self._rootItem = ColheaderTreeItem(self.columntree, parent=None)
 
@@ -462,7 +462,7 @@ class FlatTreeModel(IfcTreeModelBaseClass):
         self.spatialelements_item = TreeItem(["IfcSpatialElement"], self._rootItem, "IfcSpatialElement")
         self._rootItem.appendChild(self.spatialelements_item)
         
-    def addFile(self, ifc_file):
+    def add_file(self, ifc_file):
         """Add data of an IfcFile instance to the tree view
         
         If an element with a certain GUID is already present in the tree, 
@@ -521,7 +521,7 @@ class IfcCustomTreeModel(IfcTreeModelBaseClass):
     
     The tree view is organized by the custom fields specified as a list of  
     CustomTreeMaker instances. After init, the data must be added to the tree 
-    with addFile().
+    with add_file().
 
     :param data: Instance if IfcFiles 
     :param parent: Parent widget should be the IfcTreeTab instance
@@ -551,7 +551,7 @@ class IfcCustomTreeModel(IfcTreeModelBaseClass):
         return self._customfields
 
 
-    def addFile(self, ifc_file):
+    def add_file(self, ifc_file):
         """Add data of an IfcFile instance to the tree view
         
         If an element with a certain GUID is already present in the tree, 
@@ -561,7 +561,7 @@ class IfcCustomTreeModel(IfcTreeModelBaseClass):
         :type ifc_file: IfcFile
         """
         if not self._customfields:
-            # This happens because addFile is called on init
+            # This happens because add_file() is called on init
             return
         
         self.beginResetModel()
