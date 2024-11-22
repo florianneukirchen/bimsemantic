@@ -222,6 +222,7 @@ class IfcTreeTab(QWidget):
         super(IfcTreeTab, self).__init__(parent)
         self.mainwindow = parent.mainwindow
         self.tabs = parent.tabs
+        self.count_ifc_elements = parent.count_ifc_elements
         self.treemodel = treemodelclass(ifc_files, self)
         self.ifc_files = ifc_files
         self.layout = QVBoxLayout(self)
@@ -255,6 +256,8 @@ class IfcTreeTab(QWidget):
         
         If the selection on the active tab changes, the details view is updated
         and the selection of the other tabs is synchronized.
+        With no selection or (almost) all rows selected, the details view 
+        shows the basic info about the open files.
         """
         if not self.is_active_tab():
             return
@@ -268,8 +271,13 @@ class IfcTreeTab(QWidget):
             print("n")
             return
         
-        # Only use the indexes of the first column
-        # indexes = [index for index in indexes if index.column() == 0]
+        # Check if all (or most) rows are selected to avoid iterating 
+        # over all items on Ctrl+A
+        elementcount = self.count_ifc_elements()
+        if len(indexes) >= elementcount:
+            self.mainwindow.show_details()
+            return
+    
         items = []
 
         for index in indexes:

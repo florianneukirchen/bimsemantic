@@ -4,13 +4,14 @@
 
 ### Todo
 - Spalten umsortieren in allen tabs
-- Selection? Copy Paste as table
 - tabs: Material, Psets
 - Ausklappen bis Ebene x
-
+- Kontextmenü
+- Export als JSON
+- Filter
 
 ## Installation
-- Use Python 3.12 or lower
+- Python 3.9 to 3.12 or lower
 
 
 
