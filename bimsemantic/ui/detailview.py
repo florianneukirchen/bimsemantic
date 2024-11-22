@@ -361,7 +361,11 @@ class OverviewTreeModel(TreeModelBaseclass):
                 if address:
                     address_item(address, building_item)
 
-
+            crs = ifcfile.model.by_type("IfcCoordinateReferenceSystem")[0]
+            if crs:
+                ifcfile_item.appendChild(
+                    self.new_item(self.tr("CRS"), crs.Name, ifcfile_item)
+                )
                 
 
             ifcfile_item.appendChild(
