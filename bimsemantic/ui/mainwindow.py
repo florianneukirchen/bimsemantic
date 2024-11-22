@@ -460,6 +460,52 @@ class MainWindow(QMainWindow):
         )
         self._view_menu.addAction(self._addcustomtree_act)
 
+        self._expand_menu = self._view_menu.addMenu(self.tr("&Expand/Collapse active tree"))
+        self._view_menu.addMenu(self._expand_menu)
+
+        self._collapse_act = QAction(
+            self.tr("&Collapse"),
+            self,
+            # Using lambda makes it possible to pass an argument to the function
+            triggered=(lambda: self.tabs.expand_active_view(-1)),
+        )
+        self._expand_menu.addAction(self._collapse_act)
+
+        self._expand_level1_act = QAction(
+            self.tr("Expand to level &1"),
+            self,
+            triggered=(lambda: self.tabs.expand_active_view(1)),
+        )
+        self._expand_menu.addAction(self._expand_level1_act)
+
+        self._expand_level2_act = QAction(
+            self.tr("Expand to level &2"),
+            self,
+            triggered=(lambda: self.tabs.expand_active_view(2)),
+        )
+        self._expand_menu.addAction(self._expand_level2_act)
+
+        self._expand_level3_act = QAction(
+            self.tr("Expand to level &3"),
+            self,
+            triggered=(lambda: self.tabs.expand_active_view(3)),
+        )
+        self._expand_menu.addAction(self._expand_level3_act)
+
+        self._expand_level4_act = QAction(
+            self.tr("Expand to level &4"),
+            self,
+            triggered=(lambda: self.tabs.expand_active_view(4)),
+        )
+        self._expand_menu.addAction(self._expand_level4_act)
+
+        self._expand_all_act = QAction(
+            self.tr("Expand &all"),
+            self,
+            triggered=(lambda: self.tabs.expand_active_view("all")),
+        )
+        self._expand_menu.addAction(self._expand_all_act)
+
         self._view_menu.addSeparator()
 
         # Help menu

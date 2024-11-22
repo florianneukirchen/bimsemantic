@@ -169,6 +169,18 @@ class IfcTabs(QWidget):
 
         return custom_tab
 
+    def expand_active_view(self, level):
+        """Expand items in active tree up to a certain level"""
+        active_tab = self.tabs.currentWidget()
+        if not active_tab:
+            return
+        if level == -1:
+            active_tab.tree.collapseAll()
+        elif level == "all":
+            active_tab.tree.expandAll()
+        else:
+            active_tab.tree.expandToDepth(level - 1) 
+
     def remove_custom_tab(self, custom_tab):
         """Remove a custom tab after clicking the close button"""
         tab_index = self.tabs.indexOf(custom_tab)
