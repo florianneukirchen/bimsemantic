@@ -82,6 +82,30 @@ def organization_item(org, parent):
 
     return org_item
 
+def address_item(address, parent):
+    """Create a tree item for an address
+    
+    :param address: The IfcPostalAddress entity
+    :type address: ifcopenshell entity
+    :param parent: The parent tree item
+    :type parent: TreeItem
+    :return: The tree item
+    :rtype: TreeItem
+    """
+    address_item = TreeItem(["Address"], parent=parent)
+    parent.appendChild(address_item)
+    address_lines = address.AddressLines
+    for i, line in enumerate(address_lines):
+        address_item.appendChild(
+            TreeItem([f"Address line {i+1}", line], parent=address_item)
+        )
+    for k,v in address.get_info().items():
+        if v and k not in ["id", "type", "AddressLines"]:
+            address_item.appendChild(
+                TreeItem([k,v], parent=address_item)
+        )
+            
+    return address_item
 
 class IfcDetailsTreeModel(TreeModelBaseclass):
     """Model for the tree view of the details dock widget
@@ -104,6 +128,13 @@ class IfcDetailsTreeModel(TreeModelBaseclass):
         :param parent: The parent tree item
         """
         if isinstance(value, ifcopenshell.entity_instance):
+            if value.is_a("IfcOwnerHistory"):
+                return owner_history_item(value, parent)
+            elif value.is_a("IfcOrganization"):
+                return organization_item(value, parent)
+            elif value.is_a("IfcPostalAddress"):
+                return address_item(value, parent)
+
             try:
                 name = value.Name
             except AttributeError:
@@ -112,6 +143,7 @@ class IfcDetailsTreeModel(TreeModelBaseclass):
             value = f"{value.is_a()} <{value.id()}> {name}"
 
         item = TreeItem([key, value], parent)
+        parent.appendChild(item)
         return item
 
 
@@ -164,9 +196,8 @@ class IfcDetailsTreeModel(TreeModelBaseclass):
         
         for k,v in info.items():
             if k not in ["Name", "id", "GlobalId", "type", "ObjectType", "OwnerHistory"]:
-                info_item.appendChild(
-                    self.new_item(k, v, info_item)
-                )
+                self.new_item(k, v, info_item)
+                
 
         owner_history_item(object.OwnerHistory, info_item)
 
@@ -187,18 +218,14 @@ class IfcDetailsTreeModel(TreeModelBaseclass):
         # Spatial relations
         if object.is_a("IfcElement"):
             try:
-                info_item.appendChild(
-                    self.new_item("Contained in", object.ContainedInStructure[0].RelatingStructure, info_item)
-                )
+                self.new_item("Contained in", object.ContainedInStructure[0].RelatingStructure, info_item)
             except IndexError:
                 pass
 
         elif object.is_a("IfcSpatialStructureElement"):
             decomposes = object.Decomposes
             if decomposes:
-                info_item.appendChild(
                 self.new_item("Contained in", decomposes[0].RelatingObject, info_item)
-                )
 
             contains_item = TreeItem(["Contains"], parent=info_item)
             info_item.appendChild(contains_item)
@@ -245,19 +272,15 @@ class IfcDetailsTreeModel(TreeModelBaseclass):
                     materials_item.appendChild(mat_item)
                     for k,v in material.get_info().items():
                         if k not in ["Name"]:
-                            mat_item.appendChild(
-                                self.new_item(k, v, mat_item)
-                        )
+                            self.new_item(k, v, mat_item)
                 elif material.is_a("IfcMaterialConstituentSet"):
                     for constituent in material.MaterialConstituents:
                         mat_item = TreeItem([constituent.Name], parent=materials_item)
                         materials_item.appendChild(mat_item)
                         for k,v in constituent.get_info().items():
                             if k not in ["Name"]:
-                                mat_item.appendChild(
-                                    self.new_item(k, v, mat_item)
-                            )
-                                
+                                self.new_item(k, v, mat_item)
+                               
 
 
 
@@ -324,6 +347,22 @@ class OverviewTreeModel(TreeModelBaseclass):
             ifcfile_item.appendChild(
                 self.new_item(self.tr("Application"), ifcfile.project.OwnerHistory.OwningApplication.ApplicationFullName, ifcfile_item)
             )
+
+            for building in ifcfile.model.by_type("IfcBuilding"):
+                building_item = TreeItem([f"Building {building.Name}"], parent=ifcfile_item)
+                ifcfile_item.appendChild(building_item)
+
+                longname = building.LongName
+                if longname:
+                    building_item.appendChild(
+                        self.new_item(self.tr("Long name"), longname, building_item)
+                    )
+                address = building.BuildingAddress
+                if address:
+                    address_item(address, building_item)
+
+
+                
 
             ifcfile_item.appendChild(
                 self.new_item(self.tr("IFC Elements"), ifcfile.count_ifc_elements(), ifcfile_item)
