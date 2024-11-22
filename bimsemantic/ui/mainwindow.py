@@ -15,6 +15,10 @@ from PySide6.QtWidgets import (
     QComboBox,
     QCheckBox,
     QWidgetAction,
+    QWidget,
+    QHBoxLayout,
+    QGridLayout,
+    QFrame,
 )
 
 from ifcopenshell import entity_instance
@@ -93,7 +97,6 @@ class MainWindow(QMainWindow):
             worker.signals.feedback.connect(lambda s: self.statusbar.showMessage(self.tr("Open file %s") % s))
             worker.signals.progress.connect(self.on_progress)
             self.threadpool.start(worker)
-                
 
     def add_ifcs_to_trees(self, ifcfiles):
         """Add data of IfcFile objects to the treeviews
@@ -178,6 +181,59 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.tabs)
         self.infolabel.setText(self.tr("No open file"))
         self.statusbar.clearMessage()
+
+    def export_to_csv(self):
+        """Export data to CSV with a custom separator"""
+        dialog = QFileDialog(self, self.tr("Export to CSV"))
+        dialog.setAcceptMode(QFileDialog.AcceptSave)
+        dialog.setNameFilter(self.tr("CSV Files (*.csv)"))
+
+        # Add widgets for options
+        dialog.setOption(QFileDialog.DontUseNativeDialog, True)
+        dialog_layout = dialog.layout()
+
+        hline = QFrame()
+        hline.setFrameShape(QFrame.HLine)
+        hline.setFrameShadow(QFrame.Sunken)
+        dialog_layout.addWidget(hline, 4, 1)
+
+        label = QLabel(self.tr("Separator:"))
+        separator_combo = QComboBox()
+        separator_combo.addItems([",", ";", "TAB", "|"])
+
+        dialog_layout.addWidget(label, 5, 0)
+        dialog_layout.addWidget(separator_combo, 5, 1)
+
+        label = QLabel(self.tr("Options:"))
+        dialog_layout.addWidget(label, 6, 0)
+
+        chk_with_level = QCheckBox(self.tr("With column for hierarchical level"))
+        chk_with_level.setChecked(False)
+        dialog_layout.addWidget(chk_with_level, 6, 1)
+
+        # Get the number of selected rows
+        active_tab = self.tabs.tabs.currentWidget()
+        selected_rows = len(active_tab.tree.selectionModel().selectedRows())
+
+        if selected_rows > 1:
+            only_selected = QCheckBox(self.tr("Export only selected rows (%i rows)") % selected_rows)
+            only_selected.setChecked(False)
+            dialog_layout.addWidget(only_selected, 7, 1)
+
+        if dialog.exec():
+            csv_file = dialog.selectedFiles()[0]
+            if not csv_file.lower().endswith(".csv"):
+                csv_file += ".csv"
+            separator = separator_combo.currentText()
+            if separator == "TAB":
+                separator = "\t"
+            with_level = chk_with_level.isChecked()
+            if selected_rows > 1:
+                all = not only_selected.isChecked()
+            else:
+                all = True
+
+            print(csv_file, separator, all, with_level)
 
     def select_by_guid(self):
         """Dialog to select an IFC element by GUID and call the algorithm to select it"""
@@ -267,6 +323,18 @@ class MainWindow(QMainWindow):
         )
         self._file_menu.addAction(self._open_act)
 
+        self._export_cvs_act = QAction(
+            self.tr("&Export View to CSV..."),
+            self,
+            shortcut=self.tr("Ctrl+E"),
+            statusTip=self.tr("Export the current view or the current selection to CSV"),
+            triggered=self.export_to_csv,
+        )
+        self._file_menu.addAction(self._export_cvs_act)
+
+
+        self._file_menu.addSeparator()
+
         icon = QIcon.fromTheme("document-close")
         self._close_act = QAction(
             icon,
@@ -277,8 +345,6 @@ class MainWindow(QMainWindow):
             triggered=self.close_all,
         )
         self._file_menu.addAction(self._close_act)
-
-        self._file_menu.addSeparator()
 
         self._quit_act = QAction(
             self.tr("&Quit"),
