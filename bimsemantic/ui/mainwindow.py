@@ -170,7 +170,16 @@ class MainWindow(QMainWindow):
 
     def close_all(self):
         """Close all IFC files"""
-        self.statusbar.showMessage(self.tr("Close all files"))
+        self.statusbar.showMessage(self.tr("Close all files"), 5000)
+
+        # Close custom tabs
+        for custom_tab in self.tabs.customtabs:
+            tab_index = self.tabs.tabs.indexOf(custom_tab)
+            if tab_index != -1:
+                self.tabs.tabs.removeTab(tab_index)
+                self.tabs.customtabs.remove(custom_tab)
+                custom_tab.deleteLater()
+
         label = QLabel(self.tr("No open file"))
         label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.detailsdock.setWidget(label)
@@ -183,7 +192,7 @@ class MainWindow(QMainWindow):
         self.statusbar.clearMessage()
 
     def export_to_csv(self):
-        """Export data to CSV with a custom separator"""
+        """Export data to CSV"""
         dialog = QFileDialog(self, self.tr("Export to CSV"))
         dialog.setAcceptMode(QFileDialog.AcceptSave)
         dialog.setNameFilter(self.tr("CSV Files (*.csv)"))
