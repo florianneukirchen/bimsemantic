@@ -565,7 +565,7 @@ class MainWindow(QMainWindow):
         treeview.setColumnWidth(0, 170)
 
         # treeview.setColumnWidth(1, 200)
-        treeview.expandAll()
+        treeview.expandToDepth(1)
         # treeview.adjustSize()
         for item in detailModel.rows_spanned:
             treeview.setFirstColumnSpanned(item.row(), treeview.rootIndex(), True)

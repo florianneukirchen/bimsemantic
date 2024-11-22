@@ -2,6 +2,87 @@ import ifcopenshell.util.element
 from .treebase import TreeItem, TreeModelBaseclass
 
 
+def owner_history_item(owner_history, parent):
+    """Create a tree item for the owner history
+    
+    Including sub-items for the owning person, organization and application.
+    Also adds the item to parent.
+
+    :param owner_history: The IfcOwnerHistory entity
+    :type owner_history: ifcopenshell entity
+    :param parent: The parent tree item
+    :type parent: TreeItem
+    :return: The tree item
+    :rtype: TreeItem
+    """
+    history_item = TreeItem([f"Owner History (ID {owner_history.id()})"], parent=parent)
+    parent.appendChild(history_item)
+
+    owning_user_item = TreeItem(["Owning User"], parent=history_item)
+    history_item.appendChild(owning_user_item)
+
+    person = owner_history.OwningUser.ThePerson
+    person_item = TreeItem([f"Person {person.GivenName}"], parent=owning_user_item)
+    owning_user_item.appendChild(person_item)
+
+    for k,v in person.get_info().items():
+        if v and not k in ["id", "type"]:
+            person_item.appendChild(
+                TreeItem([k,v], parent=person_item)
+            )
+
+    org = owner_history.OwningUser.TheOrganization
+    organization_item(org, owning_user_item)
+
+    owning_app = owner_history.OwningApplication
+
+    owning_app_item = TreeItem([f"Owning Application {owning_app.ApplicationFullName}"], parent=history_item)
+    history_item.appendChild(owning_app_item)
+
+    for k,v in owning_app.get_info().items():
+        try:
+            is_org = v.is_a("IfcOrganization")
+        except AttributeError:
+            is_org = False
+        if is_org: 
+            organization_item(v, owning_app_item)
+        else:
+            owning_app_item.appendChild(
+                TreeItem([k,v], parent=owning_app_item)
+            )
+
+    for k,v in owner_history.get_info().items():
+        if v and not k in ["id", "type", "OwningUser", "OwningApplication"]:
+            history_item.appendChild(
+                TreeItem([k,v], parent=history_item)
+            )
+
+    return history_item    
+
+def organization_item(org, parent):
+    """Create a tree item for an organization
+    
+    Used by owner_history_item()
+
+    :param org: The IfcOrganization entity
+    :type org: ifcopenshell entity
+    :param parent: The parent tree item
+    :type parent: TreeItem
+    :return: The tree item
+    :rtype: TreeItem
+    """
+    org_item = TreeItem([f"Organization {org.Name}"], parent=parent)
+    parent.appendChild(org_item)
+
+    for k,v in org.get_info().items():
+        if v and not k in ["id", "type"]:
+            org_item.appendChild(
+                TreeItem([k,v], parent=org_item)
+            )
+
+    return org_item
+
+
 class IfcDetailsTreeModel(TreeModelBaseclass):
     """Model for the tree view of the details dock widget
     
@@ -82,10 +163,12 @@ class IfcDetailsTreeModel(TreeModelBaseclass):
         object_item.appendChild(info_item)
         
         for k,v in info.items():
-            if k not in ["Name", "id", "GlobalId", "type", "ObjectType"]:
+            if k not in ["Name", "id", "GlobalId", "type", "ObjectType", "OwnerHistory"]:
                 info_item.appendChild(
                     self.new_item(k, v, info_item)
                 )
+
+        owner_history_item(object.OwnerHistory, info_item)
 
         # Filenames
         info_item.appendChild(

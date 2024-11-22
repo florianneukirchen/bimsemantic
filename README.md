@@ -5,7 +5,6 @@
 ### Todo
 - Spalten umsortieren in allen tabs
 - tabs: Material, Psets
-- Ausklappen bis Ebene x
 - Kontextmenü
 - Export als JSON
 - Filter
