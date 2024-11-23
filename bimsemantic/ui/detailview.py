@@ -32,7 +32,8 @@ def owner_history_item(owner_history, parent):
             )
 
     org = owner_history.OwningUser.TheOrganization
-    item_with_subitems(org, owning_user_item, "Organization")
+    print(org)
+    item_with_subitems(org, owning_user_item, f"Organization {org.Name}")
 
     owning_app = owner_history.OwningApplication
 
@@ -45,8 +46,8 @@ def owner_history_item(owner_history, parent):
         except AttributeError:
             is_org = False
         if is_org: 
-            item_with_subitems(v, owning_app_item, "Organization")
-        else:
+            item_with_subitems(v, owning_app_item, f"Organization {v.Name}")
+        elif k not in ["id", "type"]:
             owning_app_item.appendChild(
                 TreeItem([k,v], parent=owning_app_item)
             )
@@ -61,6 +62,9 @@ def owner_history_item(owner_history, parent):
 
 def item_with_subitems(entity, parent, label):
     """Create a tree item with several key-value pair subitems
+
+    Make subitems for the key value pairs in the dict returned by 
+    entity.get_info().
     
     :param entity: The IfcOpenShell entity
     :type org: ifcopenshell entity
@@ -71,10 +75,6 @@ def item_with_subitems(entity, parent, label):
     :return: The tree item
     :rtype: TreeItem
     """
-    try:
-        label = f"{label} {entity.Name}"
-    except AttributeError:
-        pass
     main_item = TreeItem([label], parent=parent)
     parent.appendChild(main_item)
 
@@ -96,20 +96,20 @@ def address_item(address, parent):
     :return: The tree item
     :rtype: TreeItem
     """
-    address_item = TreeItem(["Address"], parent=parent)
-    parent.appendChild(address_item)
+    add_item = TreeItem(["Address"], parent=parent)
+    parent.appendChild(add_item)
     address_lines = address.AddressLines
     for i, line in enumerate(address_lines):
-        address_item.appendChild(
-            TreeItem([f"Address line {i+1}", line], parent=address_item)
+        add_item.appendChild(
+            TreeItem([f"Address line {i+1}", line], parent=add_item)
         )
     for k,v in address.get_info().items():
         if v and k not in ["id", "type", "AddressLines"]:
-            address_item.appendChild(
-                TreeItem([k,v], parent=address_item)
+            add_item.appendChild(
+                TreeItem([k,v], parent=add_item)
         )
             
-    return address_item
+    return add_item
 
 class IfcDetailsTreeModel(TreeModelBaseclass):
     """Model for the tree view of the details dock widget
@@ -135,7 +135,7 @@ class IfcDetailsTreeModel(TreeModelBaseclass):
             if value.is_a("IfcOwnerHistory"):
                 return owner_history_item(value, parent)
             elif value.is_a("IfcOrganization"):
-                return item_with_subitems(value, parent, "Organization")
+                return item_with_subitems(value, parent, "Organization {value.Name}")
             elif value.is_a("IfcPostalAddress"):
                 return address_item(value, parent)
 
