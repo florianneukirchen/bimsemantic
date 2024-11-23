@@ -32,7 +32,7 @@ def owner_history_item(owner_history, parent):
             )
 
     org = owner_history.OwningUser.TheOrganization
-    organization_item(org, owning_user_item)
+    item_with_subitems(org, owning_user_item, "Organization")
 
     owning_app = owner_history.OwningApplication
 
@@ -45,7 +45,7 @@ def owner_history_item(owner_history, parent):
         except AttributeError:
             is_org = False
         if is_org: 
-            organization_item(v, owning_app_item)
+            item_with_subitems(v, owning_app_item, "Organization")
         else:
             owning_app_item.appendChild(
                 TreeItem([k,v], parent=owning_app_item)
@@ -59,28 +59,32 @@ def owner_history_item(owner_history, parent):
 
     return history_item    
 
-def organization_item(org, parent):
-    """Create a tree item for an organization
+def item_with_subitems(entity, parent, label):
+    """Create a tree item with several key-value pair subitems
     
-    Used by owner_history_item()
-
-    :param org: The IfcOrganization entity
+    :param entity: The IfcOpenShell entity
     :type org: ifcopenshell entity
     :param parent: The parent tree item
     :type parent: TreeItem
+    :param label: The label for the main item
+    :type label: str
     :return: The tree item
     :rtype: TreeItem
     """
-    org_item = TreeItem([f"Organization {org.Name}"], parent=parent)
-    parent.appendChild(org_item)
+    try:
+        label = f"{label} {entity.Name}"
+    except AttributeError:
+        pass
+    main_item = TreeItem([label], parent=parent)
+    parent.appendChild(main_item)
 
-    for k,v in org.get_info().items():
+    for k,v in entity.get_info().items():
         if v and not k in ["id", "type"]:
-            org_item.appendChild(
-                TreeItem([k,v], parent=org_item)
+            main_item.appendChild(
+                TreeItem([k,v], parent=main_item)
             )
 
-    return org_item
+    return main_item
 
 def address_item(address, parent):
     """Create a tree item for an address
@@ -131,7 +135,7 @@ class IfcDetailsTreeModel(TreeModelBaseclass):
             if value.is_a("IfcOwnerHistory"):
                 return owner_history_item(value, parent)
             elif value.is_a("IfcOrganization"):
-                return organization_item(value, parent)
+                return item_with_subitems(value, parent, "Organization")
             elif value.is_a("IfcPostalAddress"):
                 return address_item(value, parent)
 
