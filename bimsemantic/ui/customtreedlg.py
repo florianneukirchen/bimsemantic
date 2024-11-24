@@ -22,11 +22,12 @@ class CustomFieldType(Enum):
     These define where the data comes from: from the property sets,
     from attributes of the Ifc element etc.
     """
-    TYPE = 1
+    IFCCLASS = 1
     OBJECTTYPE = 2
-    PSET = 3
-    FILENAME = 4
-    CONTAINEDIN = 5
+    LINKEDOBJECTTYPE = 3
+    PSET = 4
+    FILENAME = 5
+    CONTAINEDIN = 6
 
 
 class CustomTreeMaker:
@@ -118,12 +119,16 @@ class CustomTreeDialog(QDialog):
 
         PropertyTreeItem(
             self.info_item, 
-            self.tr("Type"), 
-            CustomFieldType.TYPE)
+            self.tr("IFC Class"), 
+            CustomFieldType.IFCCLASS)
         PropertyTreeItem(
             self.info_item, 
-            self.tr("Object Type"), 
+            self.tr("ObjectType attribute"), 
             CustomFieldType.OBJECTTYPE)
+        PropertyTreeItem(
+            self.info_item, 
+            self.tr("Linked Object Type"), 
+            CustomFieldType.LINKEDOBJECTTYPE)
         PropertyTreeItem(
             self.info_item, 
             self.tr("Filename"), 

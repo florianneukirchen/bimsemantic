@@ -166,8 +166,11 @@ class IfcDetailsTreeModel(DetailsBaseclass):
             TreeItem(["ObjectType", objtype], parent=object_item)
         )
         if linked_object_type:
+            linked_object_type_name = linked_object_type.Name
+            if linked_object_type_name is None:
+                linked_object_type_name = self.tr("Unnamed")
             object_item.appendChild(
-                TreeItem([self.tr("Linked Object Type"), linked_object_type.Name], parent=object_item)
+                TreeItem([self.tr("Linked Object Type"), linked_object_type_name], parent=object_item)
             )
         object_item.appendChild(
             TreeItem(["IFC ID", ifc_object.id()], parent=object_item)
@@ -304,7 +307,7 @@ class IfcDetailsTreeModel(DetailsBaseclass):
         if linked_object_type:
             # Object type Property Sets
             psets = ifcopenshell.util.element.get_psets(linked_object_type)
-            type_item = self.item_with_subitems(linked_object_type, parent, self.tr("Linked Object Type"), value_label=linked_object_type.Name)
+            type_item = self.item_with_subitems(linked_object_type, parent, self.tr("Linked Object Type"), value_label=linked_object_type_name)
             if psets:
                 psets_item = TreeItem([self.tr("Property Sets")], parent=type_item)
                 type_item.appendChild(psets_item)

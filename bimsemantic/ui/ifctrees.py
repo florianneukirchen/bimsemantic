@@ -573,10 +573,21 @@ class IfcCustomTreeModel(IfcTreeModelBaseClass):
         for element in elements:
             parent_item = self._rootItem
             for customfield in self._customfields:
-                if customfield.fieldtype == CustomFieldType.TYPE:
+                if customfield.fieldtype == CustomFieldType.IFCCLASS:
                     data = element.is_a()
                 elif customfield.fieldtype == CustomFieldType.OBJECTTYPE:
                     data = element.ObjectType
+                    if not data:
+                        data = self.nan
+
+                elif customfield.fieldtype == CustomFieldType.LINKEDOBJECTTYPE:
+                    linked_type = ifcopenshell.util.element.get_type(element)
+                    if linked_type:
+                        data = linked_type.Name
+                        if data is None:
+                            data = self.tr("Unnamed")
+                    else:
+                        data = self.nan
                 elif customfield.fieldtype == CustomFieldType.PSET:
                     psets = ifcopenshell.util.element.get_psets(element)
                     try:
