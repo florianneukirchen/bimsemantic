@@ -23,6 +23,7 @@ class DetailsBaseclass(TreeModelBaseclass):
                 except AttributeError:
                     name = ""
                 return self.item_with_subitems(value, parent, ifc_class, name)
+            # All other ifc instances
             try:
                 name = value.Name
             except AttributeError:
