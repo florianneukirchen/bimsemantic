@@ -344,7 +344,7 @@ class MainWindow(QMainWindow):
         self._export_cvs_act = QAction(
             self.tr("&Export View to CSV..."),
             self,
-            shortcut=self.tr("Ctrl+E"),
+            shortcut="Ctrl+E",
             statusTip=self.tr("Export the current view or the current selection to CSV"),
             triggered=self.export_to_csv,
         )
@@ -358,7 +358,7 @@ class MainWindow(QMainWindow):
             icon,
             self.tr("&Close all IFCs"),
             self,
-            shortcut=self.tr("Ctrl+W"),
+            shortcut="Ctrl+W", 
             statusTip=self.tr("Close all IFC files"),
             triggered=self.close_all,
         )
@@ -367,7 +367,7 @@ class MainWindow(QMainWindow):
         self._quit_act = QAction(
             self.tr("&Quit"),
             self,
-            shortcut=self.tr("Ctrl+Q"),
+            shortcut="Ctrl+Q", 
             statusTip=self.tr("Quit the application"),
             triggered=self.close,
         )
@@ -380,7 +380,7 @@ class MainWindow(QMainWindow):
         self._copy_rows_act = QAction(
             self.tr("&Copy rows"),
             self,
-            shortcut=self.tr("Ctrl+C"),
+            shortcut="Ctrl+C",
             statusTip=self.tr("Copy selected rows to clipboard"),
             triggered=self.tabs.copy_selection_to_clipboard,
         )
@@ -389,7 +389,7 @@ class MainWindow(QMainWindow):
         self._copy_cell_act = QAction(
             self.tr("Copy cell"),
             self,
-            shortcut=self.tr("Shift+Ctrl+C"),
+            shortcut="Shift+Ctrl+C",
             statusTip=self.tr("Copy selected cell to clipboard"),
             triggered=self.tabs.copy_active_cell_to_clipboard,
         )

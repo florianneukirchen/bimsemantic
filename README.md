@@ -129,7 +129,12 @@ Update translations:
 pyside6-lupdate bimsemantic/ui/*.py -ts bimsemantic/i18n/bimsemantic_de.ts
 ```
 
-Edit the translations in QtLinguist and then release translation with:
+Edit the translations in QtLinguist 
+```
+pyside6-linguist bimsemantic/i18n/bimsemantic_de.ts
+```
+
+and then release translation with:
 ```
 pyside6-lrelease bimsemantic/i18n/bimsemantic_de.ts
 ```

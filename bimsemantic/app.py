@@ -1,7 +1,7 @@
 import sys
 import os
 from PySide6.QtWidgets import QApplication
-from PySide6.QtCore import QTranslator, QLocale
+from PySide6.QtCore import QTranslator, QLocale, QLibraryInfo
 
 # Add package to python path
 package_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -22,6 +22,13 @@ if __name__ == "__main__":
         app.installTranslator(translator)
     elif language_code != "en":
         print(f"Translation file for locale '{locale}' not found.")
+
+    qt_translator = QTranslator(app)
+    qt_translations_path = QLibraryInfo.path(QLibraryInfo.TranslationsPath)
+    if qt_translator.load(QLocale(), "qtbase", "_", qt_translations_path):
+        app.installTranslator(qt_translator)
+    else:
+        print("Qt base translations not found!")
 
     main_win = MainWindow()
     main_win.show()
