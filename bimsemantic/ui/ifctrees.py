@@ -588,7 +588,8 @@ class IfcCustomTreeModel(IfcTreeModelBaseClass):
                     data = filename
                 elif customfield.fieldtype == CustomFieldType.CONTAINEDIN:
                     try:
-                        data = element.ContainedInStructure[0].RelatingStructure.Name
+                        container = element.ContainedInStructure[0].RelatingStructure
+                        data = f"{container.is_a()} {container.Name}"
                     except (IndexError, AttributeError):
                         data = self.nan
                 else:
