@@ -157,6 +157,7 @@ class TreeModelBaseclass(QAbstractItemModel):
     def __init__(self, data, parent=None):
         super(TreeModelBaseclass, self).__init__(parent)
         self.column_count = 2
+        self.nan = self.tr("<NULL>")
 
         self.setup_root_item()
         self.setup_model_data(data, self._rootItem)

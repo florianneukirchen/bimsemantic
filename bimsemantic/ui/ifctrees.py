@@ -327,7 +327,7 @@ class LocationTreeModel(IfcTreeModelBaseClass):
         for site in ifc_file.model.by_type("IfcSite"):
             self.add_items(site, project_item, filename)
 
-        label = self.tr("Without container")
+        label = self.tr("Container is %s" % self.nan)
         notcontained_item = self.get_child_by_label(self._rootItem, label)
         if not notcontained_item:
             notcontained_item = TreeItem([label], self._rootItem)
@@ -532,7 +532,6 @@ class IfcCustomTreeModel(IfcTreeModelBaseClass):
         self.name = self.tr("Custom")
         self._customfields = []
         super(IfcCustomTreeModel, self).__init__(data, parent)
-        self.nan = self.tr("<NULL>")
 
     def set_custom_fields(self, customfields):
         """Set the custom fields for the tree view
