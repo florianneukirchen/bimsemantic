@@ -165,7 +165,7 @@ class IfcDetailsTreeModel(DetailsBaseclass):
             TreeItem(["IFC ID", ifc_object.id()], parent=object_item)
         )
 
-        # Check if the ID is alway the same
+        # Check if the ID is always the same
         if len(self.filenames) > 1:
             ids = []
             for filename in self.filenames[1:]:
@@ -183,7 +183,7 @@ class IfcDetailsTreeModel(DetailsBaseclass):
         )
 
 
-        info_item = TreeItem([self.tr("Info")], parent=object_item)
+        info_item = TreeItem([self.tr("Main Attributes")], parent=object_item)
         object_item.appendChild(info_item)
         
         for k,v in info.items():
@@ -237,16 +237,32 @@ class IfcDetailsTreeModel(DetailsBaseclass):
                     )
 
         # Property Sets
-        psets = ifcopenshell.util.element.get_psets(ifc_object)
-        for pset_name, pset in psets.items():
-            pset_item = TreeItem([pset_name], parent=object_item)
-            self.rows_spanned.append(pset_item)
-            object_item.appendChild(pset_item)
-            for k, v in pset.items():
-                pset_item.appendChild(
-                    TreeItem([k,v], parent=pset_item)
-                )
+        psets = ifcopenshell.util.element.get_psets(ifc_object, psets_only=True)
+        if psets:
+            psets_item = TreeItem([self.tr("Property Sets")], parent=object_item)
+            object_item.appendChild(psets_item)
+            for pset_name, pset in psets.items():
+                pset_item = TreeItem([pset_name], parent=psets_item)
+                self.rows_spanned.append(pset_item)
+                psets_item.appendChild(pset_item)
+                for k, v in pset.items():
+                    pset_item.appendChild(
+                        TreeItem([k,v], parent=pset_item)
+                    )
 
+        # Quantity Sets
+        qsets = ifcopenshell.util.element.get_psets(ifc_object, qtos_only=True)
+        if qsets:
+            qsets_item = TreeItem([self.tr("Quantity Sets")], parent=object_item)
+            object_item.appendChild(qsets_item)
+            for qset_name, qset in qsets.items():
+                qset_item = TreeItem([qset_name], parent=qsets_item)
+                self.rows_spanned.append(qset_item)
+                qsets_item.appendChild(qset_item)
+                for k, v in qset.items():
+                    qset_item.appendChild(
+                        TreeItem([k,v], parent=qset_item)
+                    )   
 
         # Materials
         materials = []
