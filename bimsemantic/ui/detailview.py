@@ -317,19 +317,26 @@ class OverviewTreeModel(DetailsBaseclass):
 
             self.new_item(self.tr("Project owner"), ifcfile.project.OwnerHistory.OwningUser.ThePerson.GivenName, ifcfile_item)
             self.new_item(self.tr("Application"), ifcfile.project.OwnerHistory.OwningApplication.ApplicationFullName, ifcfile_item)
-            
 
-            for building in ifcfile.model.by_type("IfcBuilding"):
-                building_item = TreeItem([f"Building {building.Name}"], parent=ifcfile_item)
-                ifcfile_item.appendChild(building_item)
+            address_item = TreeItem([self.tr("Addresses")], parent=ifcfile_item)
 
-                longname = building.LongName
-                if longname:
-                    self.new_item(self.tr("Long name"), longname, building_item)
-                    
-                address = building.BuildingAddress
+            for site in ifcfile.model.by_type("IfcSite"):
+                address = site.SiteAddress
                 if address:
-                    self.item_with_subitems(address, building_item, "Building Address")
+                    self.item_with_subitems(address, address_item, "Site", site.Name)
+
+                buildings = site.IsDecomposedBy[0].RelatedObjects
+
+                for building in buildings:
+                    try:
+                        address = building.BuildingAddress
+                    except AttributeError:
+                        address = None
+                    if address:
+                        self.item_with_subitems(address, address_item, "Building", building.Name)
+
+            if address_item.child_count() > 0:
+                ifcfile_item.appendChild(address_item)
 
             try:
                 crs = ifcfile.model.by_type("IfcCoordinateReferenceSystem")[0]
