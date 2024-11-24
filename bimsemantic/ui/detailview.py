@@ -106,7 +106,7 @@ class DetailsBaseclass(TreeModelBaseclass):
         parent.appendChild(main_item)
 
         for k,v in entity.get_info().items():
-            if v and not k in ["id", "type"]:
+            if v and not k in ["id", "type", "HasPropertySets"]:
                 if isinstance(v, tuple):
                     for i, v in enumerate(v):
                         if isinstance(v, ifcopenshell.entity_instance):
@@ -275,6 +275,7 @@ class IfcDetailsTreeModel(DetailsBaseclass):
                         TreeItem([k,v], parent=qset_item)
                     )   
 
+
         # Materials
         materials = []
         if ifc_object.HasAssociations:
@@ -300,7 +301,24 @@ class IfcDetailsTreeModel(DetailsBaseclass):
                             if k not in ["Name"]:
                                 self.new_item(k, v, mat_item)
                                
+        if linked_object_type:
+            # Object type Property Sets
+            psets = ifcopenshell.util.element.get_psets(linked_object_type)
+            type_item = self.item_with_subitems(linked_object_type, parent, self.tr("Linked Object Type"), value_label=linked_object_type.Name)
+            if psets:
+                psets_item = TreeItem([self.tr("Property Sets")], parent=type_item)
+                type_item.appendChild(psets_item)
+                parent_index = self.index(psets_item.row(), 0, self.index(type_item.row(), 0)) 
+                for pset_name, pset in psets.items():
+                    pset_item = TreeItem([pset_name], parent=psets_item)
+                    psets_item.appendChild(pset_item)
+                    self.rows_spanned.append((pset_item.row(), parent_index))
+                    for k, v in pset.items():
+                        pset_item.appendChild(
+                            TreeItem([k,v], parent=pset_item)
+                        )
 
+  
 
 
 
