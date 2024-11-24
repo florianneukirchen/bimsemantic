@@ -2,6 +2,35 @@ import ifcopenshell.util.element
 from .treebase import TreeItem, TreeModelBaseclass
 
 class DetailsBaseclass(TreeModelBaseclass):
+    """Base class for the details dock widget models"""
+
+    def new_item(self, key, value, parent):
+        """Helper to create new items of key-value pairs, including subitems
+
+        :param key: The key
+        :param value: The value
+        :param parent: The parent tree item
+        """
+        if isinstance(value, ifcopenshell.entity_instance):
+            ifc_class = value.is_a()
+
+            if ifc_class in ["IfcPerson", "IfcOrganization", "IfPostalAddress", 'IfcTelecomAddress']:
+                try:
+                    name = value.Name
+                except AttributeError:
+                    name = ""
+                return self.item_with_subitems(value, parent, f"{ifc_class} {name}")
+            try:
+                name = value.Name
+            except AttributeError:
+                name = ""
+
+            value = f"{value.is_a()} <{value.id()}> {name}"
+
+        item = TreeItem([key, value], parent)
+        parent.appendChild(item)
+        return item
+
     def owner_history_item(self, owner_history, parent):
         """Create a tree item for the owner history
         
@@ -105,33 +134,6 @@ class IfcDetailsTreeModel(DetailsBaseclass):
         self._mainwindow = parent
         element = ifc_element
         super(IfcDetailsTreeModel, self).__init__(element, parent)
-
-    def new_item(self, key, value, parent):
-        """Helper to create new items of key-value pairs, including subitems
-
-        :param key: The key
-        :param value: The value
-        :param parent: The parent tree item
-        """
-        if isinstance(value, ifcopenshell.entity_instance):
-            ifc_class = value.is_a()
-
-            if ifc_class in ["IfcPerson", "IfcOrganization", "IfPostalAddress", 'IfcTelecomAddress']:
-                try:
-                    name = value.Name
-                except AttributeError:
-                    name = ""
-                return self.item_with_subitems(value, parent, f"{ifc_class} {name}")
-            try:
-                name = value.Name
-            except AttributeError:
-                name = ""
-
-            value = f"{value.is_a()} <{value.id()}> {name}"
-
-        item = TreeItem([key, value], parent)
-        parent.appendChild(item)
-        return item
 
 
     def setup_model_data(self, data, parent):
@@ -283,10 +285,11 @@ class OverviewTreeModel(DetailsBaseclass):
 
         super(OverviewTreeModel, self).__init__(None, parent)
 
-    def new_item(self, key, value, parent):
-        """Helper to create new items of key-value pairs"""
-        item = TreeItem([key, value], parent)
-        return item
+    # def new_item(self, key, value, parent):
+    #     """Helper to create new items of key-value pairs"""
+    #     item = TreeItem([key, value], parent)
+    #     return item
+
 
 
     def setup_model_data(self, data, parent):
@@ -304,36 +307,21 @@ class OverviewTreeModel(DetailsBaseclass):
             root_item.appendChild(ifcfile_item)
             self.rows_spanned.append(ifcfile_item)
 
-            ifcfile_item.appendChild(
-                self.new_item(self.tr("IFC Version"), ifcfile.model.schema, ifcfile_item)
-            )
-            ifcfile_item.appendChild(
-                self.new_item(self.tr("File size"), f"{ifcfile.megabytes} MB", ifcfile_item)
-            )
-
-            ifcfile_item.appendChild(
-                self.new_item(self.tr("Project name"), ifcfile.project.Name, ifcfile_item)
-            )
+            self.new_item(self.tr("IFC Version"), ifcfile.model.schema, ifcfile_item)
+            self.new_item(self.tr("File size"), f"{ifcfile.megabytes} MB", ifcfile_item)
+            self.new_item(self.tr("Project name"), ifcfile.project.Name, ifcfile_item)
 
             longname = ifcfile.project.LongName
             if longname:
-                ifcfile_item.appendChild(
-                    self.new_item(self.tr("Long name"), longname, ifcfile_item)
-                )
+                self.new_item(self.tr("Long name"), longname, ifcfile_item)
 
             phase = ifcfile.project.Phase
             if phase:
-                ifcfile_item.appendChild(
-                    self.new_item(self.tr("Project phase"), phase, ifcfile_item)
-                )
+                self.new_item(self.tr("Project phase"), phase, ifcfile_item)
 
-            ifcfile_item.appendChild(
-                self.new_item(self.tr("Project owner"), ifcfile.project.OwnerHistory.OwningUser.ThePerson.GivenName, ifcfile_item)
-            )
-
-            ifcfile_item.appendChild(
-                self.new_item(self.tr("Application"), ifcfile.project.OwnerHistory.OwningApplication.ApplicationFullName, ifcfile_item)
-            )
+            self.new_item(self.tr("Project owner"), ifcfile.project.OwnerHistory.OwningUser.ThePerson.GivenName, ifcfile_item)
+            self.new_item(self.tr("Application"), ifcfile.project.OwnerHistory.OwningApplication.ApplicationFullName, ifcfile_item)
+            
 
             for building in ifcfile.model.by_type("IfcBuilding"):
                 building_item = TreeItem([f"Building {building.Name}"], parent=ifcfile_item)
@@ -341,9 +329,8 @@ class OverviewTreeModel(DetailsBaseclass):
 
                 longname = building.LongName
                 if longname:
-                    building_item.appendChild(
-                        self.new_item(self.tr("Long name"), longname, building_item)
-                    )
+                    self.new_item(self.tr("Long name"), longname, building_item)
+                    
                 address = building.BuildingAddress
                 if address:
                     self.item_with_subitems(address, building_item, "Building Address")
@@ -353,20 +340,13 @@ class OverviewTreeModel(DetailsBaseclass):
             except IndexError:
                 crs = None
             if crs:
-                ifcfile_item.appendChild(
-                    self.new_item(self.tr("CRS"), crs.Name, ifcfile_item)
-                )
+                self.new_item(self.tr("CRS"), crs.Name, ifcfile_item)
                 
 
-            ifcfile_item.appendChild(
-                self.new_item(self.tr("IFC Elements"), ifcfile.count_ifc_elements(), ifcfile_item)
-            )
-            ifcfile_item.appendChild(
-                self.new_item(self.tr("Pset count"), ifcfile.pset_count(), ifcfile_item)
-            )
-            ifcfile_item.appendChild(
-                self.new_item(self.tr("Qset count"), ifcfile.qset_count(), ifcfile_item)
-            )
+            self.new_item(self.tr("IFC Elements"), ifcfile.count_ifc_elements(), ifcfile_item)
+            self.new_item(self.tr("Pset count"), ifcfile.pset_count(), ifcfile_item)
+            self.new_item(self.tr("Qset count"), ifcfile.qset_count(), ifcfile_item)
+            
 
 
 
