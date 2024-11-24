@@ -49,7 +49,7 @@ class MainWindow(QMainWindow):
         self.workers = []
 
         self.setup_menus()
-        self.create_dock_windows()
+        self.create_dock_widgets()
          
         self.setCentralWidget(self.tabs)
         self.setAcceptDrops(True)
@@ -519,8 +519,9 @@ class MainWindow(QMainWindow):
 
         self._help_menu.addAction(self._about_act)
 
-    def create_dock_windows(self):
+    def create_dock_widgets(self):
         """Create the dock widgets"""
+
         # Details dock
         self.detailsdock = QDockWidget(self.tr("&Details"), self)
         self.detailsdock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
