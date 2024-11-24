@@ -19,7 +19,7 @@ class DetailsBaseclass(TreeModelBaseclass):
                     name = value.Name
                 except AttributeError:
                     name = ""
-                return self.item_with_subitems(value, parent, f"{ifc_class} {name}")
+                return self.item_with_subitems(value, parent, ifc_class, name)
             try:
                 name = value.Name
             except AttributeError:
@@ -44,7 +44,7 @@ class DetailsBaseclass(TreeModelBaseclass):
         :return: The tree item
         :rtype: TreeItem
         """
-        history_item = TreeItem([f"Owner History (ID {owner_history.id()})"], parent=parent)
+        history_item = TreeItem(["Owner History", f"ID {owner_history.id()}"], parent=parent)
         parent.appendChild(history_item)
 
         owning_user_item = TreeItem(["Owning User"], parent=history_item)
@@ -52,14 +52,14 @@ class DetailsBaseclass(TreeModelBaseclass):
 
         person = owner_history.OwningUser.ThePerson
 
-        self.item_with_subitems(person, owning_user_item, f"Person {person.GivenName}")
+        self.item_with_subitems(person, owning_user_item, "Person", person.GivenName)
 
         org = owner_history.OwningUser.TheOrganization
-        self.item_with_subitems(org, owning_user_item, f"Organization {org.Name}")
+        self.item_with_subitems(org, owning_user_item, "Organization", org.Name)
 
         owning_app = owner_history.OwningApplication
 
-        owning_app_item = TreeItem([f"Owning Application {owning_app.ApplicationFullName}"], parent=history_item)
+        owning_app_item = TreeItem(["Owning Application", owning_app.ApplicationFullName], parent=history_item)
         history_item.appendChild(owning_app_item)
 
         for k,v in owning_app.get_info().items():
@@ -68,7 +68,7 @@ class DetailsBaseclass(TreeModelBaseclass):
             except AttributeError:
                 is_org = False
             if is_org: 
-                self.item_with_subitems(v, owning_app_item, f"Organization {v.Name}")
+                self.item_with_subitems(v, owning_app_item, "Organization", v.Name)
             elif k not in ["id", "type"]:
                 owning_app_item.appendChild(
                     TreeItem([k,v], parent=owning_app_item)
@@ -82,7 +82,7 @@ class DetailsBaseclass(TreeModelBaseclass):
 
         return history_item    
 
-    def item_with_subitems(self, entity, parent, label):
+    def item_with_subitems(self, entity, parent, key_label, value_label=None):
         """Create a tree item with several key-value pair subitems
 
         Make subitems for the key value pairs in the dict returned by 
@@ -98,7 +98,7 @@ class DetailsBaseclass(TreeModelBaseclass):
         :return: The tree item
         :rtype: TreeItem
         """
-        main_item = TreeItem([label], parent=parent)
+        main_item = TreeItem([key_label, value_label], parent=parent)
         parent.appendChild(main_item)
 
         for k,v in entity.get_info().items():
