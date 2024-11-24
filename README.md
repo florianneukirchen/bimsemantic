@@ -5,11 +5,11 @@
 ### Todo
 - Spalten umsortieren in allen tabs
 - tabs: Material, Psets
-- tabbify
 - Kontextmenü
 - Export als JSON
 - Filter
 - email linkedin
+- qset und pset getrennt
 
 ## Installation
 - Python 3.9 to 3.12 or lower

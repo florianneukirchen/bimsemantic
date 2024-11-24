@@ -22,14 +22,8 @@ class DetailsBaseclass(TreeModelBaseclass):
         history_item.appendChild(owning_user_item)
 
         person = owner_history.OwningUser.ThePerson
-        person_item = TreeItem([f"Person {person.GivenName}"], parent=owning_user_item)
-        owning_user_item.appendChild(person_item)
 
-        for k,v in person.get_info().items():
-            if v and not k in ["id", "type"]:
-                person_item.appendChild(
-                    TreeItem([k,v], parent=person_item)
-                )
+        self.item_with_subitems(person, owning_user_item, f"Person {person.GivenName}")
 
         org = owner_history.OwningUser.TheOrganization
         self.item_with_subitems(org, owning_user_item, f"Organization {org.Name}")
@@ -63,7 +57,8 @@ class DetailsBaseclass(TreeModelBaseclass):
         """Create a tree item with several key-value pair subitems
 
         Make subitems for the key value pairs in the dict returned by 
-        entity.get_info().
+        entity.get_info(). If the value is a tuple (such as several addresses), 
+        create several subitems.
         
         :param entity: The IfcOpenShell entity
         :type org: ifcopenshell entity
@@ -79,36 +74,23 @@ class DetailsBaseclass(TreeModelBaseclass):
 
         for k,v in entity.get_info().items():
             if v and not k in ["id", "type"]:
-                main_item.appendChild(
-                    TreeItem([k,v], parent=main_item)
-                )
+                if isinstance(v, tuple):
+                    print(f"Tuple: {k} {v}")
+                    for i, v in enumerate(v):
+                        if isinstance(v, ifcopenshell.entity_instance):
+                            self.item_with_subitems(v, main_item, f"{k} {i+1}")
+                        else:
+                            main_item.appendChild(
+                                TreeItem([f"{k} {i+1}", v], parent=main_item)
+                            )
+                else:
+                    main_item.appendChild(
+                        TreeItem([k,v], parent=main_item)
+                    )
 
         return main_item
 
-    def address_item(self, address, parent):
-        """Create a tree item for an address
-        
-        :param address: The IfcPostalAddress entity
-        :type address: ifcopenshell entity
-        :param parent: The parent tree item
-        :type parent: TreeItem
-        :return: The tree item
-        :rtype: TreeItem
-        """
-        add_item = TreeItem(["Address"], parent=parent)
-        parent.appendChild(add_item)
-        address_lines = address.AddressLines
-        for i, line in enumerate(address_lines):
-            add_item.appendChild(
-                TreeItem([f"Address line {i+1}", line], parent=add_item)
-            )
-        for k,v in address.get_info().items():
-            if v and k not in ["id", "type", "AddressLines"]:
-                add_item.appendChild(
-                    TreeItem([k,v], parent=add_item)
-            )
-                
-        return add_item
+
 
 class IfcDetailsTreeModel(DetailsBaseclass):
     """Model for the tree view of the details dock widget
@@ -125,19 +107,21 @@ class IfcDetailsTreeModel(DetailsBaseclass):
         super(IfcDetailsTreeModel, self).__init__(element, parent)
 
     def new_item(self, key, value, parent):
-        """Helper to create new items of key-value pairs
+        """Helper to create new items of key-value pairs, including subitems
+
         :param key: The key
         :param value: The value
         :param parent: The parent tree item
         """
         if isinstance(value, ifcopenshell.entity_instance):
-            if value.is_a("IfcOwnerHistory"):
-                return self.owner_history_item(value, parent)
-            elif value.is_a("IfcOrganization"):
-                return self.item_with_subitems(value, parent, "Organization {value.Name}")
-            elif value.is_a("IfcPostalAddress"):
-                return self.address_item(value, parent)
+            ifc_class = value.is_a()
 
+            if ifc_class in ["IfcPerson", "IfcOrganization", "IfPostalAddress", 'IfcTelecomAddress']:
+                try:
+                    name = value.Name
+                except AttributeError:
+                    name = ""
+                return self.item_with_subitems(value, parent, f"{ifc_class} {name}")
             try:
                 name = value.Name
             except AttributeError:
@@ -362,7 +346,7 @@ class OverviewTreeModel(DetailsBaseclass):
                     )
                 address = building.BuildingAddress
                 if address:
-                    self.address_item(address, building_item)
+                    self.item_with_subitems(address, building_item, "Building Address")
 
             try:
                 crs = ifcfile.model.by_type("IfcCoordinateReferenceSystem")[0]
