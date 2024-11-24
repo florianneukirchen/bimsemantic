@@ -54,6 +54,14 @@ class IfcTreeItem(TreeItem):
         self._filenames = []
         self._columntree = columntree
 
+        linked_object_type = ifcopenshell.util.element.get_type(self._ifc_item)
+        if linked_object_type:
+            self._linked_object_type = linked_object_type.Name
+            if self._linked_object_type is None:
+                self._linked_object_type = self.tr("Unnamed")
+        else:
+            self._linked_object_type = self.tr("None")
+
         if filename:
             self._filenames.append(filename)
         
@@ -98,16 +106,18 @@ class IfcTreeItem(TreeItem):
         if column == 5:
             return self._ifc_item.ObjectType
         if column == 6:
-            return self._ifc_item.Description
+            return self._linked_object_type
         if column == 7:
-            return self.filenames_str
+            return self._ifc_item.Description
         if column == 8:
+            return self.filenames_str
+        if column == 9:
             try:
                 container = self._ifc_item.ContainedInStructure[0].RelatingStructure.Name
             except (IndexError, AttributeError):
                 container = None
             return container
-        if column == 9:
+        if column == 10:
             # Validation
             return None
         

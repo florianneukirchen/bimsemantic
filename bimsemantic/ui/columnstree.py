@@ -21,12 +21,13 @@ class ColumnsTreeModel(QTreeWidget):
     def __init__(self, data=None, parent=None):
         super(ColumnsTreeModel, self).__init__(parent)
         self.first_cols = [
-            self.tr("Type"), 
+            self.tr("IFC Class"), 
             "ID", 
             self.tr("Name"), 
             "GUID", 
             "Tag",
-            self.tr("Object Type"),
+            self.tr("ObjectType Attribute"),
+            self.tr("Linked Object Type"),
             self.tr("Description"),
             self.tr("Filename"), 
             self.tr("Contained In"),
@@ -36,7 +37,8 @@ class ColumnsTreeModel(QTreeWidget):
             "ID", 
             "GUID", 
             "Tag", 
-            self.tr("Object Type"), 
+            self.tr("ObjectType Attribute"), 
+            self.tr("Linked Object Type"),
             self.tr("Description"), 
             self.tr("Filename"), 
             self.tr("Contained In"),

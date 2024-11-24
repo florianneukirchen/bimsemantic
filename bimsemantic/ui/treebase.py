@@ -1,8 +1,8 @@
-from PySide6.QtCore import QDate, QFile, Qt, QAbstractItemModel, QModelIndex, Qt
+from PySide6.QtCore import QDate, QFile, Qt, QAbstractItemModel, QModelIndex, Qt, QObject
 from PySide6.QtGui import QAction, QFont, QIcon
 from PySide6.QtWidgets import QTreeView
 
-class TreeItem:
+class TreeItem(QObject):
     """Basic item for a tree model.
     
     Can be used directly or subclassed to add more functionality.
