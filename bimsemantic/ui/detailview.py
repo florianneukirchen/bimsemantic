@@ -151,6 +151,7 @@ class IfcDetailsTreeModel(DetailsBaseclass):
         ifc_object = data
 
         info = ifc_object.get_info()
+
         object_item.appendChild(
             TreeItem(["Name", ifc_object.Name], parent=object_item)
         )
@@ -241,10 +242,12 @@ class IfcDetailsTreeModel(DetailsBaseclass):
         if psets:
             psets_item = TreeItem([self.tr("Property Sets")], parent=object_item)
             object_item.appendChild(psets_item)
+            parent_index = self.index(psets_item.row(), 0) 
             for pset_name, pset in psets.items():
                 pset_item = TreeItem([pset_name], parent=psets_item)
-                self.rows_spanned.append(pset_item)
                 psets_item.appendChild(pset_item)
+                # This tuple can be used to span rows:
+                self.rows_spanned.append((pset_item.row(), parent_index))
                 for k, v in pset.items():
                     pset_item.appendChild(
                         TreeItem([k,v], parent=pset_item)
@@ -255,10 +258,11 @@ class IfcDetailsTreeModel(DetailsBaseclass):
         if qsets:
             qsets_item = TreeItem([self.tr("Quantity Sets")], parent=object_item)
             object_item.appendChild(qsets_item)
+            parent_index = self.index(qsets_item.row(), 0)
             for qset_name, qset in qsets.items():
                 qset_item = TreeItem([qset_name], parent=qsets_item)
-                self.rows_spanned.append(qset_item)
                 qsets_item.appendChild(qset_item)
+                self.rows_spanned.append((qset_item.row(), parent_index))
                 for k, v in qset.items():
                     qset_item.appendChild(
                         TreeItem([k,v], parent=qset_item)
@@ -318,7 +322,7 @@ class OverviewTreeModel(DetailsBaseclass):
         for ifcfile in self.ifcfiles:
             ifcfile_item = TreeItem([ifcfile.filename], parent=root_item)
             root_item.appendChild(ifcfile_item)
-            self.rows_spanned.append(ifcfile_item)
+            self.rows_spanned.append(ifcfile_item.row())
 
             self.new_item(self.tr("IFC Version"), ifcfile.model.schema, ifcfile_item)
             self.new_item(self.tr("File size"), f"{ifcfile.megabytes} MB", ifcfile_item)

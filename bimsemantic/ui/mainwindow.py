@@ -127,8 +127,8 @@ class MainWindow(QMainWindow):
         self.overviewtree.expandAll()
         self.overviewtree.setColumnWidth(0, 170)
 
-        for item in overview.rows_spanned:
-            self.overviewtree.setFirstColumnSpanned(item.row(), self.overviewtree.rootIndex(), True)
+        for row in overview.rows_spanned:
+            self.overviewtree.setFirstColumnSpanned(row, self.overviewtree.rootIndex(), True)
 
         if isinstance(self.detailsdock.widget(), QLabel):
             self.show_details()
@@ -568,8 +568,10 @@ class MainWindow(QMainWindow):
         # treeview.setColumnWidth(1, 200)
         treeview.expandToDepth(1)
         # treeview.adjustSize()
-        for item in detailModel.rows_spanned:
-            treeview.setFirstColumnSpanned(item.row(), treeview.rootIndex(), True)
+        for row, parent_index in detailModel.rows_spanned:
+            if not parent_index:
+                parent_index = treeview.rootIndex()
+            treeview.setFirstColumnSpanned(row, parent_index, True)
         self.detailsdock.setWidget(treeview)
 
 

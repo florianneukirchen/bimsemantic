@@ -101,6 +101,7 @@ class TreeItem:
             return self._parent.children.index(self)
         return 0
 
+        
     def find_item_by_guid(self, guid):
         """Find children of type IfcTreeItem by GUID
         
