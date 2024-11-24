@@ -287,12 +287,6 @@ class OverviewTreeModel(DetailsBaseclass):
 
         super(OverviewTreeModel, self).__init__(None, parent)
 
-    # def new_item(self, key, value, parent):
-    #     """Helper to create new items of key-value pairs"""
-    #     item = TreeItem([key, value], parent)
-    #     return item
-
-
 
     def setup_model_data(self, data, parent):
         """Build the tree view
