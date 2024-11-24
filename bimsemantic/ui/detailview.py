@@ -226,13 +226,13 @@ class IfcDetailsTreeModel(DetailsBaseclass):
                 elements = []
             for element in elements:
                 contains_item.appendChild(
-                    TreeItem([element.is_a(), element.id(), element.Name], parent=contains_item)
+                    TreeItem([f"{element.is_a()} <{element.id()}>", element.Name], parent=contains_item)
                 )
             iscomposedby = ifc_object.IsDecomposedBy
             if iscomposedby:
                 for obj in list(iscomposedby[0].RelatedObjects):
                     contains_item.appendChild(
-                        TreeItem([obj.is_a(), obj.id(), obj.Name], parent=contains_item)
+                        TreeItem([f"{obj.is_a()} <{obj.id()}>", obj.Name], parent=contains_item)
                     )
 
         # Property Sets
