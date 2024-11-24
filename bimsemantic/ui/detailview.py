@@ -151,7 +151,11 @@ class IfcDetailsTreeModel(DetailsBaseclass):
         ifc_object = data
 
         info = ifc_object.get_info()
-        linked_object_type = ifcopenshell.util.element.get_type(ifc_object)
+        if ifc_object.is_a("IfcElementType"):
+            # get_type() on a element type item would return the item itself
+            linked_object_type = None
+        else:
+            linked_object_type = ifcopenshell.util.element.get_type(ifc_object)
 
         object_item.appendChild(
             TreeItem(["Name", ifc_object.Name], parent=object_item)

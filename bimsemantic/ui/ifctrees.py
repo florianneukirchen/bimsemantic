@@ -53,14 +53,16 @@ class IfcTreeItem(TreeItem):
         self._children = []
         self._filenames = []
         self._columntree = columntree
-
-        linked_object_type = ifcopenshell.util.element.get_type(self._ifc_item)
-        if linked_object_type:
-            self._linked_object_type = linked_object_type.Name
-            if self._linked_object_type is None:
-                self._linked_object_type = self.tr("Unnamed")
+        if self._ifc_item.is_a("IfcElementType"):
+            linked_object_type = None
         else:
-            self._linked_object_type = self.tr("None")
+            linked_object_type = ifcopenshell.util.element.get_type(self._ifc_item)
+        if linked_object_type:
+            self._linked_type_name = linked_object_type.Name
+            if self._linked_type_name is None:
+                self._linked_type_name = self.tr("Unnamed")
+        else:
+            self._linked_type_name = None
 
         if filename:
             self._filenames.append(filename)
@@ -106,7 +108,7 @@ class IfcTreeItem(TreeItem):
         if column == 5:
             return self._ifc_item.ObjectType
         if column == 6:
-            return self._linked_object_type
+            return self._linked_type_name
         if column == 7:
             return self._ifc_item.Description
         if column == 8:
