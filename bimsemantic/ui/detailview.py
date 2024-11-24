@@ -11,6 +11,9 @@ class DetailsBaseclass(TreeModelBaseclass):
         :param value: The value
         :param parent: The parent tree item
         """
+        if value is None:
+            return None
+        
         if isinstance(value, ifcopenshell.entity_instance):
             ifc_class = value.is_a()
 
@@ -27,7 +30,7 @@ class DetailsBaseclass(TreeModelBaseclass):
 
             value = f"{value.is_a()} <{value.id()}> {name}"
 
-        item = TreeItem([key, value], parent)
+        item = TreeItem([key, str(value)], parent) # Might be tuple, therefore str()
         parent.appendChild(item)
         return item
 
@@ -104,7 +107,6 @@ class DetailsBaseclass(TreeModelBaseclass):
         for k,v in entity.get_info().items():
             if v and not k in ["id", "type"]:
                 if isinstance(v, tuple):
-                    print(f"Tuple: {k} {v}")
                     for i, v in enumerate(v):
                         if isinstance(v, ifcopenshell.entity_instance):
                             self.item_with_subitems(v, main_item, f"{k} {i+1}")
