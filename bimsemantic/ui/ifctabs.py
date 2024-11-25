@@ -34,7 +34,7 @@ class IfcTabs(QWidget):
         self.tabs.addTab(self.locationtab, self.tr("Location"))
 
         self.typetab = IfcTreeTab(TypeTreeModel, self.ifcfiles, self) 
-        self.tabs.addTab(self.typetab, self.tr("Type"))
+        self.tabs.addTab(self.typetab, self.tr("Class"))
 
         self.flattab = IfcTreeTab(FlatTreeModel, self.ifcfiles, self) 
         self.tabs.addTab(self.flattab, self.tr("Flat"))
