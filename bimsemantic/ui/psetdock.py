@@ -53,6 +53,8 @@ class PsetTreeModel(TreeModelBaseclass):
                     pset_item = TreeItem([pset_name, ""], self._rootItem)
                     self._rootItem.appendChild(pset_item)
                 for prop_name, prop_value in pset.items():
+                    if not prop_value:
+                        prop_value = self.nan
                     if prop_name == "id":
                         continue
                     prop_item = self.get_child_by_label(pset_item, prop_name)
