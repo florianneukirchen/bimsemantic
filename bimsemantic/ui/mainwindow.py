@@ -23,7 +23,7 @@ from PySide6.QtWidgets import (
 
 from ifcopenshell import entity_instance
 from bimsemantic.util import IfcFiles
-from bimsemantic.ui import IfcTabs, IfcDetailsTreeModel, OverviewTreeModel, ColumnsTreeModel, WorkerAddFiles, CustomTreeDialog
+from bimsemantic.ui import IfcTabs, IfcDetailsTreeModel, OverviewTreeModel, ColumnsTreeModel, WorkerAddFiles, CustomTreeDialog, PsetTreeModel
 
 
 class MainWindow(QMainWindow):
@@ -43,6 +43,8 @@ class MainWindow(QMainWindow):
         self.statusbar.addPermanentWidget(self.progressbar)
         self.overviewtree = QTreeView()
         self.column_treemodel = ColumnsTreeModel(parent=self)
+        self.pset_treemodel = PsetTreeModel(parent=self)
+
         self.tabs = IfcTabs(self)
 
         self.threadpool = QThreadPool()
@@ -539,8 +541,16 @@ class MainWindow(QMainWindow):
         self.addDockWidget(Qt.RightDockWidgetArea, self.columnsdock)
         self._view_menu.addAction(self.columnsdock.toggleViewAction())
 
-    
+        # Pset docks
+        self.psetdock = QDockWidget(self.tr("&Psets"), self)
+        label = QLabel(self.tr("No open file"))
+        label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.psetdock.setWidget(label)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.psetdock)
+
         self.tabifyDockWidget(self.detailsdock, self.columnsdock)
+        self.tabifyDockWidget(self.columnsdock, self.psetdock)
+        self.detailsdock.raise_()
 
     def show_details(self, data=None, filenames=None):
         """Show the details of an IFC element

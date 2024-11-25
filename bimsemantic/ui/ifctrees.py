@@ -277,16 +277,6 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
                 return child
         return None
 
-    def get_child_by_label(self, parent, label):
-        """Get the child item with a given label (data of first column) if already present, otherwise None"""
-        for child in parent.children:
-            try:
-                childlabel = child.label
-            except AttributeError:
-                continue
-            if child.label == label:
-                return child
-        return None
     
     def find_index_by_guid(self, guid):
         """Search the tree for an item by its GUID and return the QModelIndex"""
