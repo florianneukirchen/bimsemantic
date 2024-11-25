@@ -123,7 +123,7 @@ class MainWindow(QMainWindow):
         elementcount = self.tabs.count_ifc_elements()
         typecount = self.tabs.count_ifc_types()
         psetscount = self.column_treemodel.count_psets()
-        self.infolabel.setText(self.tr("{0} files, {1} elements, {2} types, {3} psets").format(filecount, elementcount, typecount, psetscount))
+        self.infolabel.setText(self.tr("{0} files, {1} elements in {2} IFC classes, {3} psets").format(filecount, elementcount, typecount, psetscount))
 
         overview = OverviewTreeModel(self)
         self.overviewtree.setModel(overview)
