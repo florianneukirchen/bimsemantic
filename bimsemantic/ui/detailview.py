@@ -1,5 +1,70 @@
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QDockWidget, QLabel, QTreeView
 import ifcopenshell.util.element
 from .treebase import TreeItem, TreeModelBaseclass
+from ifcopenshell import entity_instance
+
+class DetailsDock(QDockWidget):
+    def __init__(self, parent):
+        super(DetailsDock, self).__init__(self.tr("&Details"), parent)
+        self.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
+        self.placeholder = QLabel(self.tr("No open file"))
+        self.placeholder.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.setWidget(self.placeholder)
+        self.mainwindow = parent
+        self.ifcfiles = self.mainwindow.ifcfiles
+
+        self.overviewtree = QTreeView()
+        self.overviewmodel = None
+
+    def reset(self):
+        self.setWidget(self.placeholder)
+
+    def new_files(self):
+        """Simply create a new overview model"""
+        self.overviewmodel = OverviewTreeModel(self)
+        self.overviewtree.setModel(self.overviewmodel)
+        self.overviewtree.expandAll()
+        self.overviewtree.setColumnWidth(0, 170)
+
+        for row in self.overviewmodel.rows_spanned:
+            self.overviewtree.setFirstColumnSpanned(row, self.overviewtree.rootIndex(), True)
+
+        self.show_details()
+
+
+
+    def show_details(self, data=None, filenames=None):
+        """Show the details of an IFC element
+        
+        ID is the ID of the element, as in the first file of the list of filenames.
+        Filenames is the list of filenames of all files containing the element.
+        If ID is None, the overview tree is shown.
+        
+        :param id: The ID of the element
+        :type id: int
+        :param filenames: The list of filenames
+        :type filenames: list of str
+        """
+        if self.ifcfiles.count() == 0:
+            return
+        if isinstance(data, entity_instance):
+            detail_model = IfcDetailsTreeModel(data, self, filenames)
+        else:
+            self.setWidget(self.overviewtree)
+            return
+        treeview = QTreeView()
+        treeview.setModel(detail_model)
+        treeview.setColumnWidth(0, 170)
+
+        treeview.expandToDepth(1)
+
+        # First column spanned for some rows
+        for row, parent_index in detail_model.rows_spanned:
+            if not parent_index:
+                parent_index = treeview.rootIndex()
+            treeview.setFirstColumnSpanned(row, parent_index, True)
+        self.setWidget(treeview)
 
 class DetailsBaseclass(TreeModelBaseclass):
     """Base class for the details dock widget models"""

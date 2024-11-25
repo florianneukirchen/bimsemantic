@@ -21,9 +21,9 @@ from PySide6.QtWidgets import (
     QFrame,
 )
 
-from ifcopenshell import entity_instance
+# from ifcopenshell import entity_instance
 from bimsemantic.util import IfcFiles
-from bimsemantic.ui import IfcTabs, IfcDetailsTreeModel, OverviewTreeModel, ColumnsTreeModel, WorkerAddFiles, CustomTreeDialog, PsetTreeModel, PsetDockWidget
+from bimsemantic.ui import IfcTabs, IfcDetailsTreeModel, OverviewTreeModel, ColumnsTreeModel, WorkerAddFiles, CustomTreeDialog, PsetTreeModel, PsetDockWidget, DetailsDock
 
 
 class MainWindow(QMainWindow):
@@ -41,10 +41,8 @@ class MainWindow(QMainWindow):
         self.infolabel = QLabel(self.tr("No open file"))
         self.statusbar.addPermanentWidget(self.infolabel)
         self.statusbar.addPermanentWidget(self.progressbar)
-        self.overviewtree = QTreeView()
+        
         self.column_treemodel = ColumnsTreeModel(parent=self)
-        #self.pset_treemodel = PsetTreeModel(data=self.ifcfiles, parent=self)
-
         self.tabs = IfcTabs(self)
 
         self.threadpool = QThreadPool()
@@ -111,6 +109,7 @@ class MainWindow(QMainWindow):
         """
         self.progressbar.setRange(0, len(ifcfiles))
         self.statusbar.showMessage(self.tr("Add files to treeviews"))
+        self.detailsdock.new_files()
         for i, ifcfile in enumerate(ifcfiles):
             self.column_treemodel.addFile(ifcfile)
             self.tabs.add_file(ifcfile)
@@ -125,16 +124,7 @@ class MainWindow(QMainWindow):
         psetscount = self.column_treemodel.count_psets()
         self.infolabel.setText(self.tr("{0} files, {1} elements in {2} IFC classes, {3} psets").format(filecount, elementcount, typecount, psetscount))
 
-        overview = OverviewTreeModel(self)
-        self.overviewtree.setModel(overview)
-        self.overviewtree.expandAll()
-        self.overviewtree.setColumnWidth(0, 170)
-
-        for row in overview.rows_spanned:
-            self.overviewtree.setFirstColumnSpanned(row, self.overviewtree.rootIndex(), True)
-
-        if isinstance(self.detailsdock.widget(), QLabel):
-            self.show_details()
+        
 
     def on_progress(self, progress):
         """Callback for progress bar updates of the WorkerAddFiles worker"""
@@ -183,9 +173,7 @@ class MainWindow(QMainWindow):
                 self.tabs.customtabs.remove(custom_tab)
                 custom_tab.deleteLater()
 
-        label = QLabel(self.tr("No open file"))
-        label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.detailsdock.setWidget(label)
+        self.detailsdock.reset()
         self.ifcfiles = IfcFiles()
         self.column_treemodel = ColumnsTreeModel(parent=self)
         self.psetdock.reset()
@@ -450,13 +438,6 @@ class MainWindow(QMainWindow):
         # View menu
         self._view_menu = self.menuBar().addMenu(self.tr("&View"))
 
-        self._overview_act = QAction(
-            self.tr("&Files in details dock"),
-            self,
-            triggered=self.show_details,
-        )
-        self._view_menu.addAction(self._overview_act)
-
         self._addcustomtree_act = QAction(
             self.tr("&Add custom IFC treeview"),
             self,
@@ -510,7 +491,6 @@ class MainWindow(QMainWindow):
         )
         self._expand_menu.addAction(self._expand_all_act)
 
-        self._view_menu.addSeparator()
 
         # Help menu
         self._help_menu = self.menuBar().addMenu(self.tr("&Help"))
@@ -527,62 +507,50 @@ class MainWindow(QMainWindow):
         """Create the dock widgets"""
 
         # Details dock
-        self.detailsdock = QDockWidget(self.tr("&Details"), self)
+        self.detailsdock = DetailsDock(self)
         self.detailsdock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
         label = QLabel(self.tr("No open file"))
         label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.detailsdock.setWidget(label)
         self.addDockWidget(Qt.RightDockWidgetArea, self.detailsdock)
-        self._view_menu.addAction(self.detailsdock.toggleViewAction())
 
+
+        # self.detailsdock = QDockWidget(self.tr("&Details"), self)
+        # self.detailsdock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
+        # label = QLabel(self.tr("No open file"))
+        # label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        # self.detailsdock.setWidget(label)
+        # self.addDockWidget(Qt.RightDockWidgetArea, self.detailsdock)
+        # self._view_menu.addAction(self.detailsdock.toggleViewAction())
 
         # Columns dock
         self.columnsdock = QDockWidget(self.tr("&Columns"), self)
         self.columnsdock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
         self.columnsdock.setWidget(self.column_treemodel)
         self.addDockWidget(Qt.RightDockWidgetArea, self.columnsdock)
-        self._view_menu.addAction(self.columnsdock.toggleViewAction())
 
         # Pset docks
         self.psetdock = PsetDockWidget(self)
         self.addDockWidget(Qt.RightDockWidgetArea, self.psetdock)
-        self._view_menu.addAction(self.psetdock.toggleViewAction())
 
         self.tabifyDockWidget(self.detailsdock, self.columnsdock)
         self.tabifyDockWidget(self.columnsdock, self.psetdock)
         self.detailsdock.raise_()
 
-    def show_details(self, data=None, filenames=None):
-        """Show the details of an IFC element
-        
-        ID is the ID of the element, as in the first file of the list of filenames.
-        Filenames is the list of filenames of all files containing the element.
-        If ID is None, the overview tree is shown.
-        
-        :param id: The ID of the element
-        :type id: int
-        :param filenames: The list of filenames
-        :type filenames: list of str
-        """
-        if self.ifcfiles.count() == 0:
-            return
-        if isinstance(data, entity_instance):
-            detailModel = IfcDetailsTreeModel(data, self, filenames)
-        else:
-            self.detailsdock.setWidget(self.overviewtree)
-            return
-        treeview = QTreeView()
-        treeview.setModel(detailModel)
-        treeview.setColumnWidth(0, 170)
+        # Add actions to menu
+        self._overview_act = QAction(
+            self.tr("&Files in details dock"),
+            self,
+            triggered=self.detailsdock.show_details,
+        )
+        self._view_menu.addAction(self._overview_act)
 
-        # treeview.setColumnWidth(1, 200)
-        treeview.expandToDepth(1)
-        # treeview.adjustSize()
-        for row, parent_index in detailModel.rows_spanned:
-            if not parent_index:
-                parent_index = treeview.rootIndex()
-            treeview.setFirstColumnSpanned(row, parent_index, True)
-        self.detailsdock.setWidget(treeview)
+        self._view_menu.addSeparator()
+
+        self._view_menu.addAction(self.detailsdock.toggleViewAction())
+        self._view_menu.addAction(self.columnsdock.toggleViewAction())
+        self._view_menu.addAction(self.psetdock.toggleViewAction())
+
 
 
     def about(self):

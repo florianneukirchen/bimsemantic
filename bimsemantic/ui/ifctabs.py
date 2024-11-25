@@ -279,7 +279,7 @@ class IfcTreeTab(QWidget):
         # no index is passed. The following line works.
         indexes = self.tree.selectionModel().selectedRows()
         if not indexes:
-            self.mainwindow.show_details()
+            self.mainwindow.detailsdock.show_details()
             print("n")
             return
         
@@ -287,7 +287,7 @@ class IfcTreeTab(QWidget):
         # over all items on Ctrl+A
         elementcount = self.count_ifc_elements()
         if len(indexes) >= elementcount:
-            self.mainwindow.show_details()
+            self.mainwindow.detailsdock.show_details()
             return
     
         items = []
@@ -300,9 +300,9 @@ class IfcTreeTab(QWidget):
         # Show the details of the first selected item
         item = items[0]
         if isinstance(item, IfcTreeItem):
-            self.mainwindow.show_details(item.ifc, item.filenames)
+            self.mainwindow.detailsdock.show_details(item.ifc, item.filenames)
         else:
-            self.mainwindow.show_details(item.id)
+            self.mainwindow.detailsdock.show_details(item.id)
             print("selected", item, item.id)
 
         items = [item for item in items if isinstance(item, IfcTreeItem)]
