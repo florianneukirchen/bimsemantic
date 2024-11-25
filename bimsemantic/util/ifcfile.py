@@ -109,6 +109,9 @@ class IfcFile():
         """The number of quantity sets in the file"""
         return len(self.qset_info)
     
+    def __repr__(self):
+        return f"IfcFile({self.filename})"
+    
     # def get_pset_cols(self):
     #     cols = []
     #     for _, pset_props in self.pset_info.items():

@@ -7,7 +7,7 @@ from ifcopenshell import entity_instance
 class DetailsDock(QDockWidget):
     """Dock widget for showing details of IFC elements or overview of files
     
-    The overview is updated with new_files() and shown with show_details().
+    The overview is updated with new_files(ifc_files) and shown with show_details().
     The details of an IFC element are shown with show_details(data, filenames).
 
     :param parent: The parent widget (main window)
@@ -19,7 +19,6 @@ class DetailsDock(QDockWidget):
         self.placeholder.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setWidget(self.placeholder)
         self.mainwindow = parent
-        self.ifcfiles = self.mainwindow.ifcfiles
 
         self.overviewtree = QTreeView()
         self.overviewmodel = None
@@ -28,9 +27,10 @@ class DetailsDock(QDockWidget):
         """Show the placeholder label"""
         self.setWidget(self.placeholder)
 
-    def new_files(self):
+    def new_files(self, ifc_files):
         """Simply create a new overview model and show it"""
         self.overviewmodel = OverviewTreeModel(self)
+        self.overviewtree = QTreeView()
         self.overviewtree.setModel(self.overviewmodel)
         self.overviewtree.expandAll()
         self.overviewtree.setColumnWidth(0, 170)
@@ -54,7 +54,7 @@ class DetailsDock(QDockWidget):
         :param filenames: The list of filenames, shown in the details view
         :type filenames: list of str
         """
-        if self.ifcfiles.count() == 0:
+        if self.mainwindow.ifcfiles.count() == 0:
             return
         if isinstance(data, entity_instance):
             detail_model = IfcDetailsTreeModel(data, self, filenames)
@@ -408,8 +408,7 @@ class OverviewTreeModel(DetailsBaseclass):
     :param parent: The parent widget (main window)
     """
     def __init__(self, parent):
-        self._mainwindow = parent
-        self.ifcfiles = parent.ifcfiles
+        self._mainwindow = parent.mainwindow
 
         super(OverviewTreeModel, self).__init__(None, parent)
 
@@ -420,11 +419,12 @@ class OverviewTreeModel(DetailsBaseclass):
         Data is ignored, but passed by the parent class.
         :param parent: The root item of the tree
         """
+        ifc_files = self._mainwindow.ifcfiles
         root_item = parent
 
         self.rows_spanned = []
 
-        for ifcfile in self.ifcfiles:
+        for ifcfile in ifc_files:
             ifcfile_item = TreeItem([ifcfile.filename], parent=root_item)
             root_item.appendChild(ifcfile_item)
             self.rows_spanned.append(ifcfile_item.row())

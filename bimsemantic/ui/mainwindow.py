@@ -109,12 +109,12 @@ class MainWindow(QMainWindow):
         """
         self.progressbar.setRange(0, len(ifcfiles))
         self.statusbar.showMessage(self.tr("Add files to treeviews"))
-        self.detailsdock.new_files()
         for i, ifcfile in enumerate(ifcfiles):
             self.column_treemodel.addFile(ifcfile)
             self.tabs.add_file(ifcfile)
             self.psetdock.treemodel.add_file(ifcfile)
             self.progressbar.setValue(i + 1)
+        self.detailsdock.new_files(self.ifcfiles)
         self.statusbar.clearMessage()
         self.progressbar.reset()
 
