@@ -332,10 +332,10 @@ class LocationTreeModel(IfcTreeModelBaseClass):
         for site in ifc_file.model.by_type("IfcSite"):
             self.add_items(site, project_item, filename)
 
-        label = self.tr("Container is %s" % self.nan)
-        notcontained_item = self.get_child_by_label(self._rootItem, label)
+        self.notcontainedlabel = self.tr("Container is %s" % self.nan)
+        notcontained_item = self.get_child_by_label(self._rootItem, self.notcontainedlabel)
         if not notcontained_item:
-            notcontained_item = TreeItem([label], self._rootItem)
+            notcontained_item = TreeItem([self.notcontainedlabel], self._rootItem)
             self._rootItem.appendChild(notcontained_item)
 
         # Also add the elements that don't have a spatial container
@@ -381,6 +381,18 @@ class LocationTreeModel(IfcTreeModelBaseClass):
 
         for child in children:
             self.add_items(child, item, filename)
+
+    def expand_default(self):
+        """Called when the tree view is updated to expand the tree
+        
+        If not overwritten in derived classes, expand all levels
+        """
+        self.tab.tree.expandAll()
+        notcontained_item = self.get_child_by_label(self._rootItem, self.notcontainedlabel)
+        if notcontained_item:
+            source_index = self.index(notcontained_item.row(), 0, QModelIndex())
+            proxy_index = self.tab.proxymodel.mapFromSource(source_index)
+            self.tab.tree.collapse(proxy_index)
 
 
     def __repr__(self):
