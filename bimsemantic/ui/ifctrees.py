@@ -106,7 +106,10 @@ class IfcTreeItem(TreeItem):
                 tag = None
             return tag
         if column == 5:
-            return self._ifc_item.ObjectType
+            try:
+                return self._ifc_item.ObjectType
+            except AttributeError:
+                return None
         if column == 6:
             return self._linked_type_name
         if column == 7:
