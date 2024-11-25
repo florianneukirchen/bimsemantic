@@ -578,11 +578,14 @@ class MainWindow(QMainWindow):
     def about(self):
         QMessageBox.about(
             self,
-            "BIM Semantic Viewer",
-            "Bla "
-            "Bla "
-            "Bla "
-            "Bla ",
+            "About",
+            """
+            <p><b>BIM Semantic Viewer</b></p>
+            <p>Version 0.1</p>
+            <p>© 2024 Florian Neukirchen<br/>
+            Berliner Hochschule für Technik (BHT)<br/>
+            Geoprojektarbeit</p>
+            """,
         )
 
 
