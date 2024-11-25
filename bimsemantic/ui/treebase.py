@@ -14,13 +14,14 @@ class TreeItem(QObject):
     :type parent: TreeItem or derived class
     :param id: An optional identifier for the item
     """
-    def __init__(self, data=None, parent=None, id=None):
+    def __init__(self, data=None, parent=None, id=None, showchildcount=True):
         self._data = data
         if data is None:
             self._data = []
         self._parent = parent
         self._id = id
         self._children = []
+        self.showchildcount = showchildcount
 
     def appendChild(self, item):
         """Add a child item to the item"""
@@ -73,6 +74,8 @@ class TreeItem(QObject):
         if column < 0 or column >= len(self._data):
             return None
         if column == 0:
+            if not self.showchildcount:
+                return self._data[0]
             count_children = self.child_count()
             if count_children > 0:
                 count_leaves = self.leaves_count()
@@ -81,6 +84,17 @@ class TreeItem(QObject):
                 else:
                     return f"{self._data[0]} ({count_children})"
         return self._data[column]
+
+    def set_data(self, column, value):
+        """Set the data for a column
+        
+        :param column: The column number
+        :type column: int
+        :param value: The value to set
+        """
+        if column < 0 or column >= len(self._data):
+            return
+        self._data[column] = value
 
     @property
     def label(self):

@@ -23,7 +23,7 @@ from PySide6.QtWidgets import (
 
 from ifcopenshell import entity_instance
 from bimsemantic.util import IfcFiles
-from bimsemantic.ui import IfcTabs, IfcDetailsTreeModel, OverviewTreeModel, ColumnsTreeModel, WorkerAddFiles, CustomTreeDialog, PsetTreeModel
+from bimsemantic.ui import IfcTabs, IfcDetailsTreeModel, OverviewTreeModel, ColumnsTreeModel, WorkerAddFiles, CustomTreeDialog, PsetTreeModel, PsetDockWidget
 
 
 class MainWindow(QMainWindow):
@@ -43,7 +43,7 @@ class MainWindow(QMainWindow):
         self.statusbar.addPermanentWidget(self.progressbar)
         self.overviewtree = QTreeView()
         self.column_treemodel = ColumnsTreeModel(parent=self)
-        self.pset_treemodel = PsetTreeModel(parent=self)
+        #self.pset_treemodel = PsetTreeModel(data=self.ifcfiles, parent=self)
 
         self.tabs = IfcTabs(self)
 
@@ -114,6 +114,7 @@ class MainWindow(QMainWindow):
         for i, ifcfile in enumerate(ifcfiles):
             self.column_treemodel.addFile(ifcfile)
             self.tabs.add_file(ifcfile)
+            self.psetdock.treemodel.add_file(ifcfile)
             self.progressbar.setValue(i + 1)
         self.statusbar.clearMessage()
         self.progressbar.reset()
@@ -187,6 +188,7 @@ class MainWindow(QMainWindow):
         self.detailsdock.setWidget(label)
         self.ifcfiles = IfcFiles()
         self.column_treemodel = ColumnsTreeModel(parent=self)
+        self.psetdock.reset()
         self.tabs = IfcTabs(self)
         self.columnsdock.setWidget(self.column_treemodel)
         self.setCentralWidget(self.tabs)
@@ -542,10 +544,11 @@ class MainWindow(QMainWindow):
         self._view_menu.addAction(self.columnsdock.toggleViewAction())
 
         # Pset docks
-        self.psetdock = QDockWidget(self.tr("&Psets"), self)
-        label = QLabel(self.tr("No open file"))
-        label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.psetdock.setWidget(label)
+        #self.psetdock = QDockWidget(self.tr("&Psets"), self)
+        # label = QLabel(self.tr("No open file"))
+        # label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        # self.psetdock.setWidget(label)
+        self.psetdock = PsetDockWidget(self)
         self.addDockWidget(Qt.RightDockWidgetArea, self.psetdock)
 
         self.tabifyDockWidget(self.detailsdock, self.columnsdock)

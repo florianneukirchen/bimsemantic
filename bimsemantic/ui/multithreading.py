@@ -1,5 +1,7 @@
 from PySide6.QtCore import QRunnable, Slot, Signal, QObject
 
+# https://www.pythonguis.com/tutorials/multithreading-pyside6-applications-qthreadpool/
+
 class WorkerSignals(QObject):
     """Helper class to transport signals from Workers to the main thread
     
