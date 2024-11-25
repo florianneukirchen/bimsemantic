@@ -544,12 +544,9 @@ class MainWindow(QMainWindow):
         self._view_menu.addAction(self.columnsdock.toggleViewAction())
 
         # Pset docks
-        #self.psetdock = QDockWidget(self.tr("&Psets"), self)
-        # label = QLabel(self.tr("No open file"))
-        # label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        # self.psetdock.setWidget(label)
         self.psetdock = PsetDockWidget(self)
         self.addDockWidget(Qt.RightDockWidgetArea, self.psetdock)
+        self._view_menu.addAction(self.psetdock.toggleViewAction())
 
         self.tabifyDockWidget(self.detailsdock, self.columnsdock)
         self.tabifyDockWidget(self.columnsdock, self.psetdock)
