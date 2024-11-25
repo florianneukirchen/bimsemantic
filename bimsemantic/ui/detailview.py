@@ -393,7 +393,8 @@ class OverviewTreeModel(DetailsBaseclass):
 
             try:
                 crs = ifcfile.model.by_type("IfcCoordinateReferenceSystem")[0]
-            except IndexError:
+            except (IndexError, RuntimeError):
+                # IfcOpenShell throws RuntimeError with IFC2x3: not found in schema
                 crs = None
             if crs:
                 self.new_item(self.tr("CRS"), crs.Name, ifcfile_item)

@@ -512,7 +512,13 @@ class FlatTreeModel(IfcTreeModelBaseClass):
                 type_item = IfcTreeItem(element_type, self.types_item, self.columntree, filename)
                 self.types_item.appendChild(type_item)
 
-        spatialelements = ifc_file.model.by_type("IfcSpatialElement")
+        if ifc_file.model.schema_version[0] == 2:
+            spatialelements = ifc_file.model.by_type("IfcSpatialStructureElement")
+            self.spatialelements_item.set_data(0, "IfcSpatialStructureElement")
+        elif ifc_file.model.schema_version[0] >= 4:
+            spatialelements = ifc_file.model.by_type("IfcSpatialElement")
+        else:
+            spatialelements = []
 
         for spatialelement in spatialelements:
             spatial_item = self.get_child_by_guid(self.spatialelements_item, spatialelement.GlobalId)

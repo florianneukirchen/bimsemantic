@@ -89,6 +89,8 @@ class IfcFile():
         return pset_info
     
     def _get_qset_info(self):
+        if self._model.schema_version[0] < 4:
+            return {}
         qset_info = {}
         qsets = self._model.by_type("IfcQuantitySet")
         for qset in qsets:
