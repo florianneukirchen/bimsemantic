@@ -28,9 +28,10 @@ class PsetTreeModel(TreeModelBaseclass):
     def __init__(self, data, parent):
         super(PsetTreeModel, self).__init__(data, parent)
         self.psetdock = parent
+        self.column_count = 3
 
     def setup_root_item(self):
-        self._rootItem = TreeItem(["Property Set", "Elements"], showchildcount=False)
+        self._rootItem = TreeItem(["Property Set", "Elements", "Types"], showchildcount=False)
 
     def setup_model_data(self, data, parent):
         self.ifc_files = data
@@ -40,9 +41,16 @@ class PsetTreeModel(TreeModelBaseclass):
 
     def add_file(self, ifc_file):
 
-        elements = ifc_file.model.by_type("IfcElement")
         self.beginResetModel()
+        elements = ifc_file.model.by_type("IfcElement")
+        self.add_elements(elements)
+        elementtypes = ifc_file.model.by_type("IfcElementType")
+        self.add_elements(elementtypes, count_col=2)
+        self.endResetModel()
+        self.psetdock.proxymodel.sort(0, Qt.SortOrder.AscendingOrder)
+        self.psetdock.treeview.expandAll()
 
+    def add_elements(self, elements, count_col=1):
         for element in elements:
             psets = ifcopenshell.util.element.get_psets(element, psets_only=True)
             if not psets:
@@ -63,11 +71,9 @@ class PsetTreeModel(TreeModelBaseclass):
                         pset_item.appendChild(prop_item)
                     value_item = self.get_child_by_label(prop_item, prop_value)
                     if not value_item:
-                        value_item = TreeItem([prop_value, 1], prop_item)
+                        value_item = TreeItem([prop_value, 0, 0], prop_item)
+                        value_item.set_data(count_col, 1)
                         prop_item.appendChild(value_item)
                     else:
-                        value_item.set_data(1, value_item.data(1) + 1)
+                        value_item.set_data(count_col, value_item.data(count_col) + 1)
 
-        self.endResetModel()
-        self.psetdock.proxymodel.sort(0, Qt.SortOrder.AscendingOrder)
-        self.psetdock.treeview.expandAll()
