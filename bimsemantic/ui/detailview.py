@@ -5,6 +5,13 @@ from .treebase import TreeItem, TreeModelBaseclass
 from ifcopenshell import entity_instance
 
 class DetailsDock(QDockWidget):
+    """Dock widget for showing details of IFC elements or overview of files
+    
+    The overview is updated with new_files() and shown with show_details().
+    The details of an IFC element are shown with show_details(data, filenames).
+
+    :param parent: The parent widget (main window)
+    """
     def __init__(self, parent):
         super(DetailsDock, self).__init__(self.tr("&Details"), parent)
         self.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
@@ -18,10 +25,11 @@ class DetailsDock(QDockWidget):
         self.overviewmodel = None
 
     def reset(self):
+        """Show the placeholder label"""
         self.setWidget(self.placeholder)
 
     def new_files(self):
-        """Simply create a new overview model"""
+        """Simply create a new overview model and show it"""
         self.overviewmodel = OverviewTreeModel(self)
         self.overviewtree.setModel(self.overviewmodel)
         self.overviewtree.expandAll()
@@ -41,9 +49,9 @@ class DetailsDock(QDockWidget):
         Filenames is the list of filenames of all files containing the element.
         If ID is None, the overview tree is shown.
         
-        :param id: The ID of the element
-        :type id: int
-        :param filenames: The list of filenames
+        :data: The IFC element
+        :type data: ifcopenshell entity
+        :param filenames: The list of filenames, shown in the details view
         :type filenames: list of str
         """
         if self.ifcfiles.count() == 0:
