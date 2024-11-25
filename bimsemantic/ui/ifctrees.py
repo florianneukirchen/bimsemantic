@@ -332,7 +332,7 @@ class LocationTreeModel(IfcTreeModelBaseClass):
         for site in ifc_file.model.by_type("IfcSite"):
             self.add_items(site, project_item, filename)
 
-        self.notcontainedlabel = self.tr("Container is %s" % self.nan)
+        self.notcontainedlabel = self.tr("Container is %s") % self.nan
         notcontained_item = self.get_child_by_label(self._rootItem, self.notcontainedlabel)
         if not notcontained_item:
             notcontained_item = TreeItem([self.notcontainedlabel], self._rootItem)
