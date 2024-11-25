@@ -42,7 +42,7 @@ class MainWindow(QMainWindow):
         self.statusbar.addPermanentWidget(self.infolabel)
         self.statusbar.addPermanentWidget(self.progressbar)
         self.overviewtree = QTreeView()
-        self.column_treeview = ColumnsTreeModel(parent=self)
+        self.column_treemodel = ColumnsTreeModel(parent=self)
         self.tabs = IfcTabs(self)
 
         self.threadpool = QThreadPool()
@@ -110,7 +110,7 @@ class MainWindow(QMainWindow):
         self.progressbar.setRange(0, len(ifcfiles))
         self.statusbar.showMessage(self.tr("Add files to treeviews"))
         for i, ifcfile in enumerate(ifcfiles):
-            self.column_treeview.addFile(ifcfile)
+            self.column_treemodel.addFile(ifcfile)
             self.tabs.add_file(ifcfile)
             self.progressbar.setValue(i + 1)
         self.statusbar.clearMessage()
@@ -119,7 +119,7 @@ class MainWindow(QMainWindow):
         filecount = self.ifcfiles.count()
         elementcount = self.tabs.count_ifc_elements()
         typecount = self.tabs.count_ifc_types()
-        psetscount = self.column_treeview.count_psets()
+        psetscount = self.column_treemodel.count_psets()
         self.infolabel.setText(self.tr("{0} files, {1} elements, {2} types, {3} psets").format(filecount, elementcount, typecount, psetscount))
 
         overview = OverviewTreeModel(self)
@@ -184,9 +184,9 @@ class MainWindow(QMainWindow):
         label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.detailsdock.setWidget(label)
         self.ifcfiles = IfcFiles()
-        self.column_treeview = ColumnsTreeModel(parent=self)
+        self.column_treemodel = ColumnsTreeModel(parent=self)
         self.tabs = IfcTabs(self)
-        self.columnsdock.setWidget(self.column_treeview)
+        self.columnsdock.setWidget(self.column_treemodel)
         self.setCentralWidget(self.tabs)
         self.infolabel.setText(self.tr("No open file"))
         self.statusbar.clearMessage()
@@ -535,7 +535,7 @@ class MainWindow(QMainWindow):
         # Columns dock
         self.columnsdock = QDockWidget(self.tr("&Columns"), self)
         self.columnsdock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
-        self.columnsdock.setWidget(self.column_treeview)
+        self.columnsdock.setWidget(self.column_treemodel)
         self.addDockWidget(Qt.RightDockWidgetArea, self.columnsdock)
         self._view_menu.addAction(self.columnsdock.toggleViewAction())
 

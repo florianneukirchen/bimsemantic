@@ -39,7 +39,7 @@ class IfcTabs(QWidget):
         self.flattab = IfcTreeTab(FlatTreeModel, self.ifcfiles, self) 
         self.tabs.addTab(self.flattab, self.tr("Flat"))
 
-        self.mainwindow.column_treeview.columnsChanged.connect(self.update_columns)
+        self.mainwindow.column_treemodel.columnsChanged.connect(self.update_columns)
 
         self.installEventFilter(self)
 

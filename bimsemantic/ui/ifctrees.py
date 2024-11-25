@@ -225,7 +225,7 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
     """
     def __init__(self, data, parent):
         self.tab = parent
-        self.columntree = self.tab.mainwindow.column_treeview
+        self.columntree = self.tab.mainwindow.column_treemodel
         self.first_cols = self.columntree.first_cols
         super(IfcTreeModelBaseClass, self).__init__(data, parent)
         
