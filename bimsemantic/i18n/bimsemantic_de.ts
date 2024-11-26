@@ -127,14 +127,27 @@
     </message>
 </context>
 <context>
+    <name>DetailsDock</name>
+    <message>
+        <location filename="../ui/detailview.py" line="16"/>
+        <source>&amp;Details</source>
+        <translation>&amp;Details</translation>
+    </message>
+    <message>
+        <location filename="../ui/detailview.py" line="18"/>
+        <source>No open file</source>
+        <translation>Keine offene Datei</translation>
+    </message>
+</context>
+<context>
     <name>IfcCustomTreeModel</name>
     <message>
-        <location filename="../ui/ifctrees.py" line="550"/>
+        <location filename="../ui/ifctrees.py" line="556"/>
         <source>Custom</source>
         <translation>Eigener Baum</translation>
     </message>
     <message>
-        <location filename="../ui/ifctrees.py" line="606"/>
+        <location filename="../ui/ifctrees.py" line="612"/>
         <source>Unnamed</source>
         <translation>Ohne Namen</translation>
     </message>
@@ -142,34 +155,34 @@
 <context>
     <name>IfcDetailsTreeModel</name>
     <message>
-        <location filename="../ui/detailview.py" line="164"/>
+        <location filename="../ui/detailview.py" line="237"/>
         <source>IFC Class</source>
         <translation>IFC-Klasse</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="176"/>
+        <location filename="../ui/detailview.py" line="249"/>
         <source>Unnamed</source>
         <translation>Ohne Namen</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="177"/>
-        <location filename="../ui/detailview.py" line="314"/>
+        <location filename="../ui/detailview.py" line="250"/>
+        <location filename="../ui/detailview.py" line="387"/>
         <source>Linked Object Type</source>
         <translation>Verlinkter Objekttyp</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="201"/>
+        <location filename="../ui/detailview.py" line="274"/>
         <source>Main Attributes</source>
         <translation>Hauptattribute</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="257"/>
-        <location filename="../ui/detailview.py" line="316"/>
+        <location filename="../ui/detailview.py" line="330"/>
+        <location filename="../ui/detailview.py" line="389"/>
         <source>Property Sets</source>
         <translation>Property Sets</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="273"/>
+        <location filename="../ui/detailview.py" line="346"/>
         <source>Quantity Sets</source>
         <translation>Quantity Sets</translation>
     </message>
@@ -227,7 +240,7 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../ui/mainwindow.py" line="335"/>
+        <location filename="../ui/mainwindow.py" line="329"/>
         <source>&amp;File</source>
         <translation>&amp;Datei</translation>
     </message>
@@ -240,23 +253,23 @@
         <translation type="vanished">IFC-Datei öffnen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="80"/>
-        <location filename="../ui/mainwindow.py" line="343"/>
+        <location filename="../ui/mainwindow.py" line="78"/>
+        <location filename="../ui/mainwindow.py" line="337"/>
         <source>Open IFC files</source>
         <translation>IFC-Dateien öffnen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="82"/>
+        <location filename="../ui/mainwindow.py" line="80"/>
         <source>IFC Files (*.ifc)</source>
         <translation>IFC-Dateien (*.ifc)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="99"/>
+        <location filename="../ui/mainwindow.py" line="97"/>
         <source>Open file %s</source>
         <translation>Öffne Datei %s</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="113"/>
+        <location filename="../ui/mainwindow.py" line="111"/>
         <source>Add files to treeviews</source>
         <translation>Füge Dateien zu den Baumansichten hinzu</translation>
     </message>
@@ -265,98 +278,103 @@
         <translation type="vanished">{0} Dateien, {1} Elemente, {2} Typen, {3} Psets</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="163"/>
+        <location filename="../ui/mainwindow.py" line="157"/>
         <source>{} files were ignored because they are already open</source>
         <translation>{} Datein waren bereits geöffnet und wurden ignoriert</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="176"/>
+        <location filename="../ui/mainwindow.py" line="170"/>
         <source>Close all files</source>
         <translation>Alle Dateien schließen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="200"/>
+        <location filename="../ui/mainwindow.py" line="194"/>
         <source>Export to CSV</source>
         <translation>Exportiere zu CSV</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="202"/>
+        <location filename="../ui/mainwindow.py" line="196"/>
         <source>CSV Files (*.csv)</source>
         <translation>CSV-Dateien (*.csv)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="213"/>
+        <location filename="../ui/mainwindow.py" line="207"/>
         <source>Separator:</source>
         <translation>Trennzeichen:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="220"/>
+        <location filename="../ui/mainwindow.py" line="214"/>
         <source>Options:</source>
         <translation>Optionen:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="223"/>
+        <location filename="../ui/mainwindow.py" line="217"/>
         <source>With column for hierarchical level</source>
         <translation>Mit Spalte für Hierarchieebene</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="232"/>
+        <location filename="../ui/mainwindow.py" line="226"/>
         <source>Export only selected rows (%i rows)</source>
         <translation>Nur ausgewählte Zeilen exportieren (%i Zeilen)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="257"/>
+        <location filename="../ui/mainwindow.py" line="251"/>
         <source>Exported to %s</source>
         <translation>Als %s exportiert</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="269"/>
+        <location filename="../ui/mainwindow.py" line="263"/>
         <source>No element found with GUID %s</source>
         <translation>Kein Element mit der GUID %s gefunden</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="280"/>
+        <location filename="../ui/mainwindow.py" line="274"/>
         <source>No element found with Tag %s</source>
         <translation>Kein Element mit Tag %s gefunden</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="297"/>
+        <location filename="../ui/mainwindow.py" line="291"/>
         <source>Invalid ID %s</source>
         <translation>Invalide ID %s</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="301"/>
+        <location filename="../ui/mainwindow.py" line="295"/>
         <source>Any</source>
         <translation>Alle</translation>
     </message>
     <message>
+        <location filename="../ui/mainwindow.py" line="303"/>
         <location filename="../ui/mainwindow.py" line="309"/>
-        <location filename="../ui/mainwindow.py" line="315"/>
-        <location filename="../ui/mainwindow.py" line="320"/>
+        <location filename="../ui/mainwindow.py" line="314"/>
         <source>No element found with ID %i</source>
         <translation>Kein Element mit ID %s gefunden</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="340"/>
+        <location filename="../ui/mainwindow.py" line="334"/>
         <source>&amp;Open IFC...</source>
         <translation>Ö&amp;ffnen...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="349"/>
+        <location filename="../ui/mainwindow.py" line="343"/>
         <source>&amp;Export View to CSV...</source>
         <translation>Ansicht als CSV &amp;exportieren...</translation>
+    </message>
+    <message>
+        <location filename="../ui/mainwindow.py" line="553"/>
+        <source>&amp;Qsets</source>
+        <translation>&amp;Qsets</translation>
     </message>
     <message>
         <source>Ctrl+E</source>
         <translation type="vanished">Strg+E</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="352"/>
+        <location filename="../ui/mainwindow.py" line="346"/>
         <source>Export the current view or the current selection to CSV</source>
         <translation>Aktuelle Ansicht bzw. aktuelle Auswahl zu CSV exportieren</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="363"/>
+        <location filename="../ui/mainwindow.py" line="357"/>
         <source>&amp;Close all IFCs</source>
         <translation>Alle IFCs s&amp;chließen</translation>
     </message>
@@ -365,12 +383,12 @@
         <translation type="vanished">Strg+W</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="366"/>
+        <location filename="../ui/mainwindow.py" line="360"/>
         <source>Close all IFC files</source>
         <translation>Alle IFC-Dateien schließen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="372"/>
+        <location filename="../ui/mainwindow.py" line="366"/>
         <source>&amp;Quit</source>
         <translation>&amp;Beenden</translation>
     </message>
@@ -379,17 +397,17 @@
         <translation type="vanished">Strg+Q</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="375"/>
+        <location filename="../ui/mainwindow.py" line="369"/>
         <source>Quit the application</source>
         <translation>Programm beenden</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="382"/>
+        <location filename="../ui/mainwindow.py" line="376"/>
         <source>&amp;Edit</source>
         <translation>&amp;Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="385"/>
+        <location filename="../ui/mainwindow.py" line="379"/>
         <source>&amp;Copy rows</source>
         <translation>&amp;Zeilen kopieren</translation>
     </message>
@@ -398,142 +416,145 @@
         <translation type="vanished">Strg+C</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="388"/>
+        <location filename="../ui/mainwindow.py" line="382"/>
         <source>Copy selected rows to clipboard</source>
         <translation>Ausgewählte Zeilen in die Zwischenablage kopieren</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="394"/>
+        <location filename="../ui/mainwindow.py" line="388"/>
         <source>Copy cell</source>
         <translation>Zelle kopieren</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="126"/>
         <source>{0} files, {1} elements in {2} IFC classes, {3} psets</source>
-        <translation>{0} Dateien, {1} Elemente in {2} IFC-Klassen, {3} Psets</translation>
+        <translation type="vanished">{0} Dateien, {1} Elemente in {2} IFC-Klassen, {3} Psets</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="397"/>
+        <location filename="../ui/mainwindow.py" line="391"/>
         <source>Copy selected cell to clipboard</source>
         <translation>Ausgewählte Zellen in Zwischenablage kopieren</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="402"/>
+        <location filename="../ui/mainwindow.py" line="396"/>
         <source>Copy options</source>
         <translation>Optionen beim Kopieren</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="404"/>
+        <location filename="../ui/mainwindow.py" line="398"/>
         <source>Copy with headers</source>
         <translation>Mit Kopfzeile kopieren</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="408"/>
+        <location filename="../ui/mainwindow.py" line="402"/>
         <source>Copy with column of hierarchic level</source>
         <translation>Mit Spalte für Hierarchieebene kopieren</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="414"/>
+        <location filename="../ui/mainwindow.py" line="408"/>
         <source>&amp;Selection</source>
         <translation>&amp;Auswahl</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="417"/>
+        <location filename="../ui/mainwindow.py" line="411"/>
         <source>Select by &amp;GUID</source>
         <translation>Nach &amp;GUID auswählen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="419"/>
+        <location filename="../ui/mainwindow.py" line="413"/>
         <source>Select IFC element by GUID</source>
         <translation>IFC-Element nach GUID auswählen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="425"/>
+        <location filename="../ui/mainwindow.py" line="419"/>
         <source>Select by &amp;ID</source>
         <translation>Nach &amp;ID auswählen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="427"/>
+        <location filename="../ui/mainwindow.py" line="421"/>
         <source>Select IFC element by ID and filename</source>
         <translation>IFC-Element nach ID und Dateiname wählen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="433"/>
+        <location filename="../ui/mainwindow.py" line="427"/>
         <source>Select by &amp;Tag</source>
         <translation>Nach &amp;Tag auswählen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="435"/>
+        <location filename="../ui/mainwindow.py" line="429"/>
         <source>Select IFC element (IfcElement) by Tag</source>
         <translation>IFC-Element nach Tag auswählen (nur bei IfcElement)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="443"/>
+        <location filename="../ui/mainwindow.py" line="437"/>
         <source>Clear selection</source>
         <translation>Auswahl entfernen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="445"/>
+        <location filename="../ui/mainwindow.py" line="439"/>
         <source>Clear selection in all IFC tabs</source>
         <translation>Auswahl in allen IFC-Tabs entfernen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="451"/>
+        <location filename="../ui/mainwindow.py" line="445"/>
         <source>&amp;View</source>
         <translation>&amp;Ansicht</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="454"/>
+        <location filename="../ui/mainwindow.py" line="539"/>
         <source>&amp;Files in details dock</source>
         <translation>&amp;Dateien im Details-Dock</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="461"/>
+        <location filename="../ui/mainwindow.py" line="448"/>
         <source>&amp;Add custom IFC treeview</source>
         <translation>&amp;Eigene IFC-Baumansicht hinzufügen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="467"/>
+        <location filename="../ui/mainwindow.py" line="129"/>
+        <source>{0} files, {1} elements in {2} IFC classes, {3} psets, {4} qsets</source>
+        <translation type="unfinished">{0} Dateien, {1} Elemente in {2} IFC-Klassen, {3} Psets, {4} Qsets</translation>
+    </message>
+    <message>
+        <location filename="../ui/mainwindow.py" line="454"/>
         <source>&amp;Expand/Collapse active tree</source>
         <translation>Ausklappen/&amp;Einklappen der aktuellen Baumansicht</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="471"/>
+        <location filename="../ui/mainwindow.py" line="458"/>
         <source>&amp;Collapse</source>
         <translation>&amp;Einklappen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="479"/>
+        <location filename="../ui/mainwindow.py" line="466"/>
         <source>Expand to level &amp;1</source>
         <translation>Bis Ebene &amp;1 ausklappen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="486"/>
+        <location filename="../ui/mainwindow.py" line="473"/>
         <source>Expand to level &amp;2</source>
         <translation>Bis Ebene &amp;2 ausklappen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="493"/>
+        <location filename="../ui/mainwindow.py" line="480"/>
         <source>Expand to level &amp;3</source>
         <translation>Bis Ebene &amp;3 ausklappen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="500"/>
+        <location filename="../ui/mainwindow.py" line="487"/>
         <source>Expand to level &amp;4</source>
         <translation>Bis Ebene &amp;4 ausklappen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="507"/>
+        <location filename="../ui/mainwindow.py" line="494"/>
         <source>Expand &amp;all</source>
         <translation>&amp;Alle ausklappen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="530"/>
         <source>&amp;Details</source>
-        <translation>&amp;Details</translation>
+        <translation type="vanished">&amp;Details</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="540"/>
+        <location filename="../ui/mainwindow.py" line="524"/>
         <source>&amp;Columns</source>
         <translation>&amp;Spalten</translation>
     </message>
@@ -554,12 +575,12 @@
         <translation type="vanished">Alle ausblenden</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="516"/>
+        <location filename="../ui/mainwindow.py" line="502"/>
         <source>&amp;Help</source>
         <translation>&amp;Hilfe</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="519"/>
+        <location filename="../ui/mainwindow.py" line="505"/>
         <source>&amp;About</source>
         <translation>&amp;Über</translation>
     </message>
@@ -569,9 +590,8 @@
     </message>
     <message>
         <location filename="../ui/mainwindow.py" line="41"/>
-        <location filename="../ui/mainwindow.py" line="186"/>
-        <location filename="../ui/mainwindow.py" line="195"/>
-        <location filename="../ui/mainwindow.py" line="532"/>
+        <location filename="../ui/mainwindow.py" line="189"/>
+        <location filename="../ui/mainwindow.py" line="518"/>
         <source>No open file</source>
         <translation>Keine offene Datei</translation>
     </message>
@@ -579,62 +599,67 @@
 <context>
     <name>OverviewTreeModel</name>
     <message>
-        <location filename="../ui/detailview.py" line="359"/>
+        <location filename="../ui/detailview.py" line="432"/>
         <source>IFC Version</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="360"/>
+        <location filename="../ui/detailview.py" line="433"/>
         <source>File size</source>
         <translation>Dateigröße</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="361"/>
+        <location filename="../ui/detailview.py" line="434"/>
         <source>Project name</source>
         <translation>Projektname</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="365"/>
+        <location filename="../ui/detailview.py" line="438"/>
         <source>Long name</source>
         <translation>Langer Name</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="369"/>
+        <location filename="../ui/detailview.py" line="442"/>
         <source>Project phase</source>
         <translation>Projektphase</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="371"/>
+        <location filename="../ui/detailview.py" line="449"/>
+        <source>Project coordinates</source>
+        <translation>Projektkoordinaten</translation>
+    </message>
+    <message>
+        <location filename="../ui/detailview.py" line="451"/>
         <source>Project owner</source>
         <translation>Projektbesitzer</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="372"/>
+        <location filename="../ui/detailview.py" line="452"/>
         <source>Application</source>
         <translation>Anwendung</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="374"/>
+        <location filename="../ui/detailview.py" line="454"/>
         <source>Addresses</source>
         <translation>Adressen</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="399"/>
+        <location filename="../ui/detailview.py" line="480"/>
         <source>CRS</source>
         <translation>CRS</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="402"/>
+        <location filename="../ui/detailview.py" line="483"/>
         <source>IFC Elements</source>
         <translation>IFC-Elemente</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="403"/>
+        <location filename="../ui/detailview.py" line="484"/>
         <source>Pset count</source>
         <translation>Pset-Anzahl</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="404"/>
+        <location filename="../ui/detailview.py" line="485"/>
         <source>Qset count</source>
         <translation>Qset-Anzahl</translation>
     </message>
@@ -642,25 +667,76 @@
 <context>
     <name>PsetDockWidget</name>
     <message>
-        <location filename="../ui/psetdock.py" line="8"/>
+        <location filename="../ui/psetdock.py" line="22"/>
+        <source>&amp;Qsets</source>
+        <translation>&amp;Qsets</translation>
+    </message>
+    <message>
+        <location filename="../ui/psetdock.py" line="24"/>
         <source>&amp;Psets</source>
         <translation>&amp;Psets</translation>
     </message>
 </context>
 <context>
+    <name>PsetTreeModel</name>
+    <message>
+        <location filename="../ui/psetdock.py" line="76"/>
+        <source>Elements</source>
+        <translation>Elemente</translation>
+    </message>
+    <message>
+        <location filename="../ui/psetdock.py" line="76"/>
+        <source>Types</source>
+        <translation>Typen</translation>
+    </message>
+</context>
+<context>
+    <name>QsetTreeModel</name>
+    <message>
+        <location filename="../ui/psetdock.py" line="150"/>
+        <source>Elements</source>
+        <translation>Elemente</translation>
+    </message>
+    <message>
+        <location filename="../ui/psetdock.py" line="150"/>
+        <source>Std</source>
+        <translation>Std</translation>
+    </message>
+    <message>
+        <location filename="../ui/psetdock.py" line="150"/>
+        <source>Min</source>
+        <translation>Min</translation>
+    </message>
+    <message>
+        <location filename="../ui/psetdock.py" line="150"/>
+        <source>Mean</source>
+        <translation>Durchschnitt</translation>
+    </message>
+    <message>
+        <location filename="../ui/psetdock.py" line="150"/>
+        <source>Median</source>
+        <translation>Median</translation>
+    </message>
+    <message>
+        <location filename="../ui/psetdock.py" line="150"/>
+        <source>Max</source>
+        <translation>Max</translation>
+    </message>
+</context>
+<context>
     <name>SelectByDialog</name>
     <message>
-        <location filename="../ui/mainwindow.py" line="614"/>
+        <location filename="../ui/mainwindow.py" line="598"/>
         <source>Select element by %s</source>
         <translation>Element nach %s auswählen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="629"/>
+        <location filename="../ui/mainwindow.py" line="613"/>
         <source>IFC File</source>
         <translation>IFC-Datei</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="631"/>
+        <location filename="../ui/mainwindow.py" line="615"/>
         <source>Any</source>
         <translation>Jede</translation>
     </message>

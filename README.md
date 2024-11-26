@@ -4,10 +4,11 @@
 
 ### Todo
 - Spalten umsortieren in allen tabs
-- tabs: Material, Psets
+- tabs: Material
 - Kontextmenü
 - Export als JSON
 - Filter
+- Cartesian Point
 
 
 ## Installation
