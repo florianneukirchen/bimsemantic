@@ -143,11 +143,11 @@ class QsetTreeModel(TreeModelBaseclass):
     def __init__(self, data, parent):
         self.qsetdock = parent
         super(QsetTreeModel, self).__init__(data, parent)
-        self.column_count = 7
+        self.column_count = 8
 
     def setup_root_item(self):
         """Set up the root item"""
-        self._rootItem = TreeItem(["Quantity Set", self.tr("Elements"), self.tr("Min"), self.tr("Mean"), self.tr("Median"), self.tr("Max")], showchildcount=False)
+        self._rootItem = TreeItem(["Quantity Set", self.tr("Elements"), self.tr("Std"), self.tr("Min"), self.tr("Mean"), self.tr("Median"), self.tr("Max")], showchildcount=False)
 
     def setup_model_data(self, data, parent):
         """Set up the model data on init"""
@@ -200,27 +200,29 @@ class QsetTreeModel(TreeModelBaseclass):
                         # [name, count, min, mean, median, max, values]
                         # values will be invisible in the tree, but is needed to 
                         # calculate mean, median, etc.
-                        qto_item = TreeItem([qto_name, 1, 0,0,0,0, [qto_value]], qset_item)
+                        qto_item = TreeItem([qto_name, 1, 0,0,0,0,0, [qto_value]], qset_item)
                         qset_item.appendChild(qto_item)
                     else:
                         qto_item.set_data(1, qto_item.data(1) + 1)
-                        values = qto_item.data(6)
+                        values = qto_item.data(7)
                         values.append(qto_value)
-                        qto_item.set_data(6, values)
+                        qto_item.set_data(7, values)
 
 
     def calculate_statistics(self):
         """Calculate basic statistics and add them to the TreeItems"""
         for qset_item in self._rootItem.children:
             for qto_item in qset_item.children:
-                values = qto_item.data(6)
+                values = qto_item.data(7)
                 if not values:
                     continue
                 min_val = min(values)
                 max_val = max(values)
                 mean_val = sum(values) / len(values)
                 median_val = statistics.median(values)
-                qto_item.set_data(2, min_val)
-                qto_item.set_data(3, mean_val)
-                qto_item.set_data(4, median_val)
-                qto_item.set_data(5, max_val)
+                std_val = statistics.stdev(values)
+                qto_item.set_data(2, std_val)
+                qto_item.set_data(3, min_val)
+                qto_item.set_data(4, mean_val)
+                qto_item.set_data(5, median_val)
+                qto_item.set_data(6, max_val)
