@@ -441,6 +441,13 @@ class OverviewTreeModel(DetailsBaseclass):
             if phase:
                 self.new_item(self.tr("Project phase"), phase, ifcfile_item)
 
+            try:
+                world_coordinates = ifcfile.project.RepresentationContexts[0].WorldCoordinateSystem.Location.Coordinates
+            except (AttributeError, IndexError):
+                world_coordinates = None
+            if world_coordinates:
+                self.new_item(self.tr("Project coordinates"), str(world_coordinates), ifcfile_item)
+
             self.new_item(self.tr("Project owner"), ifcfile.project.OwnerHistory.OwningUser.ThePerson.GivenName, ifcfile_item)
             self.new_item(self.tr("Application"), ifcfile.project.OwnerHistory.OwningApplication.ApplicationFullName, ifcfile_item)
 

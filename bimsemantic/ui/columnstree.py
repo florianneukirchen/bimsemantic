@@ -250,3 +250,6 @@ class ColumnsTreeModel(QTreeWidget):
         """Return the number of property sets of all open files"""
         return self.psets_item.childCount()
 
+    def count_qsets(self):
+        """Return the number of quantity sets of all open files"""
+        return self.qsets_item.childCount()
