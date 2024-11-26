@@ -237,7 +237,7 @@ class IfcTreeModelBaseClass(TreeModelBaseclass):
         self.columntree.hideInfoColumn.connect(self.hide_info_column)
 
     def setup_model_data(self, data, parent):
-        """Setup the model data by calling add_file for each IFC file instance"""
+        """Called by init: setup the model data"""
         self.ifc_files = data  
 
         for file in self.ifc_files:

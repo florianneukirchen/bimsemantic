@@ -182,7 +182,7 @@ class TreeModelBaseclass(QAbstractItemModel):
         self._rootItem = TreeItem()
        
     def setup_model_data(self, data, parent):
-        """Set up the model data, must be overridden in derived classes"""
+        """Set up the model data, called by init, must be overridden in derived classes"""
         pass
 
     def get_child_by_label(self, parent, label):

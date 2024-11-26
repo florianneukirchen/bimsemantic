@@ -5,6 +5,16 @@ from PySide6.QtWidgets import QDockWidget, QTreeView
 import statistics
 
 class PsetDockWidget(QDockWidget):
+    """Dock widget for property sets or quantity sets
+
+    Also holds the tree model and the tree view, and adds methods
+    to reset and to add files.
+
+    :param parent: The parent widget
+    :type parent: QMainWindow
+    :param qset: If True, the widget will show quantity sets, otherwise property sets
+    :type qset: bool
+    """
     def __init__(self, parent, qset=False):
         self.is_qset = qset
         if self.is_qset:
@@ -17,6 +27,7 @@ class PsetDockWidget(QDockWidget):
 
 
     def reset(self):
+        """Reset the tree model and the tree view"""
         if self.is_qset:
             self.treemodel = QsetTreeModel(data=self.mainwindow.ifcfiles, parent=self)
             self.treemodel.calculate_statistics()
@@ -36,6 +47,10 @@ class PsetDockWidget(QDockWidget):
         self.treeview.expandAll()
 
     def add_files(self, ifc_files):
+        """Add files to the tree model
+        
+        :param ifc_files: A list of IfcFile objects
+        """
         for file in ifc_files:
             self.treemodel.add_file(file)
         if self.is_qset:
@@ -45,6 +60,12 @@ class PsetDockWidget(QDockWidget):
 
 
 class PsetTreeModel(TreeModelBaseclass):
+    """Model for property sets dockwidget
+    
+    :param data: The IfcFiles object of the main window
+    :type data: IfcFiles
+    :param parent: The parent widget (PsetDockWidget)
+    """
 
     def __init__(self, data, parent):
         self.psetdock = parent
@@ -55,12 +76,18 @@ class PsetTreeModel(TreeModelBaseclass):
         self._rootItem = TreeItem(["Property Set", self.tr("Elements"), self.tr("Types")], showchildcount=False)
 
     def setup_model_data(self, data, parent):
+        """Set up the model data on init"""
         self.ifc_files = data
         
         for file in self.ifc_files:
             self.add_file(file)
 
     def add_file(self, ifc_file):
+        """Add a file to the model
+        
+        :param ifc_file: The IfcFile object
+        :type ifc_file: IfcFile
+        """
 
         self.beginResetModel()
         elements = ifc_file.model.by_type("IfcElement")
@@ -70,6 +97,7 @@ class PsetTreeModel(TreeModelBaseclass):
         self.endResetModel()
 
     def add_elements(self, elements, count_col=1):
+        """Add elements or element types to the model"""
         for element in elements:
             psets = ifcopenshell.util.element.get_psets(element, psets_only=True)
             if not psets:
@@ -101,6 +129,16 @@ class PsetTreeModel(TreeModelBaseclass):
 
 
 class QsetTreeModel(TreeModelBaseclass):
+    """Model for quantity sets dockwidget with basic statistics
+    
+    Complex quantity types are ignored
+
+    Note: No quantity sets in IFC2x3
+
+    :param data: The IfcFiles object of the main window
+    :type data: IfcFiles
+    :param parent: The parent widget (PsetDockWidget)
+    """
 
     def __init__(self, data, parent):
         self.qsetdock = parent
@@ -108,15 +146,22 @@ class QsetTreeModel(TreeModelBaseclass):
         self.column_count = 7
 
     def setup_root_item(self):
+        """Set up the root item"""
         self._rootItem = TreeItem(["Quantity Set", self.tr("Elements"), self.tr("Min"), self.tr("Mean"), self.tr("Median"), self.tr("Max")], showchildcount=False)
 
     def setup_model_data(self, data, parent):
+        """Set up the model data on init"""
         self.ifc_files = data
         
         for file in self.ifc_files:
             self.add_file(file)
 
     def add_file(self, ifc_file):
+        """Add a file to the model
+
+        :param ifc_file: The IfcFile object
+        :type ifc_file: IfcFile
+        """
         if ifc_file.model.schema_version[0] < 4:
             # No quantity sets in IFC2x3
             return 
@@ -127,6 +172,7 @@ class QsetTreeModel(TreeModelBaseclass):
 
 
     def add_elements(self, elements, count_col=1):
+        """Add elements to the model"""
         for element in elements:
             qsets = ifcopenshell.util.element.get_psets(element, qtos_only=True)
             if not qsets:
@@ -164,6 +210,7 @@ class QsetTreeModel(TreeModelBaseclass):
 
 
     def calculate_statistics(self):
+        """Calculate basic statistics and add them to the TreeItems"""
         for qset_item in self._rootItem.children:
             for qto_item in qset_item.children:
                 values = qto_item.data(6)
