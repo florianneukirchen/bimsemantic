@@ -114,7 +114,7 @@ Now run
 ```
 pyinstaller app.spec
 ```
-
+And the exe will be in the `dist` folder
 
 In case of any problems, try:
 ```
