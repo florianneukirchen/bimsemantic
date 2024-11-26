@@ -121,6 +121,7 @@ In case of any problems, try:
 pip3 install --upgrade PyInstaller pyinstaller-hooks-contrib
 ```
 
+Note to self: git pull mit github cli: gh repo sync
 
 ### Translation
 (Commands in the root directory of the project with venv enabled)
