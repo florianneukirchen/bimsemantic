@@ -107,13 +107,16 @@ class MainWindow(QMainWindow):
 
         :param ifcfiles: List of IfcFile objects
         """
-        self.progressbar.setRange(0, len(ifcfiles))
+        self.progressbar.setRange(0, len(ifcfiles) + 1)
         self.statusbar.showMessage(self.tr("Add files to treeviews"))
+        self.psetdock.add_files(ifcfiles)
+        if self.qsetdock is not None:
+            self.qsetdock.add_files(ifcfiles)
+        self.progressbar.setValue(1)
         for i, ifcfile in enumerate(ifcfiles):
             self.column_treemodel.addFile(ifcfile)
             self.tabs.add_file(ifcfile)
-            self.psetdock.treemodel.add_file(ifcfile)
-            self.progressbar.setValue(i + 1)
+            self.progressbar.setValue(i + 2)
         self.detailsdock.new_files(self.ifcfiles)
         self.statusbar.clearMessage()
         self.progressbar.reset()
@@ -177,6 +180,8 @@ class MainWindow(QMainWindow):
         self.ifcfiles = IfcFiles()
         self.column_treemodel = ColumnsTreeModel(parent=self)
         self.psetdock.reset()
+        if self.qsetdock is not None:
+            self.qsetdock.reset()
         self.tabs = IfcTabs(self)
         self.columnsdock.setWidget(self.column_treemodel)
         self.setCentralWidget(self.tabs)
@@ -514,15 +519,6 @@ class MainWindow(QMainWindow):
         self.detailsdock.setWidget(label)
         self.addDockWidget(Qt.RightDockWidgetArea, self.detailsdock)
 
-
-        # self.detailsdock = QDockWidget(self.tr("&Details"), self)
-        # self.detailsdock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
-        # label = QLabel(self.tr("No open file"))
-        # label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        # self.detailsdock.setWidget(label)
-        # self.addDockWidget(Qt.RightDockWidgetArea, self.detailsdock)
-        # self._view_menu.addAction(self.detailsdock.toggleViewAction())
-
         # Columns dock
         self.columnsdock = QDockWidget(self.tr("&Columns"), self)
         self.columnsdock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
@@ -551,7 +547,26 @@ class MainWindow(QMainWindow):
         self._view_menu.addAction(self.columnsdock.toggleViewAction())
         self._view_menu.addAction(self.psetdock.toggleViewAction())
 
+        # Add checkbox for Qset dock but do not create it yet (only on demand)
+        # to speed up loading of files
+        self.chk_show_qsets = QAction(self.tr("&Qsets"), self, checkable=True)
+        self.chk_show_qsets.setChecked(False)
+        self.chk_show_qsets.triggered.connect(self.toggle_qset_dock)
+        self._view_menu.addAction(self.chk_show_qsets)
+        self.qsetdock = None
 
+    def toggle_qset_dock(self):
+        """Toggle the visibility of the Qset dock and create it if still None"""
+        if self.chk_show_qsets.isChecked():
+            if self.qsetdock is None:
+                self.qsetdock = PsetDockWidget(self, qset=True)
+                self.addDockWidget(Qt.RightDockWidgetArea, self.qsetdock)
+                self.tabifyDockWidget(self.psetdock, self.qsetdock)
+                self.qsetdock.raise_()
+            else:
+                self.qsetdock.show()
+        else:
+            self.qsetdock.hide()
 
     def about(self):
         QMessageBox.about(

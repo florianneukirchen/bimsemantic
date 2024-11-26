@@ -2,16 +2,26 @@ from PySide6.QtCore import Qt, QSortFilterProxyModel, QModelIndex
 from bimsemantic.ui import TreeItem, TreeModelBaseclass, CustomTreeMaker, CustomFieldType
 import ifcopenshell.util.element
 from PySide6.QtWidgets import QDockWidget, QTreeView
+import statistics
 
 class PsetDockWidget(QDockWidget):
-    def __init__(self, parent):
-        super(PsetDockWidget, self).__init__(self.tr("&Psets"), parent)
+    def __init__(self, parent, qset=False):
+        self.is_qset = qset
+        if self.is_qset:
+            label = self.tr("&Qsets")
+        else:
+            label = self.tr("&Psets")
+        super(PsetDockWidget, self).__init__(label, parent)
         self.mainwindow = parent
         self.reset()
 
 
     def reset(self):
-        self.treemodel = PsetTreeModel(data=self.mainwindow.ifcfiles, parent=self)
+        if self.is_qset:
+            self.treemodel = QsetTreeModel(data=self.mainwindow.ifcfiles, parent=self)
+            self.treemodel.calculate_statistics()
+        else:
+            self.treemodel = PsetTreeModel(data=self.mainwindow.ifcfiles, parent=self)
         self.proxymodel = QSortFilterProxyModel(self)
         self.proxymodel.setSourceModel(self.treemodel)
 
@@ -22,16 +32,27 @@ class PsetDockWidget(QDockWidget):
         self.treeview.setColumnWidth(0, 200)
         self.setWidget(self.treeview)
 
+        self.proxymodel.sort(0, Qt.SortOrder.AscendingOrder)
+        self.treeview.expandAll()
+
+    def add_files(self, ifc_files):
+        for file in ifc_files:
+            self.treemodel.add_file(file)
+        if self.is_qset:
+            self.treemodel.calculate_statistics()
+        self.proxymodel.sort(0, Qt.SortOrder.AscendingOrder)
+        self.treeview.expandAll()
+
 
 class PsetTreeModel(TreeModelBaseclass):
 
     def __init__(self, data, parent):
-        super(PsetTreeModel, self).__init__(data, parent)
         self.psetdock = parent
+        super(PsetTreeModel, self).__init__(data, parent)  
         self.column_count = 3
 
     def setup_root_item(self):
-        self._rootItem = TreeItem(["Property Set", "Elements", "Types"], showchildcount=False)
+        self._rootItem = TreeItem(["Property Set", self.tr("Elements"), self.tr("Types")], showchildcount=False)
 
     def setup_model_data(self, data, parent):
         self.ifc_files = data
@@ -47,8 +68,6 @@ class PsetTreeModel(TreeModelBaseclass):
         elementtypes = ifc_file.model.by_type("IfcElementType")
         self.add_elements(elementtypes, count_col=2)
         self.endResetModel()
-        self.psetdock.proxymodel.sort(0, Qt.SortOrder.AscendingOrder)
-        self.psetdock.treeview.expandAll()
 
     def add_elements(self, elements, count_col=1):
         for element in elements:
@@ -77,3 +96,84 @@ class PsetTreeModel(TreeModelBaseclass):
                     else:
                         value_item.set_data(count_col, value_item.data(count_col) + 1)
 
+
+
+
+
+class QsetTreeModel(TreeModelBaseclass):
+
+    def __init__(self, data, parent):
+        self.qsetdock = parent
+        super(QsetTreeModel, self).__init__(data, parent)
+        self.column_count = 7
+
+    def setup_root_item(self):
+        self._rootItem = TreeItem(["Quantity Set", self.tr("Elements"), self.tr("Min"), self.tr("Mean"), self.tr("Median"), self.tr("Max")], showchildcount=False)
+
+    def setup_model_data(self, data, parent):
+        self.ifc_files = data
+        
+        for file in self.ifc_files:
+            self.add_file(file)
+
+    def add_file(self, ifc_file):
+        if ifc_file.model.schema_version[0] < 4:
+            # No quantity sets in IFC2x3
+            return 
+        self.beginResetModel()
+        elements = ifc_file.model.by_type("IfcElement")
+        self.add_elements(elements)
+        self.endResetModel()
+
+
+    def add_elements(self, elements, count_col=1):
+        for element in elements:
+            qsets = ifcopenshell.util.element.get_psets(element, qtos_only=True)
+            if not qsets:
+                continue
+            for qset_name, qset in qsets.items():
+                qset_item = self.get_child_by_label(self._rootItem, qset_name)
+                if not qset_item:
+                    qset_item = TreeItem([qset_name], self._rootItem)
+                    self._rootItem.appendChild(qset_item)
+                for qto_name, qto_value in qset.items():
+                    if qto_value is None:
+                        continue
+                    if qto_name == "id":
+                        continue
+                    # Ignore complex quantity types for now:
+                    # The value could be a dict like
+                    # {'value': 4.05, 'unit': 'm3'} or 
+                    # {'GrossArea': 13.5, 'NetArea': 12.7} or
+                    # {'id': 14643, 'type': 'IfcPhysicalComplexQuantity', 'Discrimination': 'Layer', 'properties': {'Width': 0.08}}
+                    # or a list with several values or even a table
+                    if not isinstance(qto_value, (int, float)):
+                        continue
+                    qto_item = self.get_child_by_label(qset_item, qto_name)
+                    if not qto_item:
+                        # [name, count, min, mean, median, max, values]
+                        # values will be invisible in the tree, but is needed to 
+                        # calculate mean, median, etc.
+                        qto_item = TreeItem([qto_name, 1, 0,0,0,0, [qto_value]], qset_item)
+                        qset_item.appendChild(qto_item)
+                    else:
+                        qto_item.set_data(1, qto_item.data(1) + 1)
+                        values = qto_item.data(6)
+                        values.append(qto_value)
+                        qto_item.set_data(6, values)
+
+
+    def calculate_statistics(self):
+        for qset_item in self._rootItem.children:
+            for qto_item in qset_item.children:
+                values = qto_item.data(6)
+                if not values:
+                    continue
+                min_val = min(values)
+                max_val = max(values)
+                mean_val = sum(values) / len(values)
+                median_val = statistics.median(values)
+                qto_item.set_data(2, min_val)
+                qto_item.set_data(3, mean_val)
+                qto_item.set_data(4, median_val)
+                qto_item.set_data(5, max_val)
