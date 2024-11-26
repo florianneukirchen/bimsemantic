@@ -49,13 +49,13 @@ class ColumnsTreeModel(QTreeWidget):
         self.timer = QTimer()
         self.timer.setSingleShot(True) 
         self.setHeaderHidden(True)
-        self.setupModelData(data)
+        self.setup_model_data(data)
         self.expandAll()
         self.itemChanged.connect(self.item_changed)
         self.timer.timeout.connect(self.emit_columns_changed)
 
 
-    def setupModelData(self, data):
+    def setup_model_data(self, data):
         """Setup the model data, at least the Info Columns and all top level items"""
         self.infocols_item = QTreeWidgetItem(self)
 
@@ -82,9 +82,9 @@ class ColumnsTreeModel(QTreeWidget):
         self.qsets_item.setFlags(self.psets_item.flags() | Qt.ItemFlag.ItemIsAutoTristate | Qt.ItemFlag.ItemIsUserCheckable)
 
         if data:
-            self.addFile(data)
+            self.add_file(data)
 
-    def addFile(self, ifc_file):
+    def add_file(self, ifc_file):
         """Add an IFC file to the model
         
         Adds the property sets of the IFC file to the tree model.

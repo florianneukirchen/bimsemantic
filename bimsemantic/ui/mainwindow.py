@@ -114,7 +114,7 @@ class MainWindow(QMainWindow):
             self.qsetdock.add_files(ifcfiles)
         self.progressbar.setValue(1)
         for i, ifcfile in enumerate(ifcfiles):
-            self.column_treemodel.addFile(ifcfile)
+            self.column_treemodel.add_file(ifcfile)
             self.tabs.add_file(ifcfile)
             self.progressbar.setValue(i + 2)
         self.detailsdock.new_files(self.ifcfiles)
