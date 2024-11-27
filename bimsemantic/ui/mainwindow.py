@@ -87,16 +87,13 @@ class MainWindow(QMainWindow):
 
     def open_som(self, filename):
         self.progressbar.setRange(0, 0)
+        self.statusbar.showMessage(self.tr("Loading SOM list"))
         
         if self.somdock:
             self.close_som()
 
         self.somdock = SomDockWidget(self, filename)
 
-        if not self.somdock.is_valid():
-            self.somdock = None
-            self.statusbar.showMessage(self.tr("Invalid SOM file"), 5000)
-            return
         
         self.addDockWidget(Qt.BottomDockWidgetArea, self.somdock)
         self._view_menu.addAction(self.somdock.toggleViewAction())
@@ -108,7 +105,6 @@ class MainWindow(QMainWindow):
             self._view_menu.removeAction(self.somdock.toggleViewAction())
             self.somdock.deleteLater()
             self.somdock = None
-
 
 
     def open_file_dlg(self):

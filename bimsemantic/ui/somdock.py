@@ -52,21 +52,23 @@ class SomTreeModel(TreeModelBaseclass):
             parent.appendChild(item)
 
        
-
+import time
 
 class SomDockWidget(QDockWidget):
     def __init__(self, parent, filename):
         super(SomDockWidget, self).__init__(self.tr("SOM"), parent)
         self.mainwindow = parent
         self.filename = filename
-        self._isvalid = True
+
+        start = time.time()
 
         try:
             with open(self.filename, "r") as file:
                 data = json.load(file)
-        except (FileNotFoundError, json.JSONDecodeError):
-            self._isvalid = False
-            return
+        except json.JSONDecodeError:
+            raise ValueError(f"File {self.filename} is not a valid JSON file.")
+        
+        start = time.time()
 
         self.treemodel = SomTreeModel(data, self)
         self.proxymodel = QSortFilterProxyModel(self)
@@ -77,10 +79,3 @@ class SomDockWidget(QDockWidget):
         self.treeview.setSortingEnabled(True)
         self.treeview.setColumnWidth(0, 200)
         self.setWidget(self.treeview)
-
-        self.treeview.expandAll()
-        self.proxymodel.sort(0, Qt.SortOrder.AscendingOrder)
-        
-
-    def is_valid(self):
-        return self._isvalid
