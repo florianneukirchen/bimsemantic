@@ -22,6 +22,7 @@ from PySide6.QtWidgets import (
 )
 
 # from ifcopenshell import entity_instance
+import bimsemantic
 from bimsemantic.util import IfcFiles
 from bimsemantic.ui import IfcTabs, IfcDetailsTreeModel, OverviewTreeModel, ColumnsTreeModel, WorkerAddFiles, CustomTreeDialog, PsetTreeModel, PsetDockWidget, DetailsDock
 
@@ -573,9 +574,9 @@ class MainWindow(QMainWindow):
         QMessageBox.about(
             self,
             "About",
-            """
+            f"""
             <p><b>BIM Semantic Viewer</b></p>
-            <p>Version 0.1</p>
+            <p>Version {bimsemantic.__version__}</p>
             <p>© 2024 Florian Neukirchen<br/>
             Berliner Hochschule für Technik (BHT)<br/>
             Geoprojektarbeit</p>
