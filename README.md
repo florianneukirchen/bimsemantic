@@ -65,12 +65,14 @@ import os
 import glob
 rules_path = "../venv/lib/python3.10/site-packages/ifcopenshell/express/rules" # Linux
 # rules_path = "../venv/Lib/site-packages/ifcopenshell/express/rules" # Windows
+rulesdata = [(file, 'ifcopenshell/express/rules') for file in glob.glob(rules_path)]
+i18n_data = [('i18n/bimsemantic_de.qm', 'i18n')]
 
 a = Analysis(
     ['app.py'],
     pathex=[],
     binaries=[],
-    datas=[(file, 'ifcopenshell/express/rules') for file in glob.glob(rules_path)], # Edit here
+    datas=rulesdata + i18n_data, # Edit here
     hiddenimports=['ifcopenshell.express'], # Edit here
     hookspath=[],
     hooksconfig={},

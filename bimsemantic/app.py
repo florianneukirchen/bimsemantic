@@ -17,7 +17,7 @@ if __name__ == "__main__":
     translator = QTranslator(app)
     locale = QLocale.system().name()
     language_code = locale.split('_')[0]
-    translation_file = os.path.join(package_root, "bimsemantic", "i18n", f"bimsemantic_{language_code}.qm")
+    translation_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), "i18n", f"bimsemantic_{language_code}.qm")
     if translator.load(translation_file):
         app.installTranslator(translator)
     elif language_code != "en":
