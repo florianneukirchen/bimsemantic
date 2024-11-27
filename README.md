@@ -8,7 +8,7 @@
 - Kontextmenü
 - Export als JSON
 - Filter
-- Cartesian Point
+
 
 
 ## Installation

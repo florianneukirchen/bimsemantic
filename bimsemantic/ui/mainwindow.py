@@ -24,7 +24,7 @@ from PySide6.QtWidgets import (
 # from ifcopenshell import entity_instance
 import bimsemantic
 from bimsemantic.util import IfcFiles
-from bimsemantic.ui import IfcTabs, IfcDetailsTreeModel, OverviewTreeModel, ColumnsTreeModel, WorkerAddFiles, CustomTreeDialog, PsetTreeModel, PsetDockWidget, DetailsDock
+from bimsemantic.ui import IfcTabs, IfcDetailsTreeModel, OverviewTreeModel, ColumnsTreeModel, WorkerAddFiles, CustomTreeDialog, PsetTreeModel, PsetDockWidget, DetailsDock, SomDockWidget
 
 
 class MainWindow(QMainWindow):
@@ -70,6 +70,42 @@ class MainWindow(QMainWindow):
         if filenames:
             ifc_filenames = [filename for filename in filenames if filename.endswith(".ifc")]
             self.open_ifc_files(ifc_filenames)
+
+    def open_som_dlg(self):
+        """Open SOM dialog to load a SOM list from a JSON file"""
+        filename, _ = QFileDialog.getOpenFileName(
+            self,
+            self.tr("Open SOM list"),
+            "",
+            self.tr("JSON files (*.json)"),
+        )
+        if filename:
+            self.open_som(filename)
+
+    def open_som(self, filename):
+        self.progressbar.setRange(0, 0)
+        
+        if self.somdock:
+            self.close_som()
+
+        self.somdock = SomDockWidget(self, filename)
+
+        if not self.somdock.is_valid():
+            self.somdock = None
+            self.statusbar.showMessage(self.tr("Invalid SOM file"), 5000)
+            return
+        
+        self.addDockWidget(Qt.BottomDockWidgetArea, self.somdock)
+        self._view_menu.addAction(self.somdock.toggleViewAction())
+        self.progressbar.setRange(0, 100)
+        self.statusbar.showMessage(self.tr("SOM loaded"), 5000)
+
+    def close_som(self):
+        if self.somdock:
+            self._view_menu.removeAction(self.somdock.toggleViewAction())
+            self.somdock.deleteLater()
+            self.somdock = None
+
 
 
     def open_file_dlg(self):
@@ -349,6 +385,23 @@ class MainWindow(QMainWindow):
         )
         self._file_menu.addAction(self._export_cvs_act)
 
+        self._file_menu.addSeparator()
+
+        self._open_som_act = QAction(
+            self.tr("Open SOM"),
+            self,
+            statusTip=self.tr("Load SOM list from a JSON file"),
+            triggered=self.open_som_dlg,
+        )
+        self._file_menu.addAction(self._open_som_act)
+
+        self._close_som_act = QAction(
+            self.tr("Close SOM"),
+            self,
+            statusTip=self.tr("Close the SOM list"),
+            triggered=self.close_som,
+        )
+        self._file_menu.addAction(self._close_som_act)
 
         self._file_menu.addSeparator()
 
@@ -556,6 +609,9 @@ class MainWindow(QMainWindow):
         self.chk_show_qsets.triggered.connect(self.toggle_qset_dock)
         self._view_menu.addAction(self.chk_show_qsets)
         self.qsetdock = None
+
+        # Prepare for SOM dock
+        self.somdock = None
 
     def toggle_qset_dock(self):
         """Toggle the visibility of the Qset dock and create it if still None"""
