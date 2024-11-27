@@ -220,7 +220,10 @@ class QsetTreeModel(TreeModelBaseclass):
                 max_val = max(values)
                 mean_val = sum(values) / len(values)
                 median_val = statistics.median(values)
-                std_val = statistics.stdev(values)
+                if len(values) > 1:
+                    std_val = statistics.stdev(values)
+                else:
+                    std_val = None
                 qto_item.set_data(2, std_val)
                 qto_item.set_data(3, min_val)
                 qto_item.set_data(4, mean_val)
