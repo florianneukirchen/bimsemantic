@@ -69,7 +69,10 @@ class MainWindow(QMainWindow):
         filenames = [url.toLocalFile() for url in urls if url.isLocalFile()]
         if filenames:
             ifc_filenames = [filename for filename in filenames if filename.endswith(".ifc")]
+            json_filenames = [filename for filename in filenames if filename.endswith(".json")]
             self.open_ifc_files(ifc_filenames)
+            if json_filenames:
+                self.open_som(json_filenames[0])
 
     def open_som_dlg(self):
         """Open SOM dialog to load a SOM list from a JSON file"""
