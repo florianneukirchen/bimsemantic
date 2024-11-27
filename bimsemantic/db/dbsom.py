@@ -132,7 +132,9 @@ def som_csv_to_tree(filename, encoding='iso-8859-1', delimiter=";"):
     ein baumartiges verschachteltes Dictionary zurück.
 
     Die jeweiligen Kindselemente sind über den Schlüssel
-    'childs' erreichbar.
+    'childs' erreichbar. Eine Liste aller Spaltennamen 
+    (die als keys verwendet werden könnnen) wird 
+    unter dem Schlüssel 'columns' gespeichert.
 
     :param filename: Dateiname bzw. Pfad zur CSV-Datei
     :type filename: str
@@ -175,6 +177,12 @@ def som_csv_to_tree(filename, encoding='iso-8859-1', delimiter=";"):
                 node["childs"] = {}
                 modeltree[level+1] = node
                 
+
+    # Füge Liste der Columns hinzu, ohne die Namensspalten und ohne die Lph/Anw-Spalten
+    cols = columns[columns.index("Name")+1:]
+    cols = [c for c in cols if not c.startswith("Lph")]
+    cols = cols + ["Lph", "Anw"]
+    modeltree[0]["columns"] = cols
     return fachmodell, modeltree[0] # Level 0 contains all children of the other levels
 
 
