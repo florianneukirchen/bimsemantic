@@ -123,7 +123,7 @@ def row_to_dict(row, columns):
         pass
     return d
 
-def som_list_csv_to_tree(filename, encoding='iso-8859-1', delimiter=";"):
+def som_csv_to_tree(filename, encoding='iso-8859-1', delimiter=";"):
     """SOM-Liste CSV-Datei zu name und dict
     
     Öffnet ein CSV mit einem Fachmodell des 
@@ -149,7 +149,10 @@ def som_list_csv_to_tree(filename, encoding='iso-8859-1', delimiter=";"):
     with open(filename, encoding=encoding) as file:
         reader = csv.reader(file, delimiter=delimiter)
         row = next(reader)
-        fachmodell = row[0]  # Erste Zeile Titel des Fachmodells
+        fachmodell = row[0]  # Erste Zeile: Titel des Fachmodells
+
+        if not fachmodell:
+            raise ValueError("Fachmodellname ist leer")
 
         modeltree = {} 
         # Keys in modeltree sind die levels in der Hierarchie
@@ -186,7 +189,7 @@ def csv_filepaths_in_folder(path=None):
     if path is None:
         path = os.getcwd()
     files = os.listdir(path=path)
-    files = [os.path.join(path, f) for f in files if f.lower().endswith(".csv") and "vorblatt" not in f.lower()]
+    files = [os.path.join(path, f) for f in files if f.lower().endswith(".csv")]
     return files
 
 
@@ -203,8 +206,11 @@ def folder_csv_files_to_som_dict(path=None, encoding='iso-8859-1', delimiter=";"
     files = csv_filepaths_in_folder(path)
     som = {}
     for file in files:
-        name, d = som_list_csv_to_tree(file, encoding=encoding, delimiter=delimiter)
-        som[name] = d
+        try:
+            name, d = som_csv_to_tree(file, encoding=encoding, delimiter=delimiter)
+            som[name] = d
+        except Exception as e:
+            print(f"Ignoriere Datei mit Parsing-Fehler:\n{file}\n{e}")
     return som
 
 
@@ -217,8 +223,8 @@ if __name__ == "__main__":
         Extrahiert die Daten aus der SOM-Liste der Deutschen Bahn
         (Version 2.1), bereitet sie auf und speichert sie als JSON.
         Für jedes Fachmodell muss in Excel jeweils die "Originaltabelle" 
-        in eine CSV-Datei exportiert werden. Dateien mit "Vorblatt"
-        im Namen werden ignoriert.
+        in eine CSV-Datei exportiert werden. Dateien, die nicht erfolgreich
+        geparst werden können, werden ignoriert.
         """
 
     parser = argparse.ArgumentParser(prog="dbsom", description=description)
