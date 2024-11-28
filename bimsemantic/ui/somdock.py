@@ -12,12 +12,16 @@ class SomTreeItem(TreeItem):
     Takes a JSON-like nested dictionary as data, with children 
     grouped in a dictionary under the key "childs".
 
+    The columns are used to get the data for the columns from the data dictionary.
+
     :param data: The data for the item as a nested dictionary
     :type data: dict
-    :param name: The name of the item
+    :param name: The name of the item (or the key of the parent dictionary)
     :type name: str
     :param parent: The parent item
     :type parent: TreeItem or derived class
+    :param columns: The columns to use for the item
+    :type columns: list
     """
     def __init__(self, data, name, parent, columns=["Name"]):
         childs = data.pop("childs", {})
@@ -52,6 +56,14 @@ class SomTreeItem(TreeItem):
 
     
 class SomTreeModel(TreeModelBaseclass):
+    """Model for the SOM tree view
+    
+    The model is created from a JSON-like nested dictionary.
+
+    :param data: The data for the model as a nested dictionary
+    :type data: dict
+    :param parent: The parent widget (the SOM dockwidget)
+    """
     def __init__(self, data, parent):
         self.somdock = parent
         # Get a list of colums from the first Fachmodell
@@ -66,6 +78,16 @@ class SomTreeModel(TreeModelBaseclass):
         self.column_count = len(self.columns)
     
     def setup_model_data(self, data, parent):
+        """Set up the model data from a nested dictionary
+        
+        SomTreeItem automatically creates child items for anything 
+        found under the key 'childs'.
+
+        :param data: The data for the model as a nested dictionary
+        :type data: dict
+        :param parent: The parent item
+        :type parent: TreeItem or derived class
+        """
         for key, value in data.items():
             # key ist Fachmodell in DB SOM
             item = SomTreeItem(value, key, parent, self.columns)
@@ -75,6 +97,14 @@ class SomTreeModel(TreeModelBaseclass):
 
 
 class SomDockWidget(QDockWidget):
+    """Dock widget for the SOM-list tree view
+    
+    Opens a JSON file with the SOM data and displays it in a tree view.
+    Also adds actions to the main window.
+
+    :param parent: The parent widget (the main window)
+    :param filename: The filename of the JSON file with the SOM data
+    """
     def __init__(self, parent, filename):
         super(SomDockWidget, self).__init__(self.tr("SOM"), parent)
         self.mainwindow = parent

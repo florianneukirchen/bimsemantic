@@ -87,6 +87,7 @@ class MainWindow(QMainWindow):
             self.open_som(filename)
 
     def open_som(self, filename):
+        """Open a SOM list from a JSON file"""
         self.progressbar.setRange(0, 0)
         self.statusbar.showMessage(self.tr("Loading SOM list"))
         
@@ -110,6 +111,7 @@ class MainWindow(QMainWindow):
         self.statusbar.showMessage(self.tr("SOM loaded"), 5000)
 
     def close_som(self):
+        """Delete the SOM dockwidget"""
         if self.somdock:
             self.view_menu.removeAction(self.somdock.toggleViewAction())
             self.somdock.deleteLater()
