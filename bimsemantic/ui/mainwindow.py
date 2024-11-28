@@ -504,8 +504,8 @@ class MainWindow(QMainWindow):
         )
         self._view_menu.addAction(self._addcustomtree_act)
 
+        # View expand/collapse menu
         self._expand_menu = self._view_menu.addMenu(self.tr("&Expand/Collapse active tree"))
-        self._view_menu.addMenu(self._expand_menu)
 
         self._collapse_act = QAction(
             self.tr("&Collapse"),
@@ -549,6 +549,9 @@ class MainWindow(QMainWindow):
             triggered=(lambda: self.tabs.expand_active_view("all")),
         )
         self._expand_menu.addAction(self._expand_all_act)
+
+        # View - SOM menu
+        self.expand_som_menu = self._view_menu.addMenu(self.tr("&Expand/Collapse SOM tree"))
 
 
         # Help menu

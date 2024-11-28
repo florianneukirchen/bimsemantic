@@ -1,4 +1,5 @@
 from PySide6.QtCore import Qt, QSortFilterProxyModel, QModelIndex
+from PySide6.QtGui import QAction
 from bimsemantic.ui import TreeItem, TreeModelBaseclass, CustomTreeMaker, CustomFieldType
 import ifcopenshell.util.element
 from PySide6.QtWidgets import QDockWidget, QTreeView
@@ -95,3 +96,58 @@ class SomDockWidget(QDockWidget):
         self.treeview.setSortingEnabled(True)
         self.treeview.setColumnWidth(0, 200)
         self.setWidget(self.treeview)
+
+        # Add menu actions
+
+        self._collapse_act = QAction(
+            self.tr("&Collapse"),
+            self,
+            # Using lambda makes it possible to pass an argument to the function
+            triggered=(lambda: self.expand_view(-1)),
+        )
+        self.mainwindow.expand_som_menu.addAction(self._collapse_act)
+
+        self._expand_level1_act = QAction(
+            self.tr("Expand to level &1"),
+            self,
+            triggered=(lambda: self.expand_view(1)),
+        )
+        self.mainwindow.expand_som_menu.addAction(self._expand_level1_act)
+
+        self._expand_level2_act = QAction(
+            self.tr("Expand to level &2"),
+            self,
+            triggered=(lambda: self.expand_view(2)),
+        )
+        self.mainwindow.expand_som_menu.addAction(self._expand_level2_act)
+
+        self._expand_level3_act = QAction(
+            self.tr("Expand to level &3"),
+            self,
+            triggered=(lambda: self.expand_view(3)),
+        )
+        self.mainwindow.expand_som_menu.addAction(self._expand_level3_act)
+
+        self._expand_level4_act = QAction(
+            self.tr("Expand to level &4"),
+            self,
+            triggered=(lambda: self.expand_view(4)),
+        )
+        self.mainwindow.expand_som_menu.addAction(self._expand_level4_act)
+
+        self._expand_all_act = QAction(
+            self.tr("Expand &all"),
+            self,
+            triggered=(lambda: self.expand_view("all")),
+        )
+        self.mainwindow.expand_som_menu.addAction(self._expand_all_act)
+
+
+    def expand_view(self, level):
+        """Expand the treeview to a certain level"""
+        if level == -1:
+            self.treeview.collapseAll()
+        elif level == "all":
+            self.treeview.expandAll()
+        else:
+            self.treeview.expandToDepth(level -1)
