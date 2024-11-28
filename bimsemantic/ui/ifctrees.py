@@ -211,6 +211,10 @@ class IfcTreeItem(TreeItem):
         """IFC entity instance from IfcOpenShell"""
         return self._ifc_item
     
+    @property
+    def label(self):
+        return None
+
     def __repr__(self):
         return f"IfcTreeItem: {self._ifc_item.is_a()} {self._ifc_item.id()}"
 
