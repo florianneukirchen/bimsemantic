@@ -96,13 +96,13 @@ class MainWindow(QMainWindow):
 
         
         self.addDockWidget(Qt.BottomDockWidgetArea, self.somdock)
-        self._view_menu.addAction(self.somdock.toggleViewAction())
+        self.view_menu.addAction(self.somdock.toggleViewAction())
         self.progressbar.setRange(0, 100)
         self.statusbar.showMessage(self.tr("SOM loaded"), 5000)
 
     def close_som(self):
         if self.somdock:
-            self._view_menu.removeAction(self.somdock.toggleViewAction())
+            self.view_menu.removeAction(self.somdock.toggleViewAction())
             self.somdock.deleteLater()
             self.somdock = None
 
@@ -362,10 +362,10 @@ class MainWindow(QMainWindow):
     def setup_menus(self):
         """Setup the menu and actions of the main window"""
         # File menu
-        self._file_menu = self.menuBar().addMenu(self.tr("&File"))
+        self.file_menu = self.menuBar().addMenu(self.tr("&File"))
 
         icon = QIcon.fromTheme("document-open")
-        self._open_act = QAction(
+        self.open_act = QAction(
             icon,
             self.tr("&Open IFC..."),
             self,
@@ -373,39 +373,39 @@ class MainWindow(QMainWindow):
             statusTip=self.tr("Open IFC files"),
             triggered=self.open_file_dlg,
         )
-        self._file_menu.addAction(self._open_act)
+        self.file_menu.addAction(self.open_act)
 
-        self._export_cvs_act = QAction(
+        self.export_cvs_act = QAction(
             self.tr("&Export View to CSV..."),
             self,
             shortcut="Ctrl+E",
             statusTip=self.tr("Export the current view or the current selection to CSV"),
             triggered=self.export_to_csv,
         )
-        self._file_menu.addAction(self._export_cvs_act)
+        self.file_menu.addAction(self.export_cvs_act)
 
-        self._file_menu.addSeparator()
+        self.file_menu.addSeparator()
 
-        self._open_som_act = QAction(
+        self.open_som_act = QAction(
             self.tr("Open SOM"),
             self,
             statusTip=self.tr("Load SOM list from a JSON file"),
             triggered=self.open_som_dlg,
         )
-        self._file_menu.addAction(self._open_som_act)
+        self.file_menu.addAction(self.open_som_act)
 
-        self._close_som_act = QAction(
+        self.close_som_act = QAction(
             self.tr("Close SOM"),
             self,
             statusTip=self.tr("Close the SOM list"),
             triggered=self.close_som,
         )
-        self._file_menu.addAction(self._close_som_act)
+        self.file_menu.addAction(self.close_som_act)
 
-        self._file_menu.addSeparator()
+        self.file_menu.addSeparator()
 
         icon = QIcon.fromTheme("document-close")
-        self._close_act = QAction(
+        self.close_act = QAction(
             icon,
             self.tr("&Close all IFCs"),
             self,
@@ -413,9 +413,9 @@ class MainWindow(QMainWindow):
             statusTip=self.tr("Close all IFC files"),
             triggered=self.close_all,
         )
-        self._file_menu.addAction(self._close_act)
+        self.file_menu.addAction(self.close_act)
 
-        self._quit_act = QAction(
+        self.quit_act = QAction(
             self.tr("&Quit"),
             self,
             shortcut="Ctrl+Q", 
@@ -423,147 +423,147 @@ class MainWindow(QMainWindow):
             triggered=self.close,
         )
 
-        self._file_menu.addAction(self._quit_act)
+        self.file_menu.addAction(self.quit_act)
 
         # Edit menu
-        self._edit_menu = self.menuBar().addMenu(self.tr("&Edit"))
+        self.edit_menu = self.menuBar().addMenu(self.tr("&Edit"))
 
-        self._copy_rows_act = QAction(
+        self.copy_rows_act = QAction(
             self.tr("&Copy rows"),
             self,
             shortcut="Ctrl+C",
             statusTip=self.tr("Copy selected rows to clipboard"),
             triggered=self.tabs.copy_selection_to_clipboard,
         )
-        self._edit_menu.addAction(self._copy_rows_act)
+        self.edit_menu.addAction(self.copy_rows_act)
 
-        self._copy_cell_act = QAction(
+        self.copy_cell_act = QAction(
             self.tr("Copy cell"),
             self,
             shortcut="Shift+Ctrl+C",
             statusTip=self.tr("Copy selected cell to clipboard"),
             triggered=self.tabs.copy_active_cell_to_clipboard,
         )
-        self._edit_menu.addAction(self._copy_cell_act)
+        self.edit_menu.addAction(self.copy_cell_act)
 
-        self._copyoptions_menu = self._edit_menu.addMenu(self.tr("Copy options"))
+        self.copyoptions_menu = self.edit_menu.addMenu(self.tr("Copy options"))
 
         self.chk_copy_with_headers = QAction(self.tr("Copy with headers"), self, checkable=True)
         self.chk_copy_with_headers.setChecked(False)
-        self._copyoptions_menu.addAction(self.chk_copy_with_headers)
+        self.copyoptions_menu.addAction(self.chk_copy_with_headers)
 
         self.chk_copy_with_level = QAction(self.tr("Copy with column of hierarchic level"), self, checkable=True)
         self.chk_copy_with_level.setChecked(False)
-        self._copyoptions_menu.addAction(self.chk_copy_with_level)
+        self.copyoptions_menu.addAction(self.chk_copy_with_level)
 
-        self._edit_menu.addSeparator()
+        self.edit_menu.addSeparator()
 
-        self._edit_selection_menu = self._edit_menu.addMenu(self.tr("&Selection"))
+        self.edit_selection_menu = self.edit_menu.addMenu(self.tr("&Selection"))
 
-        self._select_by_guid_act = QAction(
+        self.select_by_guid_act = QAction(
             self.tr("Select by &GUID"),
             self,
             statusTip=self.tr("Select IFC element by GUID"),
             triggered=self.select_by_guid,
         )
-        self._edit_selection_menu.addAction(self._select_by_guid_act)
+        self.edit_selection_menu.addAction(self.select_by_guid_act)
 
-        self._select_by_id_act = QAction(
+        self.select_by_id_act = QAction(
             self.tr("Select by &ID"),
             self,
             statusTip=self.tr("Select IFC element by ID and filename"),
             triggered=self.select_by_id
         )
-        self._edit_selection_menu.addAction(self._select_by_id_act)
+        self.edit_selection_menu.addAction(self.select_by_id_act)
 
-        self._select_by_tag_act = QAction(
+        self.select_by_tag_act = QAction(
             self.tr("Select by &Tag"),
             self,
             statusTip=self.tr("Select IFC element (IfcElement) by Tag"),
             triggered=self.select_by_tag
         )
-        self._edit_selection_menu.addAction(self._select_by_tag_act)
+        self.edit_selection_menu.addAction(self.select_by_tag_act)
 
-        self._edit_selection_menu.addSeparator()
+        self.edit_selection_menu.addSeparator()
 
-        self._clearselection_act = QAction(
+        self.clearselection_act = QAction(
             self.tr("Clear selection"),
             self,
             statusTip=self.tr("Clear selection in all IFC tabs"),
             triggered=self.tabs.clear_selection
         )
-        self._edit_selection_menu.addAction(self._clearselection_act)
+        self.edit_selection_menu.addAction(self.clearselection_act)
 
         # View menu
-        self._view_menu = self.menuBar().addMenu(self.tr("&View"))
+        self.view_menu = self.menuBar().addMenu(self.tr("&View"))
 
-        self._addcustomtree_act = QAction(
+        self.addcustomtree_act = QAction(
             self.tr("&Add custom IFC treeview"),
             self,
             triggered=self.add_custom_tree,
         )
-        self._view_menu.addAction(self._addcustomtree_act)
+        self.view_menu.addAction(self.addcustomtree_act)
 
         # View expand/collapse menu
-        self._expand_menu = self._view_menu.addMenu(self.tr("&Expand/Collapse active tree"))
+        self.expand_menu = self.view_menu.addMenu(self.tr("&Expand/Collapse active tree"))
 
-        self._collapse_act = QAction(
+        self.collapse_act = QAction(
             self.tr("&Collapse"),
             self,
             # Using lambda makes it possible to pass an argument to the function
             triggered=(lambda: self.tabs.expand_active_view(-1)),
         )
-        self._expand_menu.addAction(self._collapse_act)
+        self.expand_menu.addAction(self.collapse_act)
 
-        self._expand_level1_act = QAction(
+        self.expand_level1_act = QAction(
             self.tr("Expand to level &1"),
             self,
             triggered=(lambda: self.tabs.expand_active_view(1)),
         )
-        self._expand_menu.addAction(self._expand_level1_act)
+        self.expand_menu.addAction(self.expand_level1_act)
 
-        self._expand_level2_act = QAction(
+        self.expand_level2_act = QAction(
             self.tr("Expand to level &2"),
             self,
             triggered=(lambda: self.tabs.expand_active_view(2)),
         )
-        self._expand_menu.addAction(self._expand_level2_act)
+        self.expand_menu.addAction(self.expand_level2_act)
 
-        self._expand_level3_act = QAction(
+        self.expand_level3_act = QAction(
             self.tr("Expand to level &3"),
             self,
             triggered=(lambda: self.tabs.expand_active_view(3)),
         )
-        self._expand_menu.addAction(self._expand_level3_act)
+        self.expand_menu.addAction(self.expand_level3_act)
 
-        self._expand_level4_act = QAction(
+        self.expand_level4_act = QAction(
             self.tr("Expand to level &4"),
             self,
             triggered=(lambda: self.tabs.expand_active_view(4)),
         )
-        self._expand_menu.addAction(self._expand_level4_act)
+        self.expand_menu.addAction(self.expand_level4_act)
 
-        self._expand_all_act = QAction(
+        self.expand_all_act = QAction(
             self.tr("Expand &all"),
             self,
             triggered=(lambda: self.tabs.expand_active_view("all")),
         )
-        self._expand_menu.addAction(self._expand_all_act)
+        self.expand_menu.addAction(self.expand_all_act)
 
         # View - SOM menu
-        self.expand_som_menu = self._view_menu.addMenu(self.tr("&Expand/Collapse SOM tree"))
+        self.expand_som_menu = self.view_menu.addMenu(self.tr("&Expand/Collapse SOM tree"))
 
 
         # Help menu
-        self._help_menu = self.menuBar().addMenu(self.tr("&Help"))
+        self.help_menu = self.menuBar().addMenu(self.tr("&Help"))
 
-        self._about_act = QAction(
+        self.about_act = QAction(
             self.tr("&About"),
             self,
             triggered=self.about,
         )
 
-        self._help_menu.addAction(self._about_act)
+        self.help_menu.addAction(self.about_act)
 
     def create_dock_widgets(self):
         """Create the dock widgets"""
@@ -596,20 +596,20 @@ class MainWindow(QMainWindow):
             self,
             triggered=self.detailsdock.show_details,
         )
-        self._view_menu.addAction(self._overview_act)
+        self.view_menu.addAction(self._overview_act)
 
-        self._view_menu.addSeparator()
+        self.view_menu.addSeparator()
 
-        self._view_menu.addAction(self.detailsdock.toggleViewAction())
-        self._view_menu.addAction(self.columnsdock.toggleViewAction())
-        self._view_menu.addAction(self.psetdock.toggleViewAction())
+        self.view_menu.addAction(self.detailsdock.toggleViewAction())
+        self.view_menu.addAction(self.columnsdock.toggleViewAction())
+        self.view_menu.addAction(self.psetdock.toggleViewAction())
 
         # Add checkbox for Qset dock but do not create it yet (only on demand)
         # to speed up loading of files
         self.chk_show_qsets = QAction(self.tr("&Qsets"), self, checkable=True)
         self.chk_show_qsets.setChecked(False)
         self.chk_show_qsets.triggered.connect(self.toggle_qset_dock)
-        self._view_menu.addAction(self.chk_show_qsets)
+        self.view_menu.addAction(self.chk_show_qsets)
         self.qsetdock = None
 
         # Prepare for SOM dock
