@@ -1,6 +1,6 @@
-from PySide6.QtCore import QSortFilterProxyModel, QTimer, QItemSelection, QItemSelectionModel, QModelIndex, QEvent
+from PySide6.QtCore import Qt, QSortFilterProxyModel, QTimer, QItemSelection, QItemSelectionModel, QModelIndex, QEvent
 from PySide6.QtGui import QKeySequence
-from PySide6.QtWidgets import QTreeView, QAbstractItemView, QWidget, QTabWidget, QTabBar, QVBoxLayout, QPushButton, QStyle, QApplication
+from PySide6.QtWidgets import QTreeView, QAbstractItemView, QWidget, QMenu, QTabWidget, QTabBar, QVBoxLayout, QPushButton, QStyle, QApplication
 from bimsemantic.ui import LocationTreeModel, TypeTreeModel, FlatTreeModel, IfcTreeItem, CustomFieldType, CustomTreeMaker, IfcCustomTreeModel
 
 
@@ -261,6 +261,11 @@ class IfcTreeTab(QWidget):
         self.layout.addWidget(self.tree)
 
         self.close_button = None
+
+        # Setup Context Menu
+        self.tree.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.tree.customContextMenuRequested.connect(self.show_context_menu)
+
         
 
     def on_selection_changed(self, selected: QItemSelection, deselected: QItemSelection):
@@ -417,6 +422,17 @@ class IfcTreeTab(QWidget):
             if self.proxymodel.hasChildren(index):
                 indexes.extend(self.get_all_row_indexes(index))
         return indexes
+
+    def show_context_menu(self, position):
+        context_menu = QMenu(self)
+        context_menu.addAction(self.mainwindow.copy_rows_act)
+        context_menu.addAction(self.mainwindow.copy_cell_act)
+        expand_menu = QMenu(self.tr("Expand/Collapse"), self)
+        for action in self.mainwindow.expand_menu.actions():
+            expand_menu.addAction(action)
+        context_menu.addMenu(expand_menu)
+
+        context_menu.exec(self.tree.viewport().mapToGlobal(position))
 
     def __repr__(self):
         return f"IfcTreeTab({self.treemodel.__class__.__name__})"
