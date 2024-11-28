@@ -92,18 +92,19 @@ class MainWindow(QMainWindow):
     def copy_to_clipboard(self, only_cell=False):
         """Call the copy method of the active widget"""
         widget = QApplication.focusWidget()
-        print("w", widget)
         if isinstance(widget, QTreeView):
             parent = widget.parent()
             while parent:
-                print("p", parent)
-                if isinstance(parent, IfcTreeTab):
-                    if only_cell:
-                        parent.copy_active_cell_to_clipboard()
-                    else:
-                        parent.copy_selection_to_clipboard()
+                if isinstance(parent, (IfcTreeTab, QDockWidget)):
+                    try:
+                        if only_cell:
+                            parent.copy_active_cell_to_clipboard()
+                        else:
+                            parent.copy_selection_to_clipboard()
+                    except AttributeError:
+                        pass
                     return
-                elif isinstance(parent, QDockWidget):
+                elif isinstance(parent, ):
                     return
                 parent = parent.parent()
 
