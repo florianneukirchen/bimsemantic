@@ -183,31 +183,6 @@ class IfcTabs(QWidget):
             tab = self.tabs.widget(i)
             tab.clear_selection()
 
-    def copy_selection_to_clipboard(self):
-        """Copy the selected rows of the active tab to the clipboard"""
-        active_tab = self.tabs.currentWidget()
-        if not active_tab:
-            return
-        
-        add_header = self.mainwindow.chk_copy_with_headers.isChecked()
-        add_level = self.mainwindow.chk_copy_with_level.isChecked()
-
-        # rows_to_csv is a generator
-        txt = "".join(active_tab.rows_to_csv(sep=";", add_header=add_header, add_level=add_level))
-
-        clipboard = QApplication.clipboard()
-        clipboard.setText(txt)
-
-    def copy_active_cell_to_clipboard(self):
-        """Copy the active cell to the clipboard"""
-        active_tab = self.tabs.currentWidget()
-        if not active_tab:
-            return
-        index = active_tab.tree.currentIndex()
-        if index.isValid():
-            data = index.data()
-            clipboard = QApplication.clipboard()
-            clipboard.setText(data)    
 
 class IfcTreeTab(QWidget):
     """Class for the tabs with different IFC tree views
@@ -361,6 +336,26 @@ class IfcTreeTab(QWidget):
         """Check if the tab is the active tab, returns bool"""
         return self.tabs.currentWidget() == self
 
+    def copy_selection_to_clipboard(self):
+        """Copy the selected rows to the clipboard"""
+
+        add_header = self.mainwindow.chk_copy_with_headers.isChecked()
+        add_level = self.mainwindow.chk_copy_with_level.isChecked()
+
+        # rows_to_csv is a generator
+        txt = "".join(self.rows_to_csv(sep=";", add_header=add_header, add_level=add_level))
+
+        clipboard = QApplication.clipboard()
+        clipboard.setText(txt)
+
+    def copy_active_cell_to_clipboard(self):
+        """Copy the active cell to the clipboard"""
+
+        index = self.tree.currentIndex()
+        if index.isValid():
+            data = index.data()
+            clipboard = QApplication.clipboard()
+            clipboard.setText(data)    
 
     def rows_to_csv(self, sep=";", all=False, add_header=False, add_level=False):
         """Generator, yields the selected rows as CSV string

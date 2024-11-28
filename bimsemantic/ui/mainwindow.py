@@ -25,7 +25,7 @@ from PySide6.QtWidgets import (
 # from ifcopenshell import entity_instance
 import bimsemantic
 from bimsemantic.util import IfcFiles
-from bimsemantic.ui import IfcTabs, IfcDetailsTreeModel, OverviewTreeModel, ColumnsTreeModel, WorkerAddFiles, CustomTreeDialog, PsetTreeModel, PsetDockWidget, DetailsDock, SomDockWidget
+from bimsemantic.ui import IfcTabs, IfcTreeTab, IfcDetailsTreeModel, OverviewTreeModel, ColumnsTreeModel, WorkerAddFiles, CustomTreeDialog, PsetTreeModel, PsetDockWidget, DetailsDock, SomDockWidget
 
 
 class MainWindow(QMainWindow):
@@ -68,7 +68,7 @@ class MainWindow(QMainWindow):
         #https://stackoverflow.com/questions/40225270/copy-paste-multiple-items-from-qtableview-in-pyqt4
         if event.type() == QEvent.KeyPress:
             if event.matches(QKeySequence.Copy):
-                self.copy_selection_to_clipboard()
+                self.copy_to_clipboard()
                 return True
         return super().eventFilter(source, event)
 
@@ -89,7 +89,7 @@ class MainWindow(QMainWindow):
             if json_filenames:
                 self.open_som(json_filenames[0])
 
-    def copy_selection_to_clipboard(self):
+    def copy_to_clipboard(self, only_cell=False):
         """Call the copy method of the active widget"""
         widget = QApplication.focusWidget()
         print("w", widget)
@@ -97,11 +97,13 @@ class MainWindow(QMainWindow):
             parent = widget.parent()
             while parent:
                 print("p", parent)
-                if isinstance(parent, IfcTabs):
-                    parent.copy_selection_to_clipboard()
+                if isinstance(parent, IfcTreeTab):
+                    if only_cell:
+                        parent.copy_active_cell_to_clipboard()
+                    else:
+                        parent.copy_selection_to_clipboard()
                     return
                 elif isinstance(parent, QDockWidget):
-                    print("Bla")
                     return
                 parent = parent.parent()
 
@@ -474,7 +476,7 @@ class MainWindow(QMainWindow):
             self,
             shortcut="Ctrl+C",
             statusTip=self.tr("Copy selected rows to clipboard"),
-            triggered=self.copy_selection_to_clipboard,
+            triggered=self.copy_to_clipboard,
         )
         self.edit_menu.addAction(self.copy_rows_act)
 
@@ -483,7 +485,7 @@ class MainWindow(QMainWindow):
             self,
             shortcut="Shift+Ctrl+C",
             statusTip=self.tr("Copy selected cell to clipboard"),
-            triggered=self.tabs.copy_active_cell_to_clipboard,
+            triggered=lambda: self.copy_to_clipboard(only_cell=True),
         )
         self.edit_menu.addAction(self.copy_cell_act)
 
