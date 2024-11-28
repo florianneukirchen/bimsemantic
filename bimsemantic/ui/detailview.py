@@ -1,5 +1,5 @@
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QDockWidget, QLabel, QTreeView
+from PySide6.QtWidgets import QDockWidget, QLabel, QTreeView, QApplication
 import ifcopenshell.util.element
 from .treebase import TreeItem, TreeModelBaseclass
 from ifcopenshell import entity_instance
@@ -73,6 +73,16 @@ class DetailsDock(QDockWidget):
                 parent_index = treeview.rootIndex()
             treeview.setFirstColumnSpanned(row, parent_index, True)
         self.setWidget(treeview)
+
+
+    def copy_active_cell_to_clipboard(self):
+        """Copy the active cell to the clipboard"""
+        tree = self.widget()
+        index = tree.currentIndex()
+        if index.isValid():
+            data = index.data()
+            clipboard = QApplication.clipboard()
+            clipboard.setText(data)   
 
 class DetailsBaseclass(TreeModelBaseclass):
     """Base class for the details dock widget models"""
