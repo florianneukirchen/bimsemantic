@@ -41,20 +41,8 @@ class IfcTabs(QWidget):
 
         self.mainwindow.column_treemodel.columnsChanged.connect(self.update_columns)
 
-        self.installEventFilter(self)
 
-    def eventFilter(self, source, event):
-        """Event filter to catch the copy event
-        
-        Otherwise Ctrl+C would copy only the active cell.
-        """
 
-        #https://stackoverflow.com/questions/40225270/copy-paste-multiple-items-from-qtableview-in-pyqt4
-        if event.type() == QEvent.KeyPress:
-            if event.matches(QKeySequence.Copy):
-                self.copy_selection_to_clipboard()
-                return True
-        return super(IfcTabs, self).eventFilter(source, event)
 
     def add_file(self, ifc_file):
         """Add data of an IFC file to the tree views

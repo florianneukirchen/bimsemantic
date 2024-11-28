@@ -1,4 +1,4 @@
-from PySide6.QtCore import Qt, QThreadPool
+from PySide6.QtCore import Qt, QThreadPool, QEvent
 from PySide6.QtGui import QAction, QIcon, QKeySequence, QDragEnterEvent, QDropEvent
 from PySide6.QtWidgets import (
     QDockWidget,
@@ -19,6 +19,7 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QGridLayout,
     QFrame,
+    QApplication,
 )
 
 # from ifcopenshell import entity_instance
@@ -54,9 +55,22 @@ class MainWindow(QMainWindow):
         self.somdock = None
          
         self.setCentralWidget(self.tabs)
+
+        self.installEventFilter(self)
         self.setAcceptDrops(True)
 
+    def eventFilter(self, source, event):
+        """Event filter to catch the copy event
+        
+        Otherwise Ctrl+C would copy only the active cell.
+        """
 
+        #https://stackoverflow.com/questions/40225270/copy-paste-multiple-items-from-qtableview-in-pyqt4
+        if event.type() == QEvent.KeyPress:
+            if event.matches(QKeySequence.Copy):
+                self.copy_selection_to_clipboard()
+                return True
+        return super().eventFilter(source, event)
 
 
     def dragEnterEvent(self, event: QDragEnterEvent):
@@ -74,6 +88,22 @@ class MainWindow(QMainWindow):
             self.open_ifc_files(ifc_filenames)
             if json_filenames:
                 self.open_som(json_filenames[0])
+
+    def copy_selection_to_clipboard(self):
+        """Call the copy method of the active widget"""
+        widget = QApplication.focusWidget()
+        print("w", widget)
+        if isinstance(widget, QTreeView):
+            parent = widget.parent()
+            while parent:
+                print("p", parent)
+                if isinstance(parent, IfcTabs):
+                    parent.copy_selection_to_clipboard()
+                    return
+                elif isinstance(parent, QDockWidget):
+                    print("Bla")
+                    return
+                parent = parent.parent()
 
     def open_som_dlg(self):
         """Open SOM dialog to load a SOM list from a JSON file"""
@@ -440,11 +470,11 @@ class MainWindow(QMainWindow):
         self.edit_menu = self.menuBar().addMenu(self.tr("&Edit"))
 
         self.copy_rows_act = QAction(
-            self.tr("&Copy rows"),
+            self.tr("&Copy"),
             self,
             shortcut="Ctrl+C",
             statusTip=self.tr("Copy selected rows to clipboard"),
-            triggered=self.tabs.copy_selection_to_clipboard,
+            triggered=self.copy_selection_to_clipboard,
         )
         self.edit_menu.addAction(self.copy_rows_act)
 
