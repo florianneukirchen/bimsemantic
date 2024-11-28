@@ -2,9 +2,10 @@ from PySide6.QtCore import Qt, QSortFilterProxyModel, QModelIndex
 from bimsemantic.ui import TreeItem, TreeModelBaseclass, CustomTreeMaker, CustomFieldType
 import ifcopenshell.util.element
 from PySide6.QtWidgets import QDockWidget, QTreeView
+from bimsemantic.ui import CopyMixin
 import statistics
 
-class PsetDockWidget(QDockWidget):
+class PsetDockWidget(CopyMixin, QDockWidget):
     """Dock widget for property sets or quantity sets
 
     Also holds the tree model and the tree view, and adds methods

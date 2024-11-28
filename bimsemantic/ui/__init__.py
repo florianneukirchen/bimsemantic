@@ -1,3 +1,4 @@
+from .mixin import *
 from .detailview import *
 from .customtreedlg import *
 from .ifctrees import *

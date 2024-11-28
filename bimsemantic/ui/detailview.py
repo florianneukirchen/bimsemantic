@@ -1,10 +1,11 @@
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QDockWidget, QLabel, QTreeView, QApplication
+from PySide6.QtWidgets import QDockWidget, QLabel, QTreeView
 import ifcopenshell.util.element
 from .treebase import TreeItem, TreeModelBaseclass
 from ifcopenshell import entity_instance
+from bimsemantic.ui import CopyMixin
 
-class DetailsDock(QDockWidget):
+class DetailsDock(CopyMixin, QDockWidget):
     """Dock widget for showing details of IFC elements or overview of files
     
     The overview is updated with new_files(ifc_files) and shown with show_details().
@@ -74,15 +75,6 @@ class DetailsDock(QDockWidget):
             treeview.setFirstColumnSpanned(row, parent_index, True)
         self.setWidget(treeview)
 
-
-    def copy_active_cell_to_clipboard(self):
-        """Copy the active cell to the clipboard"""
-        tree = self.widget()
-        index = tree.currentIndex()
-        if index.isValid():
-            data = index.data()
-            clipboard = QApplication.clipboard()
-            clipboard.setText(data)   
 
 class DetailsBaseclass(TreeModelBaseclass):
     """Base class for the details dock widget models"""
