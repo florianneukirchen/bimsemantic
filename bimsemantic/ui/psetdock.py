@@ -144,7 +144,7 @@ class QsetTreeModel(TreeModelBaseclass):
     def __init__(self, data, parent):
         self.qsetdock = parent
         super(QsetTreeModel, self).__init__(data, parent)
-        self.column_count = 8
+        self.column_count = 7
 
     def setup_root_item(self):
         """Set up the root item"""
