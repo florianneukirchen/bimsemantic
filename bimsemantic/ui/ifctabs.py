@@ -1,6 +1,7 @@
 from PySide6.QtCore import Qt, QSortFilterProxyModel, QTimer, QItemSelection, QItemSelectionModel, QModelIndex, QEvent
 from PySide6.QtGui import QKeySequence
 from PySide6.QtWidgets import QTreeView, QAbstractItemView, QWidget, QMenu, QTabWidget, QTabBar, QVBoxLayout, QPushButton, QStyle, QApplication
+from PySide6.QtGui import QAction
 from bimsemantic.ui import LocationTreeModel, TypeTreeModel, FlatTreeModel, IfcTreeItem, CustomFieldType, CustomTreeMaker, IfcCustomTreeModel
 
 
@@ -407,6 +408,7 @@ class IfcTreeTab(QWidget):
         return indexes
 
     def show_context_menu(self, position):
+        index = self.tree.indexAt(position)
         context_menu = QMenu(self)
         context_menu.addAction(self.mainwindow.copy_rows_act)
         context_menu.addAction(self.mainwindow.copy_cell_act)
@@ -414,6 +416,13 @@ class IfcTreeTab(QWidget):
         for action in self.mainwindow.expand_menu.actions():
             expand_menu.addAction(action)
         context_menu.addMenu(expand_menu)
+        context_menu.addSeparator()
+        if index.isValid() and index.column() > 0:
+            context_menu.addAction(QAction(
+            self.tr("Remove column"), 
+            self,
+            triggered=lambda: self.treemodel.columntree.remove_column(index.column())
+        ))
 
         context_menu.exec(self.tree.viewport().mapToGlobal(position))
 

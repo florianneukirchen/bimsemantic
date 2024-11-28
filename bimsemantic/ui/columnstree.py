@@ -175,6 +175,21 @@ class ColumnsTreeModel(QTreeWidget):
             return self.first_cols[column]
         column = column - self._count_first_cols
         return self._psetcolumns[column][1]
+    
+    def remove_column(self, column):
+        """Hides info column or removes pset column"""
+        if column <= 0:
+            return
+        if column < self._count_first_cols:
+            item = self.infocols_item.child(column - 1)
+            item.setCheckState(0, Qt.CheckState.Unchecked)
+        else:
+            column = column - self._count_first_cols
+            pset, prop = self._psetcolumns[column]
+            pset_item = self.get_child_by_name(self.psets_item, pset)
+            prop_item = self.get_child_by_name(pset_item, prop)
+            prop_item.setCheckState(0, Qt.CheckState.Unchecked)
+
 
     def item_changed(self, item, column):
         """Slot for the itemChanged signal
