@@ -30,6 +30,8 @@ class CopyMixin:
             model = tree.model()
             data = []
             for col in range(model.columnCount()):
+                if tree.isColumnHidden(col):
+                    continue
                 index = model.index(row, col, parent)
                 row_data = index.data()
                 if row_data:

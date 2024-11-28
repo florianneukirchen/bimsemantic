@@ -1,9 +1,10 @@
 from PySide6.QtCore import Qt, QSortFilterProxyModel, QModelIndex
 from PySide6.QtGui import QAction
-from bimsemantic.ui import TreeItem, TreeModelBaseclass, CustomTreeMaker, CustomFieldType
-import ifcopenshell.util.element
 from PySide6.QtWidgets import QDockWidget, QTreeView, QMenu
+import ifcopenshell.util.element
 import json
+from bimsemantic.ui import TreeItem, TreeModelBaseclass, CopyMixin
+
 
 class SomTreeItem(TreeItem):
     """Item for the SOM tree model
@@ -96,7 +97,7 @@ class SomTreeModel(TreeModelBaseclass):
        
 
 
-class SomDockWidget(QDockWidget):
+class SomDockWidget(CopyMixin, QDockWidget):
     """Dock widget for the SOM-list tree view
     
     Opens a JSON file with the SOM data and displays it in a tree view.
