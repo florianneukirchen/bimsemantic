@@ -51,6 +51,7 @@ class MainWindow(QMainWindow):
 
         self.setup_menus()
         self.create_dock_widgets()
+        self.somdock = None
          
         self.setCentralWidget(self.tabs)
         self.setAcceptDrops(True)
@@ -92,8 +93,16 @@ class MainWindow(QMainWindow):
         if self.somdock:
             self.close_som()
 
-        self.somdock = SomDockWidget(self, filename)
-
+        try:
+            self.somdock = SomDockWidget(self, filename)
+        except (ValueError, AttributeError, IndexError):
+            self.statusbar.showMessage(self.tr("Failed to parse JSON file"), 5000)
+            self.progressbar.setRange(0, 100)
+            return
+        except FileNotFoundError:
+            self.statusbar.showMessage(self.tr("File not found"), 5000)
+            self.progressbar.setRange(0, 100)
+            return
         
         self.addDockWidget(Qt.BottomDockWidgetArea, self.somdock)
         self.view_menu.addAction(self.somdock.toggleViewAction())
@@ -612,8 +621,7 @@ class MainWindow(QMainWindow):
         self.view_menu.addAction(self.chk_show_qsets)
         self.qsetdock = None
 
-        # Prepare for SOM dock
-        self.somdock = None
+        
 
     def toggle_qset_dock(self):
         """Toggle the visibility of the Qset dock and create it if still None"""
