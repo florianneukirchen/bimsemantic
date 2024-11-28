@@ -2,7 +2,7 @@ from PySide6.QtCore import Qt, QSortFilterProxyModel, QModelIndex
 from PySide6.QtGui import QAction
 from bimsemantic.ui import TreeItem, TreeModelBaseclass, CustomTreeMaker, CustomFieldType
 import ifcopenshell.util.element
-from PySide6.QtWidgets import QDockWidget, QTreeView
+from PySide6.QtWidgets import QDockWidget, QTreeView, QMenu
 import json
 
 class SomTreeItem(TreeItem):
@@ -121,11 +121,11 @@ class SomDockWidget(QDockWidget):
         self.proxymodel = QSortFilterProxyModel(self)
         self.proxymodel.setSourceModel(self.treemodel)
 
-        self.treeview = QTreeView(self)
-        self.treeview.setModel(self.proxymodel)
-        self.treeview.setSortingEnabled(True)
-        self.treeview.setColumnWidth(0, 200)
-        self.setWidget(self.treeview)
+        self.tree = QTreeView(self)
+        self.tree.setModel(self.proxymodel)
+        self.tree.setSortingEnabled(True)
+        self.tree.setColumnWidth(0, 200)
+        self.setWidget(self.tree)
 
         # Add menu actions
 
@@ -173,11 +173,45 @@ class SomDockWidget(QDockWidget):
         self.mainwindow.expand_som_menu.addAction(self._expand_all_act)
 
 
+        # Setup Context Menu
+        self.tree.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.tree.customContextMenuRequested.connect(self.show_context_menu)
+
+    def show_context_menu(self, position):
+        index = self.tree.indexAt(position)
+        context_menu = QMenu(self)
+        context_menu.addAction(self.mainwindow.copy_rows_act)
+        context_menu.addAction(self.mainwindow.copy_cell_act)
+        expand_menu = QMenu(self.tr("Expand/Collapse"), self)
+        for action in self.mainwindow.expand_som_menu.actions():
+            expand_menu.addAction(action)
+        context_menu.addMenu(expand_menu)
+        context_menu.addSeparator()
+        if index.isValid() and index.column() > 0:
+            context_menu.addAction(QAction(
+            self.tr("Hide column"), 
+            self,
+            triggered=lambda: self.tree.setColumnHidden(index.column(), True)))
+        context_menu.addAction(QAction(
+            self.tr("Show hidden columns"), 
+            self,
+            triggered=self.show_hidden_columns))
+        context_menu.exec(self.tree.viewport().mapToGlobal(position))    
+
+
     def expand_view(self, level):
         """Expand the treeview to a certain level"""
         if level == -1:
-            self.treeview.collapseAll()
+            self.tree.collapseAll()
         elif level == "all":
-            self.treeview.expandAll()
+            self.tree.expandAll()
         else:
-            self.treeview.expandToDepth(level -1)
+            self.tree.expandToDepth(level -1)
+
+    def show_hidden_columns(self):
+        """Unhide all columns in the tree view"""
+        for i in range(self.treemodel.columnCount()):
+            self.tree.setColumnHidden(i, False)
+
+    def __repr__(self):
+        return f"SomDockWidget {self.filename}"
