@@ -16,12 +16,14 @@ from PySide6.QtWidgets import (
     QStyle,
 )
 
+
 class CustomFieldType(Enum):
     """Enum for the type used by CustomTreeMaker
-    
+
     These define where the data comes from: from the property sets,
     from attributes of the Ifc element etc.
     """
+
     IFCCLASS = 1
     OBJECTTYPE = 2
     LINKEDOBJECTTYPE = 3
@@ -32,7 +34,7 @@ class CustomFieldType(Enum):
 
 class CustomTreeMaker:
     """Definition for one of the hierarchy levels of a custom tree
-    
+
     A list of CustomTreeMaker instances can be passed to IfcCustomTreeModel.
 
     :param fieldtype: Defines how to get the data
@@ -40,12 +42,15 @@ class CustomTreeMaker:
     :param keys: Tuple of two keys for the PSET dictionary, only needed for CustomFieldType.PSET.
     :type keys: Tuple of str, optional
     """
+
     def __init__(self, fieldtype, keys=None):
         self.fieldtype = fieldtype
         self.keys = keys
         if self.fieldtype == CustomFieldType.PSET:
-            assert isinstance(self.keys, tuple), "PSET must have two keys, keys should be tuple"
-            assert len(self.keys) == 2, "PSET must have two keys, keys should be tuple" 
+            assert isinstance(
+                self.keys, tuple
+            ), "PSET must have two keys, keys should be tuple"
+            assert len(self.keys) == 2, "PSET must have two keys, keys should be tuple"
         else:
             self.keys = None
 
@@ -62,33 +67,37 @@ class CustomTreeMaker:
 
 class PropertyListItem(QListWidgetItem):
     """Helper class for CustomTreeDialog
-    
+
     Used in the list view on the right side of the dialog.
     """
+
     def __init__(self, name, fieldtype, pset_name=None):
         super().__init__(name)
         self.fieldtype = fieldtype
         self.pset_name = pset_name
         self.name = name
 
+
 class PropertyTreeItem(QTreeWidgetItem):
     """Helper class for CustomTreeDialog
-    
+
     Used in the tree view on the left side of the dialog.
     """
+
     def __init__(self, parent, name, fieldtype, pset_name=None):
         super().__init__(parent)
         self.setText(0, name)
         self.name = name
         self.fieldtype = fieldtype
-        self.pset_name = pset_name        
+        self.pset_name = pset_name
 
 
 class CustomTreeDialog(QDialog):
     """Dialog to define a custom tree view
-    
+
     :param parent: Parent widget (main window)
     """
+
     def __init__(self, parent):
         super().__init__(parent=parent)
         ifcfiles = parent.ifcfiles
@@ -117,26 +126,19 @@ class CustomTreeDialog(QDialog):
         self.info_item = QTreeWidgetItem(self.left_list)
         self.info_item.setText(0, self.tr("Main attributes"))
 
+        PropertyTreeItem(self.info_item, self.tr("IFC Class"), CustomFieldType.IFCCLASS)
         PropertyTreeItem(
-            self.info_item, 
-            self.tr("IFC Class"), 
-            CustomFieldType.IFCCLASS)
+            self.info_item, self.tr("ObjectType attribute"), CustomFieldType.OBJECTTYPE
+        )
         PropertyTreeItem(
-            self.info_item, 
-            self.tr("ObjectType attribute"), 
-            CustomFieldType.OBJECTTYPE)
+            self.info_item,
+            self.tr("Linked Object Type"),
+            CustomFieldType.LINKEDOBJECTTYPE,
+        )
+        PropertyTreeItem(self.info_item, self.tr("Filename"), CustomFieldType.FILENAME)
         PropertyTreeItem(
-            self.info_item, 
-            self.tr("Linked Object Type"), 
-            CustomFieldType.LINKEDOBJECTTYPE)
-        PropertyTreeItem(
-            self.info_item, 
-            self.tr("Filename"), 
-            CustomFieldType.FILENAME)
-        PropertyTreeItem(
-            self.info_item, 
-            self.tr("Contained in"), 
-            CustomFieldType.CONTAINEDIN)
+            self.info_item, self.tr("Contained in"), CustomFieldType.CONTAINEDIN
+        )
 
         pset_info = ifcfiles.pset_info
 
@@ -144,12 +146,8 @@ class CustomTreeDialog(QDialog):
             pset_item = QTreeWidgetItem(self.left_list)
             pset_item.setText(0, pset_name)
             for prop in pset_info[pset_name]:
-                PropertyTreeItem(
-                    pset_item, 
-                    prop, 
-                    CustomFieldType.PSET,
-                    pset_name)
-                
+                PropertyTreeItem(pset_item, prop, CustomFieldType.PSET, pset_name)
+
         self.left_list.expandAll()
         self.left_list.setHeaderHidden(True)
 
@@ -161,7 +159,6 @@ class CustomTreeDialog(QDialog):
         list_layout.addLayout(left_button_layout)
         list_layout.addWidget(self.right_list)
         list_layout.addLayout(right_button_layout)
-
 
         add_button = QPushButton("")
         icon = self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowForward)
@@ -206,7 +203,7 @@ class CustomTreeDialog(QDialog):
         """Takes an item of the treeview on the left and adds it in the list on the right"""
         selected_items = self.left_list.selectedItems()
         for item in selected_items:
-            if item.parent() is not None:  
+            if item.parent() is not None:
                 prop_item = PropertyListItem(item.name, item.fieldtype, item.pset_name)
                 self.right_list.addItem(prop_item)
                 item.parent().removeChild(item)
@@ -225,11 +222,7 @@ class CustomTreeDialog(QDialog):
                         break
             else:
                 parent_item = self.info_item
-            PropertyTreeItem(
-                parent_item, 
-                item.name, 
-                item.fieldtype, 
-                item.pset_name)
+            PropertyTreeItem(parent_item, item.name, item.fieldtype, item.pset_name)
 
     def move_item_up(self):
         """Move item up in the list on the right side"""
@@ -256,7 +249,7 @@ class CustomTreeDialog(QDialog):
 
     def get_items(self):
         """Get CustomTreeMaker items
-        
+
         Turns the items of the listview to CustomTreeMaker instances
         and returns them
         :rtype: list of CustomTreeMaker
@@ -264,14 +257,6 @@ class CustomTreeDialog(QDialog):
         items = []
         for i in range(self.right_list.count()):
             item = self.right_list.item(i)
-            custom_field = CustomTreeMaker(
-                item.fieldtype,
-                (item.pset_name, item.name))
+            custom_field = CustomTreeMaker(item.fieldtype, (item.pset_name, item.name))
             items.append(custom_field)
         return items
-
-
-
-
-
-

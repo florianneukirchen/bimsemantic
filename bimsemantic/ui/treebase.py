@@ -1,10 +1,19 @@
-from PySide6.QtCore import QDate, QFile, Qt, QAbstractItemModel, QModelIndex, Qt, QObject
+from PySide6.QtCore import (
+    QDate,
+    QFile,
+    Qt,
+    QAbstractItemModel,
+    QModelIndex,
+    Qt,
+    QObject,
+)
 from PySide6.QtGui import QAction, QFont, QIcon
 from PySide6.QtWidgets import QTreeView
 
+
 class TreeItem(QObject):
     """Basic item for a tree model.
-    
+
     Can be used directly or subclassed to add more functionality.
     Data in this case is a list of strings, with one entry for each column.
 
@@ -14,6 +23,7 @@ class TreeItem(QObject):
     :type parent: TreeItem or derived class
     :param id: An optional identifier for the item
     """
+
     def __init__(self, data=None, parent=None, id=None, showchildcount=True):
         self._data = data
         if data is None:
@@ -29,7 +39,7 @@ class TreeItem(QObject):
 
     def child(self, row):
         """Get a child item by its row
-        
+
         :param row: The row of the child item
         :type row: int
         :return: The child item
@@ -42,7 +52,7 @@ class TreeItem(QObject):
     def child_count(self):
         """Get the number of children"""
         return len(self._children)
-    
+
     def leaves_count(self):
         """Recursively get the number of leave nodes connected to/as children of this item"""
         leaves = 0
@@ -51,10 +61,10 @@ class TreeItem(QObject):
         if leaves == 0:
             return 1
         return leaves
-    
+
     def level(self):
         """Get the level of the item in the tree"""
-        level = -1 # Do not include the root item
+        level = -1  # Do not include the root item
         parent = self._parent
         while parent:
             level += 1
@@ -63,7 +73,7 @@ class TreeItem(QObject):
 
     def data(self, column):
         """Get the data for a column
-        
+
         For the first column, the number of children and leaves is added to the string.
 
         :param column: The column number
@@ -87,7 +97,7 @@ class TreeItem(QObject):
 
     def set_data(self, column, value):
         """Set the data for a column
-        
+
         :param column: The column number
         :type column: int
         :param value: The value to set
@@ -103,7 +113,7 @@ class TreeItem(QObject):
 
     def parent(self):
         """Get the parent item
-        
+
         :return: The parent item
         :rtype: TreeItem or derived class
         """
@@ -117,7 +127,7 @@ class TreeItem(QObject):
 
     def search(self, text, column=0, case_sensitive=False, how="="):
         """Find all items with a given text in column
-        
+
         Recursively search the children for items with the given label.
 
         :param text: String to search for
@@ -137,7 +147,7 @@ class TreeItem(QObject):
                 column_data = ""
         else:
             column_data = str(self.data(column))
-        
+
         if not case_sensitive:
             column_data = column_data.lower()
             text = text.lower()
@@ -150,11 +160,11 @@ class TreeItem(QObject):
         for child in self._children:
             items.extend(child.search(text, column, case_sensitive, how))
         return items
-        
+
     def find_item_by_guid(self, guid):
         """Find children of type IfcTreeItem by GUID
-        
-        TreeItem does not have a GUID, just pass on to the children, 
+
+        TreeItem does not have a GUID, just pass on to the children,
         for iteration in an IfcTreeModel.
         """
         for child in self._children:
@@ -162,11 +172,11 @@ class TreeItem(QObject):
             if result:
                 return result
         return None
-    
+
     def find_item_by_tag(self, tag):
         """Find children of type IfcTreeItem by tag
-        
-        TreeItem does not have a tag, just pass on to the children, 
+
+        TreeItem does not have a tag, just pass on to the children,
         for iteration in an IfcTreeModel.
         """
         for child in self._children:
@@ -174,7 +184,7 @@ class TreeItem(QObject):
             if result:
                 return result
         return None
-    
+
     @property
     def id(self):
         """The optional ID of the item"""
@@ -187,12 +197,12 @@ class TreeItem(QObject):
 
     def __repr__(self):
         return f"TreeItem ({self.label})"
- 
+
 
 class TreeModelBaseclass(QAbstractItemModel):
     """Base class for a tree model, supposed to be subclassed.
-    
-    On init, the root item is created in setupRootItem() and the model data is 
+
+    On init, the root item is created in setupRootItem() and the model data is
     set up in setupModelData(). These functions are supposed to be overridden
     in derived classes.
 
@@ -203,6 +213,7 @@ class TreeModelBaseclass(QAbstractItemModel):
     :type data: Any
     :param parent: The parent widget
     """
+
     def __init__(self, data, parent=None):
         super(TreeModelBaseclass, self).__init__(parent)
         self.column_count = 2
@@ -214,7 +225,7 @@ class TreeModelBaseclass(QAbstractItemModel):
     def setup_root_item(self):
         """Set up the root item for the model, can be overridden in derived classes"""
         self._rootItem = TreeItem()
-       
+
     def setup_model_data(self, data, parent):
         """Set up the model data, called by init, must be overridden in derived classes"""
         pass
@@ -229,7 +240,7 @@ class TreeModelBaseclass(QAbstractItemModel):
             if childlabel == label:
                 return child
         return None
-        
+
     def rowCount(self, parent=QModelIndex()):
         """Get the number of rows (children) for a parent item"""
         if parent.column() > 0:
@@ -243,7 +254,7 @@ class TreeModelBaseclass(QAbstractItemModel):
 
     def data(self, index, role=Qt.DisplayRole):
         """Get the data for a given index
-        
+
         :param index: The index of the item
         :type index: QModelIndex
         :param role: Flag for the role
@@ -278,9 +289,8 @@ class TreeModelBaseclass(QAbstractItemModel):
         if parentItem == self._rootItem:
             return QModelIndex()
         return self.createIndex(parentItem.row(), 0, parentItem)
-    
+
     @property
     def root_item(self):
         """The root item of the model"""
         return self._rootItem
-

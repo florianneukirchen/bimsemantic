@@ -1,6 +1,17 @@
 from PySide6.QtCore import Qt, QSortFilterProxyModel, QModelIndex
 from PySide6.QtGui import QAction
-from PySide6.QtWidgets import QDockWidget, QTreeView, QMenu, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLineEdit, QStyle, QLabel
+from PySide6.QtWidgets import (
+    QDockWidget,
+    QTreeView,
+    QMenu,
+    QWidget,
+    QVBoxLayout,
+    QHBoxLayout,
+    QPushButton,
+    QLineEdit,
+    QStyle,
+    QLabel,
+)
 import ifcopenshell.util.element
 import json
 from bimsemantic.ui import TreeItem, TreeModelBaseclass, CopyMixin, SearchBar
@@ -10,7 +21,7 @@ class SomTreeItem(TreeItem):
     """Item for the SOM tree model
 
     On init, it creates child items for the children of the item.
-    Takes a JSON-like nested dictionary as data, with children 
+    Takes a JSON-like nested dictionary as data, with children
     grouped in a dictionary under the key "childs".
 
     The columns are used to get the data for the columns from the data dictionary.
@@ -24,9 +35,10 @@ class SomTreeItem(TreeItem):
     :param columns: The columns to use for the item
     :type columns: list
     """
+
     def __init__(self, data, name, parent, columns=["Name"]):
         childs = data.pop("childs", {})
-        data.pop("columns", None) # Remove columns if they are present
+        data.pop("columns", None)  # Remove columns if they are present
         super(SomTreeItem, self).__init__(data, parent=parent)
         self.name = name
         self.columns = columns
@@ -54,20 +66,20 @@ class SomTreeItem(TreeItem):
         """First column without counter"""
         return self.name
 
-    
     def __repr__(self):
         return f"SomTreeItem {self.name}"
 
-    
+
 class SomTreeModel(TreeModelBaseclass):
     """Model for the SOM tree view
-    
+
     The model is created from a JSON-like nested dictionary.
 
     :param data: The data for the model as a nested dictionary
     :type data: dict
     :param parent: The parent widget (the SOM dockwidget)
     """
+
     def __init__(self, data, parent):
         self.somdock = parent
         # Get a list of colums from the first Fachmodell
@@ -75,16 +87,15 @@ class SomTreeModel(TreeModelBaseclass):
         self.columns = ["Name"] + data[firstkey].get("columns", [])
         super(SomTreeModel, self).__init__(data, parent)
 
-
     def setup_root_item(self):
         """Set up the root item for the model"""
         self._rootItem = TreeItem(self.columns, showchildcount=False)
         self.column_count = len(self.columns)
-    
+
     def setup_model_data(self, data, parent):
         """Set up the model data from a nested dictionary
-        
-        SomTreeItem automatically creates child items for anything 
+
+        SomTreeItem automatically creates child items for anything
         found under the key 'childs'.
 
         :param data: The data for the model as a nested dictionary
@@ -97,23 +108,22 @@ class SomTreeModel(TreeModelBaseclass):
             item = SomTreeItem(value, key, parent, self.columns)
             parent.appendChild(item)
 
-       
-
 
 class SomDockWidget(CopyMixin, QDockWidget):
     """Dock widget for the SOM-list tree view
-    
+
     Opens a JSON file with the SOM data and displays it in a tree view.
     Also adds actions to the main window.
 
     :param parent: The parent widget (the main window)
     :param filename: The filename of the JSON file with the SOM data
     """
+
     def __init__(self, parent, filename):
         super(SomDockWidget, self).__init__(self.tr("SOM"), parent)
         self.mainwindow = parent
         self.filename = filename
-        self._autosearch_attribute = None 
+        self._autosearch_attribute = None
 
         try:
             with open(self.filename, "r") as file:
@@ -122,9 +132,9 @@ class SomDockWidget(CopyMixin, QDockWidget):
             raise ValueError(f"File {self.filename} is not a valid JSON file.")
 
         self.main_widget = QWidget()
-        self.layout = QVBoxLayout(self.main_widget) 
+        self.layout = QVBoxLayout(self.main_widget)
         self.layout.setContentsMargins(4, 2, 4, 2)
-        self.setWidget(self.main_widget)       
+        self.setWidget(self.main_widget)
 
         # Tree widget
         self.treemodel = SomTreeModel(data, self)
@@ -139,7 +149,9 @@ class SomDockWidget(CopyMixin, QDockWidget):
 
         # Search widget
         self.searchbar = SearchBar(self)
-        self.searchbar.stop_auto_button.clicked.connect(lambda: self.set_autosearch_attribute(None))
+        self.searchbar.stop_auto_button.clicked.connect(
+            lambda: self.set_autosearch_attribute(None)
+        )
 
         self.layout.addWidget(self.searchbar)
         self.layout.addWidget(self.tree)
@@ -189,7 +201,6 @@ class SomDockWidget(CopyMixin, QDockWidget):
         )
         self.mainwindow.expand_som_menu.addAction(self._expand_all_act)
 
-
         # Setup Context Menu
         self.tree.setContextMenuPolicy(Qt.CustomContextMenu)
         self.tree.customContextMenuRequested.connect(self.show_context_menu)
@@ -206,16 +217,19 @@ class SomDockWidget(CopyMixin, QDockWidget):
         context_menu.addMenu(expand_menu)
         context_menu.addSeparator()
         if index.isValid() and index.column() > 0:
-            context_menu.addAction(QAction(
-            self.tr("Hide column"), 
-            self,
-            triggered=lambda: self.hide_column(index.column())))
-        context_menu.addAction(QAction(
-            self.tr("Show hidden columns"), 
-            self,
-            triggered=self.show_hidden_columns))
-        context_menu.exec(self.tree.viewport().mapToGlobal(position))    
-
+            context_menu.addAction(
+                QAction(
+                    self.tr("Hide column"),
+                    self,
+                    triggered=lambda: self.hide_column(index.column()),
+                )
+            )
+        context_menu.addAction(
+            QAction(
+                self.tr("Show hidden columns"), self, triggered=self.show_hidden_columns
+            )
+        )
+        context_menu.exec(self.tree.viewport().mapToGlobal(position))
 
     def expand_view(self, level):
         """Expand the treeview to a certain level"""
@@ -224,17 +238,17 @@ class SomDockWidget(CopyMixin, QDockWidget):
         elif level == "all":
             self.tree.expandAll()
         else:
-            self.tree.expandToDepth(level -1)
+            self.tree.expandToDepth(level - 1)
 
     def show_hidden_columns(self):
         """Unhide all columns in the tree view"""
         for i in range(self.treemodel.columnCount()):
             self.tree.setColumnHidden(i, False)
         self.searchbar.columns_changed()
-    
+
     def hide_column(self, column):
         """Hide a column in the tree view
-        
+
         :param column: The column to hide
         :type column: int
         """
@@ -243,17 +257,17 @@ class SomDockWidget(CopyMixin, QDockWidget):
 
     def autosearch(self, ifc_object):
         """Select an element in the tree view by an IfcElement
-        
+
         :param ifc_object: The IfcElement to select
         :type ifc_object: IfcElement
         """
         if not self._autosearch_attribute:
             return
-        
+
         psets = ifcopenshell.util.element.get_psets(ifc_object, psets_only=True)
         if not psets:
             return
-        
+
         try:
             name = psets[self._autosearch_attribute[0]][self._autosearch_attribute[1]]
         except KeyError:
@@ -261,29 +275,34 @@ class SomDockWidget(CopyMixin, QDockWidget):
         self.searchbar.search_text.setText(name)
         self.searchbar.column_combo.setCurrentIndex(0)
         self.searchbar.search()
-        
+
     def set_autosearch_attribute(self, attribute):
         """Set the attribute to use for autosearch
 
         Pass a tuple (pset_name, attribute_name) to enable autosearch,
         or None to disable autosearch.
-        
-        :param attribute: The attribute to use for autosearch as a tuple 
+
+        :param attribute: The attribute to use for autosearch as a tuple
         :type attribute: tuple or None
         """
         self._autosearch_attribute = attribute
         self.searchbar.stop_auto_button.setVisible(attribute is not None)
         if attribute:
-            self.searchbar.stop_auto_button.setToolTip(self.tr("Stop autosearch on %s" % f"{attribute[0]} | {attribute[1]}"))
-            self.mainwindow.statusbar.showMessage(self.tr("Autosearch attribute set to: %s" % f"{attribute[0]} | {attribute[1]}"))
+            self.searchbar.stop_auto_button.setToolTip(
+                self.tr("Stop autosearch on %s" % f"{attribute[0]} | {attribute[1]}")
+            )
+            self.mainwindow.statusbar.showMessage(
+                self.tr(
+                    "Autosearch attribute set to: %s"
+                    % f"{attribute[0]} | {attribute[1]}"
+                )
+            )
             # Autosearch the current item
             index = self.mainwindow.tabs.tree.currentIndex()
             source_index = self.mainwindow.tabs.proxymodel.mapToSource(index)
             if source_index.isValid():
                 item = source_index.internalPointer()
                 self.autosearch(item.ifc)
-
-
 
     def __repr__(self):
         return f"SomDockWidget {self.filename}"

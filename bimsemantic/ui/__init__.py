@@ -10,5 +10,3 @@ from .psetdock import *
 from .multithreading import *
 from .mainwindow import *
 from .treebase import *
-
-

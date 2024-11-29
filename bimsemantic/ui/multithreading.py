@@ -2,14 +2,15 @@ from PySide6.QtCore import QRunnable, Slot, Signal, QObject
 
 # https://www.pythonguis.com/tutorials/multithreading-pyside6-applications-qthreadpool/
 
+
 class WorkerSignals(QObject):
     """Helper class to transport signals from Workers to the main thread
-    
+
     QRunnable is not derived from QObject and therefore does not have signals.
-    Enables workers to emit the signals: 
-        finished 
+    Enables workers to emit the signals:
+        finished
         error (as tuple of type and errormessage)
-        progress (int, percentage) 
+        progress (int, percentage)
         feedback (str)
         result (object with the result)
     """
@@ -34,6 +35,7 @@ class WorkerAddFiles(QRunnable):
     :type ifcfiles: IfcFiles instance
     :return: List of IfcFile instances of the opened files
     """
+
     def __init__(self, ifcfiles, filenames):
         super(WorkerAddFiles, self).__init__()
         self.ifcfiles = ifcfiles

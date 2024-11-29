@@ -1,10 +1,10 @@
 from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem
-from PySide6.QtCore import Qt,  Qt, Signal, QTimer
+from PySide6.QtCore import Qt, Qt, Signal, QTimer
 
 
 class ColumnsTreeModel(QTreeWidget):
     """Model for the columns tree view
-    
+
     Based on QTreeWidget, giving functionality such as checkboxes.
     The model is used to manage the columns of the IFC tree views.
     It is initalized in the main window. Can be initalized without data,
@@ -21,39 +21,39 @@ class ColumnsTreeModel(QTreeWidget):
     def __init__(self, data=None, parent=None):
         super(ColumnsTreeModel, self).__init__(parent)
         self.first_cols = [
-            self.tr("IFC Class"), 
-            "ID", 
-            self.tr("Name"), 
-            "GUID", 
+            self.tr("IFC Class"),
+            "ID",
+            self.tr("Name"),
+            "GUID",
             "Tag",
             self.tr("ObjectType Attribute"),
             self.tr("Linked Object Type"),
             self.tr("Description"),
-            self.tr("Filename"), 
+            self.tr("Filename"),
             self.tr("Contained In"),
             self.tr("Validation"),
-            ]
+        ]
         self._hidden = [
-            "ID", 
-            "GUID", 
-            "Tag", 
-            self.tr("ObjectType Attribute"), 
+            "ID",
+            "GUID",
+            "Tag",
+            self.tr("ObjectType Attribute"),
             self.tr("Linked Object Type"),
-            self.tr("Description"), 
-            self.tr("Filename"), 
+            self.tr("Description"),
+            self.tr("Filename"),
             self.tr("Contained In"),
-            self.tr("Validation")] 
+            self.tr("Validation"),
+        ]
         self._count_first_cols = len(self.first_cols)
         self._psetcolumns = []
         self.mainwindow = parent
         self.timer = QTimer()
-        self.timer.setSingleShot(True) 
+        self.timer.setSingleShot(True)
         self.setHeaderHidden(True)
         self.setup_model_data(data)
         self.expandAll()
         self.itemChanged.connect(self.item_changed)
         self.timer.timeout.connect(self.emit_columns_changed)
-
 
     def setup_model_data(self, data):
         """Setup the model data, at least the Info Columns and all top level items"""
@@ -61,8 +61,12 @@ class ColumnsTreeModel(QTreeWidget):
 
         # Info Columns
         self.infocols_item.setText(0, self.tr("Main Attributes"))
-        self.infocols_item.setFlags(self.infocols_item.flags() | Qt.ItemFlag.ItemIsAutoTristate | Qt.ItemFlag.ItemIsUserCheckable)
-        
+        self.infocols_item.setFlags(
+            self.infocols_item.flags()
+            | Qt.ItemFlag.ItemIsAutoTristate
+            | Qt.ItemFlag.ItemIsUserCheckable
+        )
+
         for col in self.first_cols[1:]:
             col_item = QTreeWidgetItem(self.infocols_item)
             col_item.setText(0, col)
@@ -71,27 +75,37 @@ class ColumnsTreeModel(QTreeWidget):
                 col_item.setCheckState(0, Qt.CheckState.Unchecked)
             else:
                 col_item.setCheckState(0, Qt.CheckState.Checked)
-        
+
         # Pset Columns
         self.psets_item = QTreeWidgetItem(self)
         self.psets_item.setText(0, self.tr("Property Sets"))
-        self.psets_item.setFlags(self.psets_item.flags() | Qt.ItemFlag.ItemIsAutoTristate | Qt.ItemFlag.ItemIsUserCheckable)
+        self.psets_item.setFlags(
+            self.psets_item.flags()
+            | Qt.ItemFlag.ItemIsAutoTristate
+            | Qt.ItemFlag.ItemIsUserCheckable
+        )
 
         self.qsets_item = QTreeWidgetItem(self)
         self.qsets_item.setText(0, self.tr("Quantity Sets"))
-        self.qsets_item.setFlags(self.psets_item.flags() | Qt.ItemFlag.ItemIsAutoTristate | Qt.ItemFlag.ItemIsUserCheckable)
+        self.qsets_item.setFlags(
+            self.psets_item.flags()
+            | Qt.ItemFlag.ItemIsAutoTristate
+            | Qt.ItemFlag.ItemIsUserCheckable
+        )
 
         if data:
             self.add_file(data)
 
     def add_file(self, ifc_file):
         """Add an IFC file to the model
-        
+
         Adds the property sets of the IFC file to the tree model.
         :param ifc_file: The IFC file
         :type ifc_file: IfcFile instance
         """
-        self.blockSignals(True) # Prevent itemChanged signal from being emitted when the checkboxes are set
+        self.blockSignals(
+            True
+        )  # Prevent itemChanged signal from being emitted when the checkboxes are set
 
         pset_info = ifc_file.pset_info
 
@@ -100,14 +114,20 @@ class ColumnsTreeModel(QTreeWidget):
             if pset_item is None:
                 pset_item = QTreeWidgetItem(self.psets_item)
                 pset_item.setText(0, pset_name)
-                pset_item.setFlags(pset_item.flags() | Qt.ItemFlag.ItemIsAutoTristate | Qt.ItemFlag.ItemIsUserCheckable)
+                pset_item.setFlags(
+                    pset_item.flags()
+                    | Qt.ItemFlag.ItemIsAutoTristate
+                    | Qt.ItemFlag.ItemIsUserCheckable
+                )
 
             for prop in pset_info[pset_name]:
                 prop_item = self.get_child_by_name(pset_item, prop)
                 if prop_item is None:
                     prop_item = QTreeWidgetItem(pset_item)
                     prop_item.setText(0, prop)
-                    prop_item.setFlags(prop_item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
+                    prop_item.setFlags(
+                        prop_item.flags() | Qt.ItemFlag.ItemIsUserCheckable
+                    )
                     prop_item.setCheckState(0, Qt.CheckState.Unchecked)
 
         qset_info = ifc_file.qset_info
@@ -117,21 +137,26 @@ class ColumnsTreeModel(QTreeWidget):
             if qset_item is None:
                 qset_item = QTreeWidgetItem(self.qsets_item)
                 qset_item.setText(0, qset_name)
-                qset_item.setFlags(qset_item.flags() | Qt.ItemFlag.ItemIsAutoTristate | Qt.ItemFlag.ItemIsUserCheckable)
+                qset_item.setFlags(
+                    qset_item.flags()
+                    | Qt.ItemFlag.ItemIsAutoTristate
+                    | Qt.ItemFlag.ItemIsUserCheckable
+                )
 
             for qset in qset_info[qset_name]:
                 qto_item = self.get_child_by_name(qset_item, qset)
                 if qto_item is None:
                     qto_item = QTreeWidgetItem(qset_item)
                     qto_item.setText(0, qset)
-                    qto_item.setFlags(qset_item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
+                    qto_item.setFlags(
+                        qset_item.flags() | Qt.ItemFlag.ItemIsUserCheckable
+                    )
                     qto_item.setCheckState(0, Qt.CheckState.Unchecked)
-
 
         self.sort_psetcolumns()
         self.expandAll()
         self.blockSignals(False)
-    
+
     def get_child_by_name(self, parent, name):
         """Get a child item by its name, if it exists"""
         for i in range(parent.childCount()):
@@ -152,20 +177,20 @@ class ColumnsTreeModel(QTreeWidget):
 
     def col(self, column):
         """Return a tuple pset and property for a column
-        
+
         These can be used as keys in the pset dictionary of an ifc item.
 
         :param column: The column index of a property set column
         :type column: int
-        :return: Tuple (pset, property) 
+        :return: Tuple (pset, property)
         :rtype: tuple of str
         """
         column = column - self._count_first_cols
         return self._psetcolumns[column]
-    
+
     def column_name(self, column):
         """Return the name of a column
-        
+
         :param column: The column index
         :type column: int
         :return: The name of the column
@@ -175,7 +200,7 @@ class ColumnsTreeModel(QTreeWidget):
             return self.first_cols[column]
         column = column - self._count_first_cols
         return self._psetcolumns[column][1]
-    
+
     def remove_column(self, column):
         """Hides info column or removes pset column"""
         if column <= 0:
@@ -190,10 +215,9 @@ class ColumnsTreeModel(QTreeWidget):
             prop_item = self.get_child_by_name(pset_item, prop)
             prop_item.setCheckState(0, Qt.CheckState.Unchecked)
 
-
     def item_changed(self, item, column):
         """Slot for the itemChanged signal
-        
+
         For the Info Columns, the signal hideInfoColumn is emitted
         to toggle the visibility of these colums.
 
@@ -206,7 +230,10 @@ class ColumnsTreeModel(QTreeWidget):
         :type item: QTreeWidgetItem
         :param column: The column of the checkbox
         """
-        if item.checkState(column) in (Qt.CheckState.Checked, Qt.CheckState.Unchecked) and item.parent() is not None:
+        if (
+            item.checkState(column) in (Qt.CheckState.Checked, Qt.CheckState.Unchecked)
+            and item.parent() is not None
+        ):
             top_level_index = self.indexOfTopLevelItem(item.parent())
             if top_level_index == 0:
                 # Columns of the main attributes can only be hidden, not added/removed
@@ -253,12 +280,10 @@ class ColumnsTreeModel(QTreeWidget):
                 hidden.append(self.first_cols.index(child.text(0)))
         return hidden
 
-
     def count(self):
         """Return the total number of columns, including info and pset columns"""
         return self._count_first_cols + len(self._psetcolumns)
-    
-    
+
     def count_psets(self):
         """Return the number of property sets of all open files"""
         return self.psets_item.childCount()

@@ -1,9 +1,15 @@
 from PySide6.QtCore import Qt, QSortFilterProxyModel, QModelIndex
-from bimsemantic.ui import TreeItem, TreeModelBaseclass, CustomTreeMaker, CustomFieldType
+from bimsemantic.ui import (
+    TreeItem,
+    TreeModelBaseclass,
+    CustomTreeMaker,
+    CustomFieldType,
+)
 import ifcopenshell.util.element
 from PySide6.QtWidgets import QDockWidget, QTreeView
 from bimsemantic.ui import CopyMixin, ContextMixin
 import statistics
+
 
 class PsetDockWidget(CopyMixin, ContextMixin, QDockWidget):
     """Dock widget for property sets or quantity sets
@@ -16,6 +22,7 @@ class PsetDockWidget(CopyMixin, ContextMixin, QDockWidget):
     :param qset: If True, the widget will show quantity sets, otherwise property sets
     :type qset: bool
     """
+
     def __init__(self, parent, qset=False):
         self.is_qset = qset
         if self.is_qset:
@@ -29,7 +36,6 @@ class PsetDockWidget(CopyMixin, ContextMixin, QDockWidget):
         # Setup Context Menu
         self.tree.setContextMenuPolicy(Qt.CustomContextMenu)
         self.tree.customContextMenuRequested.connect(self.show_context_menu)
-
 
     def reset(self):
         """Reset the tree model and the tree view"""
@@ -53,7 +59,7 @@ class PsetDockWidget(CopyMixin, ContextMixin, QDockWidget):
 
     def add_files(self, ifc_files):
         """Add files to the tree model
-        
+
         :param ifc_files: A list of IfcFile objects
         """
         for file in ifc_files:
@@ -65,7 +71,7 @@ class PsetDockWidget(CopyMixin, ContextMixin, QDockWidget):
 
     def get_pset_tuple(self, index):
         """Get the property set tuple from the index
-        
+
         Used in the context menu actions for the autosearch function
 
         :param index: The index of the item
@@ -91,9 +97,10 @@ class PsetDockWidget(CopyMixin, ContextMixin, QDockWidget):
         prop_name = item.label
         return (pset_name, prop_name)
 
+
 class PsetTreeModel(TreeModelBaseclass):
     """Model for property sets dockwidget
-    
+
     :param data: The IfcFiles object of the main window
     :type data: IfcFiles
     :param parent: The parent widget (PsetDockWidget)
@@ -101,22 +108,25 @@ class PsetTreeModel(TreeModelBaseclass):
 
     def __init__(self, data, parent):
         self.psetdock = parent
-        super(PsetTreeModel, self).__init__(data, parent)  
+        super(PsetTreeModel, self).__init__(data, parent)
         self.column_count = 3
 
     def setup_root_item(self):
-        self._rootItem = TreeItem(["Property Set", self.tr("Elements"), self.tr("Types")], showchildcount=False)
+        self._rootItem = TreeItem(
+            ["Property Set", self.tr("Elements"), self.tr("Types")],
+            showchildcount=False,
+        )
 
     def setup_model_data(self, data, parent):
         """Set up the model data on init"""
         self.ifc_files = data
-        
+
         for file in self.ifc_files:
             self.add_file(file)
 
     def add_file(self, ifc_file):
         """Add a file to the model
-        
+
         :param ifc_file: The IfcFile object
         :type ifc_file: IfcFile
         """
@@ -130,7 +140,7 @@ class PsetTreeModel(TreeModelBaseclass):
 
     def add_elements(self, elements, count_col=1):
         """Add elements or element types to the model
-        
+
         :param elements: A list of IfcElement or IfcElementType objects
         :type elements: list
         :param count_col: The column index for the count of elements / element types
@@ -163,12 +173,9 @@ class PsetTreeModel(TreeModelBaseclass):
                         value_item.set_data(count_col, value_item.data(count_col) + 1)
 
 
-
-
-
 class QsetTreeModel(TreeModelBaseclass):
     """Model for quantity sets dockwidget with basic statistics
-    
+
     Complex quantity types are ignored
 
     Note: No quantity sets in IFC2x3
@@ -185,12 +192,23 @@ class QsetTreeModel(TreeModelBaseclass):
 
     def setup_root_item(self):
         """Set up the root item"""
-        self._rootItem = TreeItem(["Quantity Set", self.tr("Elements"), self.tr("Std"), self.tr("Min"), self.tr("Mean"), self.tr("Median"), self.tr("Max")], showchildcount=False)
+        self._rootItem = TreeItem(
+            [
+                "Quantity Set",
+                self.tr("Elements"),
+                self.tr("Std"),
+                self.tr("Min"),
+                self.tr("Mean"),
+                self.tr("Median"),
+                self.tr("Max"),
+            ],
+            showchildcount=False,
+        )
 
     def setup_model_data(self, data, parent):
         """Set up the model data on init"""
         self.ifc_files = data
-        
+
         for file in self.ifc_files:
             self.add_file(file)
 
@@ -202,16 +220,15 @@ class QsetTreeModel(TreeModelBaseclass):
         """
         if ifc_file.model.schema_version[0] < 4:
             # No quantity sets in IFC2x3
-            return 
+            return
         self.beginResetModel()
         elements = ifc_file.model.by_type("IfcElement")
         self.add_elements(elements)
         self.endResetModel()
 
-
     def add_elements(self, elements, count_col=1):
         """Add elements to the model
-        
+
         Complex quantity types are ignored.
 
         :param elements: A list of IfcElement objects
@@ -234,7 +251,7 @@ class QsetTreeModel(TreeModelBaseclass):
                         continue
                     # Ignore complex quantity types for now:
                     # The value could be a dict like
-                    # {'value': 4.05, 'unit': 'm3'} or 
+                    # {'value': 4.05, 'unit': 'm3'} or
                     # {'GrossArea': 13.5, 'NetArea': 12.7} or
                     # {'id': 14643, 'type': 'IfcPhysicalComplexQuantity', 'Discrimination': 'Layer', 'properties': {'Width': 0.08}}
                     # or a list with several values or even a table
@@ -243,16 +260,17 @@ class QsetTreeModel(TreeModelBaseclass):
                     qto_item = self.get_child_by_label(qset_item, qto_name)
                     if not qto_item:
                         # [name, count, min, mean, median, max, values]
-                        # values will be invisible in the tree, but is needed to 
+                        # values will be invisible in the tree, but is needed to
                         # calculate mean, median, etc.
-                        qto_item = TreeItem([qto_name, 1, 0,0,0,0,0, [qto_value]], qset_item)
+                        qto_item = TreeItem(
+                            [qto_name, 1, 0, 0, 0, 0, 0, [qto_value]], qset_item
+                        )
                         qset_item.appendChild(qto_item)
                     else:
                         qto_item.set_data(1, qto_item.data(1) + 1)
                         values = qto_item.data(7)
                         values.append(qto_value)
                         qto_item.set_data(7, values)
-
 
     def calculate_statistics(self):
         """Calculate basic statistics and add them to the TreeItems"""

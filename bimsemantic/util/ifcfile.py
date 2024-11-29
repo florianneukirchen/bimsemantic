@@ -2,9 +2,9 @@ import ifcopenshell
 import os
 
 
-class IfcFile():
+class IfcFile:
     """Represents an IFC file that is opened with ifcopenshell.
-    
+
     Includes attributes such as file name and path and some methods as shortcuts
     to the ifcopenshell model.
 
@@ -13,6 +13,7 @@ class IfcFile():
     :raises FileNotFoundError: File does not exist
     :raises ValueError: File is not a valid IFC file
     """
+
     def __init__(self, filename):
         self._abspath = os.path.abspath(filename)
         self._filename = os.path.basename(self._abspath)
@@ -25,7 +26,7 @@ class IfcFile():
             self._model = ifcopenshell.open(self._abspath)
         except RuntimeError:
             raise ValueError(f"File {self._abspath} is not a valid IFC file.")
-        
+
         self._project = self._model.by_type("IfcProject")[0]
         self._pset_info = self._get_pset_info()
         self._qset_info = self._get_qset_info()
@@ -34,27 +35,27 @@ class IfcFile():
     def model(self):
         """The ifcopenshell file object"""
         return self._model
-    
+
     @property
     def project(self):
         """The IfcProject object"""
         return self._project
-    
+
     @property
     def filename(self):
         """The name of the file"""
         return self._filename
-    
+
     @property
     def abspath(self):
         """The absolute path of the file"""
         return self._abspath
-    
+
     @property
     def pset_info(self):
         """A dictionary with the property sets and their properties"""
         return self._pset_info
-    
+
     @property
     def qset_info(self):
         """A dictionary with the quantity sets and their quantities"""
@@ -68,7 +69,7 @@ class IfcFile():
     def count_ifc_elements(self):
         """Returns the number of IfcElement objects in the file"""
         return len(self._model.by_type("IfcElement"))
-    
+
     def get_element(self, id):
         """Returns an IFC object by its ID"""
         try:
@@ -76,7 +77,7 @@ class IfcFile():
         except RuntimeError:
             return None
         return element
-    
+
     def _get_pset_info(self):
         pset_info = {}
         psets = self._model.by_type("IfcPropertySet")
@@ -87,7 +88,7 @@ class IfcFile():
                 if not prop.Name in pset_info[pset.Name]:
                     pset_info[pset.Name].append(prop.Name)
         return pset_info
-    
+
     def _get_qset_info(self):
         if self._model.schema_version[0] < 4:
             return {}
@@ -104,29 +105,29 @@ class IfcFile():
     def pset_count(self):
         """The number of property sets in the file"""
         return len(self.pset_info)
-    
+
     def qset_count(self):
         """The number of quantity sets in the file"""
         return len(self.qset_info)
-    
+
     def __repr__(self):
         return f"IfcFile({self.filename})"
-    
+
     # def get_pset_cols(self):
     #     cols = []
     #     for _, pset_props in self.pset_info.items():
     #         for prop in pset_props:
     #             cols.append(prop)
     #     return cols
-    
+
     # def pset_items(self):
     #     for pset_name, pset_props in self.pset_info.items():
     #         for prop in pset_props:
     #             yield pset_name, prop
 
 
-class IfcFiles():
-    """A collection of IfcFile objects 
+class IfcFiles:
+    """A collection of IfcFile objects
 
     Used to represent all opened IFC files as IfcFile objects.
     Files are added with add_file().
@@ -146,20 +147,21 @@ class IfcFiles():
             print(ifcfile.filename)
 
 
-    
+
     """
+
     def __init__(self):
         self._ifcfiles = []
-    
+
     def add_file(self, filename):
         """Adds an IFC file to the collection
 
-        Opens the file and returns the IfcFile object that contains the 
+        Opens the file and returns the IfcFile object that contains the
         IfcOpenShell file object.
-        
+
         If the file is already open, it is not added again. If the GUID of the
         IfcProject object is different from the first file, a ValueError is raised.
-        
+
         :raises FileNotFoundError: File does not exist
         :raises ValueError: File is not a valid IFC file
         :raises ValueError: All files must belong to the same project
@@ -187,17 +189,17 @@ class IfcFiles():
                 if ifcfile.filename == index:
                     return ifcfile
         raise IndexError(f"Index {index} not found.")
-    
+
     def __len__(self):
         return len(self._ifcfiles)
-    
+
     def __iter__(self):
         for ifcfile in self._ifcfiles:
             yield ifcfile
 
     def get_element_by_guid(self, guid, filename=None):
         """Returns an IFC object by its GUID
-        
+
         If filename is provided, the search is limited to that file.
         Otherwise the element is returned from the first file that contains it.
         Returns None if the element is not found.
@@ -224,7 +226,7 @@ class IfcFiles():
 
     def get_element(self, filename, id):
         """Returns an IFC object of a given file by its ID
-        
+
         :param filename: The name of the file
         :type filename: str
         :param id: The ID of the element
@@ -244,7 +246,7 @@ class IfcFiles():
 
     def get_project(self):
         """Returns the IfcProject object of the first file
-        
+
         :return: The IfcProject object
         :rtype: ifcopenshell entity
         """
@@ -257,7 +259,7 @@ class IfcFiles():
     def count(self):
         """The number of files in the collection"""
         return len(self._ifcfiles)
-    
+
     def filenames(self):
         """Returns a list of the filenames of the files in the collection"""
         return [ifcfile.filename for ifcfile in self._ifcfiles]
@@ -265,7 +267,7 @@ class IfcFiles():
     @property
     def pset_info(self):
         """A dictionary with the property sets and their properties for all files
-        
+
         The names of property sets and properties are unique.
         """
         pset_info = {}

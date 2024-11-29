@@ -25,11 +25,24 @@ from PySide6.QtWidgets import (
 # from ifcopenshell import entity_instance
 import bimsemantic
 from bimsemantic.util import IfcFiles
-from bimsemantic.ui import IfcTabs, IfcTreeTab, IfcDetailsTreeModel, OverviewTreeModel, ColumnsTreeModel, WorkerAddFiles, CustomTreeDialog, PsetTreeModel, PsetDockWidget, DetailsDock, SomDockWidget
+from bimsemantic.ui import (
+    IfcTabs,
+    IfcTreeTab,
+    IfcDetailsTreeModel,
+    OverviewTreeModel,
+    ColumnsTreeModel,
+    WorkerAddFiles,
+    CustomTreeDialog,
+    PsetTreeModel,
+    PsetDockWidget,
+    DetailsDock,
+    SomDockWidget,
+)
 
 
 class MainWindow(QMainWindow):
     """Main window of the application"""
+
     def __init__(self):
         super().__init__()
         self.setWindowTitle("BIM Semantic Viewer")
@@ -43,7 +56,7 @@ class MainWindow(QMainWindow):
         self.infolabel = QLabel(self.tr("No open file"))
         self.statusbar.addPermanentWidget(self.infolabel)
         self.statusbar.addPermanentWidget(self.progressbar)
-        
+
         self.column_treemodel = ColumnsTreeModel(parent=self)
         self.tabs = IfcTabs(self)
 
@@ -53,7 +66,7 @@ class MainWindow(QMainWindow):
         self.setup_menus()
         self.create_dock_widgets()
         self.somdock = None
-         
+
         self.setCentralWidget(self.tabs)
 
         self.installEventFilter(self)
@@ -61,17 +74,16 @@ class MainWindow(QMainWindow):
 
     def eventFilter(self, source, event):
         """Event filter to catch the copy event
-        
+
         Otherwise Ctrl+C would copy only the active cell.
         """
 
-        #https://stackoverflow.com/questions/40225270/copy-paste-multiple-items-from-qtableview-in-pyqt4
+        # https://stackoverflow.com/questions/40225270/copy-paste-multiple-items-from-qtableview-in-pyqt4
         if event.type() == QEvent.KeyPress:
             if event.matches(QKeySequence.Copy):
                 self.copy_to_clipboard()
                 return True
         return super().eventFilter(source, event)
-
 
     def dragEnterEvent(self, event: QDragEnterEvent):
         """Required to accept drag and drop events"""
@@ -83,8 +95,12 @@ class MainWindow(QMainWindow):
         urls = event.mimeData().urls()
         filenames = [url.toLocalFile() for url in urls if url.isLocalFile()]
         if filenames:
-            ifc_filenames = [filename for filename in filenames if filename.endswith(".ifc")]
-            json_filenames = [filename for filename in filenames if filename.endswith(".json")]
+            ifc_filenames = [
+                filename for filename in filenames if filename.endswith(".ifc")
+            ]
+            json_filenames = [
+                filename for filename in filenames if filename.endswith(".json")
+            ]
             self.open_ifc_files(ifc_filenames)
             if json_filenames:
                 self.open_som(json_filenames[0])
@@ -104,14 +120,14 @@ class MainWindow(QMainWindow):
                     except AttributeError:
                         pass
                     return
-                                       
+
                 parent = parent.parent()
 
     def somsearch(self):
         """Search the content of the active cell in the SOM"""
         if not self.somdock:
             return
-        
+
         widget = QApplication.focusWidget()
         if isinstance(widget, QTreeView):
             index = widget.currentIndex()
@@ -119,7 +135,6 @@ class MainWindow(QMainWindow):
                 data = str(index.data())
                 self.somdock.searchbar.search_text.setText(data)
                 self.somdock.searchbar.search()
-            
 
     def open_som_dlg(self):
         """Open SOM dialog to load a SOM list from a JSON file"""
@@ -136,7 +151,7 @@ class MainWindow(QMainWindow):
         """Open a SOM list from a JSON file"""
         self.progressbar.setRange(0, 0)
         self.statusbar.showMessage(self.tr("Loading SOM list"))
-        
+
         if self.somdock:
             self.close_som()
         # self.somdock = SomDockWidget(self, filename) # Debug, to be removed!!!
@@ -150,7 +165,7 @@ class MainWindow(QMainWindow):
             self.statusbar.showMessage(self.tr("File not found"), 5000)
             self.progressbar.setRange(0, 100)
             return
-        
+
         self.addDockWidget(Qt.BottomDockWidgetArea, self.somdock)
         self.view_menu.addAction(self.somdock.toggleViewAction())
         self.search_som_act.setEnabled(True)
@@ -167,7 +182,6 @@ class MainWindow(QMainWindow):
             self.somdock.deleteLater()
             self.somdock = None
 
-
     def open_file_dlg(self):
         """Open file dialog for IFC files"""
         filenames, _ = QFileDialog.getOpenFileNames(
@@ -180,24 +194,26 @@ class MainWindow(QMainWindow):
 
     def open_ifc_files(self, filenames):
         """Open IFC files
-        
+
         Open the files passed as filenames as IfcFile objects (based on IfcOpenShell)
         using multithreading to keep the GUI responsive.
         """
         if filenames:
-            self.progressbar.setRange(0, 0) # Range 0,0 means indeterminate but active
+            self.progressbar.setRange(0, 0)  # Range 0,0 means indeterminate but active
             self.ignoredfiles = []
             worker = WorkerAddFiles(self.ifcfiles, filenames)
             worker.signals.result.connect(self.add_ifcs_to_trees)
             worker.signals.error.connect(self.on_error)
             worker.signals.finished.connect(self.on_finished)
-            worker.signals.feedback.connect(lambda s: self.statusbar.showMessage(self.tr("Open file %s") % s))
+            worker.signals.feedback.connect(
+                lambda s: self.statusbar.showMessage(self.tr("Open file %s") % s)
+            )
             worker.signals.progress.connect(self.on_progress)
             self.threadpool.start(worker)
 
     def add_ifcs_to_trees(self, ifcfiles):
         """Add data of IfcFile objects to the treeviews
-        
+
         Callback of the WorkerAddFiles worker. Adds the data of the IfcFile objects
         to the column treeview and all IFC treeviews in self.tabs.
         If no file was open before, the details dock is set to show an overview.
@@ -223,9 +239,11 @@ class MainWindow(QMainWindow):
         typecount = self.tabs.count_ifc_types()
         psetscount = self.column_treemodel.count_psets()
         qsetscount = self.column_treemodel.count_qsets()
-        self.infolabel.setText(self.tr("{0} files, {1} elements in {2} IFC classes, {3} psets, {4} qsets").format(filecount, elementcount, typecount, psetscount, qsetscount))
-
-        
+        self.infolabel.setText(
+            self.tr(
+                "{0} files, {1} elements in {2} IFC classes, {3} psets, {4} qsets"
+            ).format(filecount, elementcount, typecount, psetscount, qsetscount)
+        )
 
     def on_progress(self, progress):
         """Callback for progress bar updates of the WorkerAddFiles worker"""
@@ -240,18 +258,20 @@ class MainWindow(QMainWindow):
         if errortype == "File already open":
             self.ignoredfiles.append(errorstring)
             return
-        msg = f"{error[0]}: {error[1]}" 
+        msg = f"{error[0]}: {error[1]}"
         QMessageBox.critical(self, "Error", msg)
 
-    def on_finished(self): 
+    def on_finished(self):
         """Callback for the finished signal of the WorkerAddFiles worker"""
         self.workers = [worker for worker in self.workers if not worker.isFinished()]
         self.statusbar.clearMessage()
-        self.progressbar.setRange(0,100)
+        self.progressbar.setRange(0, 100)
         self.progressbar.reset()
         if self.ignoredfiles:
             n = len(self.ignoredfiles)
-            msg = self.tr("{} files were ignored because they are already open").format(n)
+            msg = self.tr("{} files were ignored because they are already open").format(
+                n
+            )
             self.ignoredfiles = []
             self.statusbar.showMessage(msg, 5000)
 
@@ -260,7 +280,6 @@ class MainWindow(QMainWindow):
         for worker in self.workers:
             worker.stop()
         event.accept()
-
 
     def close_all(self):
         """Close all IFC files"""
@@ -319,7 +338,9 @@ class MainWindow(QMainWindow):
         selected_rows = len(self.tabs.tree.selectionModel().selectedRows())
 
         if selected_rows > 1:
-            only_selected = QCheckBox(self.tr("Export only selected rows (%i rows)") % selected_rows)
+            only_selected = QCheckBox(
+                self.tr("Export only selected rows (%i rows)") % selected_rows
+            )
             only_selected.setChecked(False)
             dialog_layout.addWidget(only_selected, 7, 1)
 
@@ -336,7 +357,9 @@ class MainWindow(QMainWindow):
             else:
                 all_rows = True
 
-            csv_lines = self.tabs.active.rows_to_csv(sep=sep, all_rows=all_rows, add_header=True, add_level=add_level)
+            csv_lines = self.tabs.active.rows_to_csv(
+                sep=sep, all_rows=all_rows, add_header=True, add_level=add_level
+            )
             self.progressbar.setRange(0, 0)
 
             with open(csv_file, "w") as f:
@@ -345,7 +368,6 @@ class MainWindow(QMainWindow):
 
             self.progressbar.setRange(0, 100)
             self.statusbar.showMessage(self.tr("Exported to %s") % csv_file, 5000)
-
 
     def select_by_guid(self):
         """Dialog to select an IFC element by GUID and call the algorithm to select it"""
@@ -356,7 +378,9 @@ class MainWindow(QMainWindow):
                 return
             count = self.tabs.select_item_by_guid(guid)
             if count == 0:
-                self.statusbar.showMessage(self.tr("No element found with GUID %s") % guid, 5000)
+                self.statusbar.showMessage(
+                    self.tr("No element found with GUID %s") % guid, 5000
+                )
 
     def select_by_tag(self):
         """Dialog to select an IFC element by Tag and call the algorithm to select it"""
@@ -367,11 +391,13 @@ class MainWindow(QMainWindow):
                 return
             count = self.tabs.select_item_by_tag(tag)
             if count == 0:
-                self.statusbar.showMessage(self.tr("No element found with Tag %s") % tag, 5000)
+                self.statusbar.showMessage(
+                    self.tr("No element found with Tag %s") % tag, 5000
+                )
 
     def select_by_id(self):
         """Dialog to select an IFC element by ID and filename and call the algorithm to select it
-        
+
         The dialog also contains a combobox to select the filename. If the filename is set to "Any",
         the item from the first file in the list containing an IfcElement with the given ID is used.
         Note that the ID may not be unique between different IFC files of the same project.
@@ -396,18 +422,24 @@ class MainWindow(QMainWindow):
             else:
                 element = self.ifcfiles.get_element(filename, id)
             if not element:
-                self.statusbar.showMessage(self.tr("No element found with ID %i") % id, 5000)
+                self.statusbar.showMessage(
+                    self.tr("No element found with ID %i") % id, 5000
+                )
                 return
 
             try:
                 guid = element.GlobalId
             except AttributeError:
-                self.statusbar.showMessage(self.tr("No element found with ID %i") % id, 5000)
+                self.statusbar.showMessage(
+                    self.tr("No element found with ID %i") % id, 5000
+                )
                 return
             count = self.tabs.select_item_by_guid(guid)
 
             if count == 0:
-                self.statusbar.showMessage(self.tr("No element found with ID %i") % id, 5000)
+                self.statusbar.showMessage(
+                    self.tr("No element found with ID %i") % id, 5000
+                )
 
     def add_custom_tree(self):
         """Add a custom tree view to the IFC tabs"""
@@ -439,7 +471,9 @@ class MainWindow(QMainWindow):
             self.tr("&Export View to CSV..."),
             self,
             shortcut="Ctrl+E",
-            statusTip=self.tr("Export the current view or the current selection to CSV"),
+            statusTip=self.tr(
+                "Export the current view or the current selection to CSV"
+            ),
             triggered=self.export_to_csv,
         )
         self.file_menu.addAction(self.export_cvs_act)
@@ -469,7 +503,7 @@ class MainWindow(QMainWindow):
             icon,
             self.tr("&Close all IFCs"),
             self,
-            shortcut="Ctrl+W", 
+            shortcut="Ctrl+W",
             statusTip=self.tr("Close all IFC files"),
             triggered=self.close_all,
         )
@@ -478,7 +512,7 @@ class MainWindow(QMainWindow):
         self.quit_act = QAction(
             self.tr("&Quit"),
             self,
-            shortcut="Ctrl+Q", 
+            shortcut="Ctrl+Q",
             statusTip=self.tr("Quit the application"),
             triggered=self.close,
         )
@@ -508,11 +542,15 @@ class MainWindow(QMainWindow):
 
         self.copyoptions_menu = self.edit_menu.addMenu(self.tr("Copy options"))
 
-        self.chk_copy_with_headers = QAction(self.tr("Copy with headers"), self, checkable=True)
+        self.chk_copy_with_headers = QAction(
+            self.tr("Copy with headers"), self, checkable=True
+        )
         self.chk_copy_with_headers.setChecked(False)
         self.copyoptions_menu.addAction(self.chk_copy_with_headers)
 
-        self.chk_copy_with_level = QAction(self.tr("Copy with column of hierarchic level"), self, checkable=True)
+        self.chk_copy_with_level = QAction(
+            self.tr("Copy with column of hierarchic level"), self, checkable=True
+        )
         self.chk_copy_with_level.setChecked(False)
         self.copyoptions_menu.addAction(self.chk_copy_with_level)
 
@@ -541,7 +579,7 @@ class MainWindow(QMainWindow):
             self.tr("Select by &ID"),
             self,
             statusTip=self.tr("Select IFC element by ID and filename"),
-            triggered=self.select_by_id
+            triggered=self.select_by_id,
         )
         self.edit_selection_menu.addAction(self.select_by_id_act)
 
@@ -549,7 +587,7 @@ class MainWindow(QMainWindow):
             self.tr("Select by &Tag"),
             self,
             statusTip=self.tr("Select IFC element (IfcElement) by Tag"),
-            triggered=self.select_by_tag
+            triggered=self.select_by_tag,
         )
         self.edit_selection_menu.addAction(self.select_by_tag_act)
 
@@ -559,7 +597,7 @@ class MainWindow(QMainWindow):
             self.tr("Clear selection"),
             self,
             statusTip=self.tr("Clear selection in all IFC tabs"),
-            triggered=self.tabs.clear_selection
+            triggered=self.tabs.clear_selection,
         )
         self.edit_selection_menu.addAction(self.clearselection_act)
 
@@ -574,7 +612,9 @@ class MainWindow(QMainWindow):
         self.view_menu.addAction(self.addcustomtree_act)
 
         # View expand/collapse menu
-        self.expand_menu = self.view_menu.addMenu(self.tr("&Expand/Collapse active tree"))
+        self.expand_menu = self.view_menu.addMenu(
+            self.tr("&Expand/Collapse active tree")
+        )
 
         self.collapse_act = QAction(
             self.tr("&Collapse"),
@@ -620,8 +660,9 @@ class MainWindow(QMainWindow):
         self.expand_menu.addAction(self.expand_all_act)
 
         # View - SOM menu
-        self.expand_som_menu = self.view_menu.addMenu(self.tr("&Expand/Collapse SOM tree"))
-
+        self.expand_som_menu = self.view_menu.addMenu(
+            self.tr("&Expand/Collapse SOM tree")
+        )
 
         # Help menu
         self.help_menu = self.menuBar().addMenu(self.tr("&Help"))
@@ -681,7 +722,6 @@ class MainWindow(QMainWindow):
         self.view_menu.addAction(self.chk_show_qsets)
         self.qsetdock = None
 
-
     def toggle_qset_dock(self):
         """Toggle the visibility of the Qset dock and create it if still None"""
         if self.chk_show_qsets.isChecked():
@@ -713,19 +753,18 @@ class SelectByDialog(QDialog):
     """Dialog for selecting an IFC element by GUID or ID
 
     If searching for ID, a combobox is shown to select the filename.
-    
+
     :param label: The label of the input field: "GUID" or "ID"
     :type label: str
     :param parent: The parent widget (main window)
     """
+
     def __init__(self, label, parent):
         super().__init__(parent=parent)
 
         self.setWindowTitle(self.tr("Select element by %s") % label)
 
-        QBtn = (
-            QDialogButtonBox.Ok | QDialogButtonBox.Cancel
-        )
+        QBtn = QDialogButtonBox.Ok | QDialogButtonBox.Cancel
 
         self.label = label
 
@@ -749,7 +788,7 @@ class SelectByDialog(QDialog):
     def get_text(self):
         """Get the text from the input field"""
         return self.textfield.text().strip()
-    
+
     def get_combotext(self):
         """Get the text from the combobox"""
         if self.label != "ID":
