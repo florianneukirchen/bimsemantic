@@ -34,6 +34,7 @@ class ColheaderTreeItem(TreeItem):
     
     @property
     def label(self):
+        """For compatibility with search of the TreeItem class"""
         return ""
 
 
@@ -217,6 +218,7 @@ class IfcTreeItem(TreeItem):
     
     @property
     def label(self):
+        """First column without counter"""
         return self._ifc_item.is_a()
 
     def __repr__(self):

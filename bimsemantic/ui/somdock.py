@@ -36,6 +36,7 @@ class SomTreeItem(TreeItem):
             self.appendChild(item)
 
     def data(self, column):
+        """Get the data for a column"""
         if column < 0 or column >= len(self.columns):
             return None
         if column == 0:
@@ -50,6 +51,7 @@ class SomTreeItem(TreeItem):
 
     @property
     def label(self):
+        """First column without counter"""
         return self.name
 
     
@@ -262,9 +264,12 @@ class SomDockWidget(CopyMixin, QDockWidget):
         
     def set_autosearch_attribute(self, attribute):
         """Set the attribute to use for autosearch
+
+        Pass a tuple (pset_name, attribute_name) to enable autosearch,
+        or None to disable autosearch.
         
-        :param attribute: The attribute to use for autosearch as a tuple (pset_name, attribute_name)
-        :type attribute: tuple of None
+        :param attribute: The attribute to use for autosearch as a tuple 
+        :type attribute: tuple or None
         """
         self._autosearch_attribute = attribute
         self.searchbar.stop_auto_button.setVisible(attribute is not None)

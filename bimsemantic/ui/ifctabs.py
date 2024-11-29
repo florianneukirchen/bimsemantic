@@ -394,6 +394,11 @@ class IfcTreeTab(QWidget):
         
         The columns are separated by the given separator.
         Using a generator allows to write the rows to a file line by line.
+
+        :param sep: CSV column separator
+        :param all_rows: If True, all rows are returned, otherwise only the selected rows
+        :param add_header: If True, the header row is added
+        :param add_level: If True, the level of the items is added as first column
         """
         if all_rows:
             indexes = self.get_all_row_indexes()

@@ -3,6 +3,12 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QL
 
 
 class SearchBar(QWidget):
+    """Search bar widget 
+    
+    For searching in a IFC tree view or SOM tree view
+    
+    :param parent: The parent widget (IfcTabs or SomDockWidget)
+    """
     def __init__(self, parent=None):
         super().__init__(parent)
         self._parent = parent
@@ -45,6 +51,7 @@ class SearchBar(QWidget):
         self.search_prev_button.clicked.connect(self.search_prev)
 
     def search(self):
+        """Search the text in the tree view"""
         self.searchresults = []
         text = self.search_text.text()
         text = text.strip()
@@ -79,6 +86,7 @@ class SearchBar(QWidget):
         self._parent.tree.scrollTo(self.searchresults[0])
 
     def search_next(self):
+        """Select and scroll to the next search result"""
         if len(self.searchresults) == 0:
             return
         self.current += 1
@@ -89,6 +97,7 @@ class SearchBar(QWidget):
         self._parent.tree.scrollTo(self.searchresults[self.current])
 
     def search_prev(self):
+        """Select and scroll to the previous search result"""
         if len(self.searchresults) == 0:
             return
         self.current -= 1
@@ -99,5 +108,6 @@ class SearchBar(QWidget):
         self._parent.tree.scrollTo(self.searchresults[self.current])
 
     def columns_changed(self):
+        """Update the column combo box"""
         self.column_combo.clear()
         self.column_combo.addItems([self._parent.treemodel.headerData(i) for i in range(self._parent.treemodel.columnCount()) if not self._parent.tree.isColumnHidden(i)])

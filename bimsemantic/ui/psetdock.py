@@ -66,7 +66,8 @@ class PsetDockWidget(CopyMixin, ContextMixin, QDockWidget):
     def get_pset_tuple(self, index):
         """Get the property set tuple from the index
         
-        Used in the context menu actions
+        Used in the context menu actions for the autosearch function
+
         :param index: The index of the item
         :type index: QModelIndex
         :return: The property set tuple (pset_name, prop_name)
@@ -128,7 +129,13 @@ class PsetTreeModel(TreeModelBaseclass):
         self.endResetModel()
 
     def add_elements(self, elements, count_col=1):
-        """Add elements or element types to the model"""
+        """Add elements or element types to the model
+        
+        :param elements: A list of IfcElement or IfcElementType objects
+        :type elements: list
+        :param count_col: The column index for the count of elements / element types
+        :type count_col: int
+        """
         for element in elements:
             psets = ifcopenshell.util.element.get_psets(element, psets_only=True)
             if not psets:
@@ -203,7 +210,14 @@ class QsetTreeModel(TreeModelBaseclass):
 
 
     def add_elements(self, elements, count_col=1):
-        """Add elements to the model"""
+        """Add elements to the model
+        
+        Complex quantity types are ignored.
+
+        :param elements: A list of IfcElement objects
+        :type elements: list
+        :param count_col: Ignored, but needed for compatibility with PsetTreeModel
+        """
         for element in elements:
             qsets = ifcopenshell.util.element.get_psets(element, qtos_only=True)
             if not qsets:

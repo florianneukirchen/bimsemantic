@@ -121,11 +121,13 @@ class TreeItem(QObject):
         Recursively search the children for items with the given label.
 
         :param text: String to search for
-        :type tag: str
+        :type text: str
         :param column: The column to search in
         :type column: int
         :param case_sensitive: Flag for case sensitive search
         :type case_sensitive: bool
+        :param how: The search mode, "=" for exact match, "in" for substring
+        :type how: str
         :return: List of IfcTreeItem instances
         """
         items = []
@@ -185,8 +187,7 @@ class TreeItem(QObject):
 
     def __repr__(self):
         return f"TreeItem ({self.label})"
-
-    
+ 
 
 class TreeModelBaseclass(QAbstractItemModel):
     """Base class for a tree model, supposed to be subclassed.
