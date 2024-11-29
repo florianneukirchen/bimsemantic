@@ -80,10 +80,10 @@ class PsetDockWidget(CopyMixin, ContextMixin, QDockWidget):
         item = source_index.internalPointer()
         if not item:
             return None
-        if not item.parent():
+        if item.parent() == self.treemodel.root_item:
             return None
 
-        if item.parent().parent():
+        if item.parent().parent() != self.treemodel.root_item:
             # item is a property value
             item = item.parent()
         pset_name = item.parent().label
