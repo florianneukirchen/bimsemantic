@@ -659,12 +659,12 @@ class MainWindow(QMainWindow):
         self.detailsdock.raise_()
 
         # Add actions to menu
-        self._overview_act = QAction(
+        self.overview_act = QAction(
             self.tr("&Files in details dock"),
             self,
             triggered=self.detailsdock.show_details,
         )
-        self.view_menu.addAction(self._overview_act)
+        self.view_menu.addAction(self.overview_act)
 
         self.view_menu.addSeparator()
 

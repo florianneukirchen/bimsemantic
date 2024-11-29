@@ -98,5 +98,9 @@ class ContextMixin:
                         self,
                         triggered=lambda: self.mainwindow.somdock.set_autosearch_attribute(pset_tuple))
                     context_menu.addAction(autosearch_action)
-            
+
+        # Detail view: show overview
+        if hasattr(self, "overviewtree") and self.overviewtree != self.widget():
+            context_menu.addAction(self.mainwindow.overview_act)
+
         context_menu.exec(tree.viewport().mapToGlobal(position))
