@@ -107,6 +107,20 @@ class MainWindow(QMainWindow):
                                        
                 parent = parent.parent()
 
+    def somsearch(self):
+        """Search the content of the active cell in the SOM"""
+        if not self.somdock:
+            return
+        
+        widget = QApplication.focusWidget()
+        if isinstance(widget, QTreeView):
+            index = widget.currentIndex()
+            if index.isValid():
+                data = index.data()
+                self.somdock.searchbar.search_text.setText(data)
+                self.somdock.searchbar.search()
+            
+
     def open_som_dlg(self):
         """Open SOM dialog to load a SOM list from a JSON file"""
         filename, _ = QFileDialog.getOpenFileName(
@@ -139,6 +153,7 @@ class MainWindow(QMainWindow):
         
         self.addDockWidget(Qt.BottomDockWidgetArea, self.somdock)
         self.view_menu.addAction(self.somdock.toggleViewAction())
+        self.search_som_act.setEnabled(True)
         self.progressbar.setRange(0, 100)
         self.statusbar.showMessage(self.tr("SOM loaded"), 5000)
 
@@ -146,6 +161,7 @@ class MainWindow(QMainWindow):
         """Delete the SOM dockwidget"""
         if self.somdock:
             self.view_menu.removeAction(self.somdock.toggleViewAction())
+            self.search_som_act.setEnabled(False)
             self.somdock.deleteLater()
             self.somdock = None
 
@@ -499,6 +515,15 @@ class MainWindow(QMainWindow):
         self.chk_copy_with_level.setChecked(False)
         self.copyoptions_menu.addAction(self.chk_copy_with_level)
 
+        self.search_som_act = QAction(
+            self.tr("Search in SOM"),
+            self,
+            statusTip=self.tr("Search content of active cell in SOM"),
+            triggered=self.somsearch,
+            enabled=False,
+        )
+        self.edit_menu.addAction(self.search_som_act)
+
         self.edit_menu.addSeparator()
 
         self.edit_selection_menu = self.edit_menu.addMenu(self.tr("&Selection"))
@@ -655,7 +680,6 @@ class MainWindow(QMainWindow):
         self.view_menu.addAction(self.chk_show_qsets)
         self.qsetdock = None
 
-        
 
     def toggle_qset_dock(self):
         """Toggle the visibility of the Qset dock and create it if still None"""

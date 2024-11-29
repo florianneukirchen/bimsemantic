@@ -417,6 +417,10 @@ class IfcTreeTab(QWidget):
         context_menu = QMenu(self)
         context_menu.addAction(self.mainwindow.copy_rows_act)
         context_menu.addAction(self.mainwindow.copy_cell_act)
+
+        if self.mainwindow.somdock and self.mainwindow.somdock.isVisible():
+            context_menu.addAction(self.mainwindow.search_som_act)
+
         expand_menu = QMenu(self.tr("Expand/Collapse"), self)
         for action in self.mainwindow.expand_menu.actions():
             expand_menu.addAction(action)
