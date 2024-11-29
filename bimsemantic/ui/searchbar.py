@@ -59,7 +59,10 @@ class SearchBar(QWidget):
             self.counterlabel.setText("0/0")
             self._parent.tree.clearSelection()
             return
-         
+        
+        # Sort the search results
+        self.searchresults.sort(key=lambda index: self._parent.tree.visualRect(index).top())
+
         self.counterlabel.setText(f"1/{len(self.searchresults)}")
         self._parent.tree.setCurrentIndex(self.searchresults[0])
         self._parent.tree.scrollTo(self.searchresults[0])

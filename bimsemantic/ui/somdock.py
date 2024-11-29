@@ -124,7 +124,7 @@ class SomDockWidget(CopyMixin, QDockWidget):
         self.layout = QVBoxLayout(self.main_widget) 
         self.layout.setContentsMargins(1, 1, 1, 1)
         self.setWidget(self.main_widget)       
-        
+
         # Tree widget
         self.treemodel = SomTreeModel(data, self)
         self.proxymodel = QSortFilterProxyModel(self)
@@ -133,6 +133,7 @@ class SomDockWidget(CopyMixin, QDockWidget):
         self.tree = QTreeView(self)
         self.tree.setModel(self.proxymodel)
         self.tree.setSortingEnabled(True)
+        self.proxymodel.sort(0, Qt.SortOrder.AscendingOrder)
         self.tree.setColumnWidth(0, 200)
 
         # Search widget
