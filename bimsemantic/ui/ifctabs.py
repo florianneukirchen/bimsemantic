@@ -5,9 +5,7 @@ from PySide6.QtCore import (
     QItemSelection,
     QItemSelectionModel,
     QModelIndex,
-    QEvent,
 )
-from PySide6.QtGui import QKeySequence
 from PySide6.QtWidgets import (
     QTreeView,
     QAbstractItemView,

@@ -1,4 +1,4 @@
-from PySide6.QtCore import Qt, QSortFilterProxyModel, QModelIndex
+from PySide6.QtCore import Qt, QSortFilterProxyModel
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (
     QDockWidget,
@@ -6,11 +6,6 @@ from PySide6.QtWidgets import (
     QMenu,
     QWidget,
     QVBoxLayout,
-    QHBoxLayout,
-    QPushButton,
-    QLineEdit,
-    QStyle,
-    QLabel,
 )
 import ifcopenshell.util.element
 import json

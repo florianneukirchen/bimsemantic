@@ -1,10 +1,5 @@
 from PySide6.QtCore import Qt, QSortFilterProxyModel, QModelIndex
-from bimsemantic.ui import (
-    TreeItem,
-    TreeModelBaseclass,
-    CustomTreeMaker,
-    CustomFieldType,
-)
+from bimsemantic.ui import TreeItem, TreeModelBaseclass
 import ifcopenshell.util.element
 from PySide6.QtWidgets import QDockWidget, QTreeView
 from bimsemantic.ui import CopyMixin, ContextMixin

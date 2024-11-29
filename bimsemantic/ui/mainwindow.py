@@ -14,10 +14,6 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QComboBox,
     QCheckBox,
-    QWidgetAction,
-    QWidget,
-    QHBoxLayout,
-    QGridLayout,
     QFrame,
     QApplication,
 )
@@ -28,12 +24,9 @@ from bimsemantic.util import IfcFiles
 from bimsemantic.ui import (
     IfcTabs,
     IfcTreeTab,
-    IfcDetailsTreeModel,
-    OverviewTreeModel,
     ColumnsTreeModel,
     WorkerAddFiles,
     CustomTreeDialog,
-    PsetTreeModel,
     PsetDockWidget,
     DetailsDock,
     SomDockWidget,
