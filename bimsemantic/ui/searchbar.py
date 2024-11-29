@@ -18,10 +18,6 @@ class SearchBar(QWidget):
         self.column_combo = QComboBox()
         self.column_combo.addItems([self._parent.treemodel.headerData(i) for i in range(self._parent.treemodel.columnCount()) if not self._parent.tree.isColumnHidden(i)])
         self.column_combo.setMinimumWidth(50)
-        self.case_button = QPushButton("Aa")
-        self.case_button.setToolTip(self.tr("Case sensitive"))
-        self.case_button.setMaximumWidth(30)
-        self.case_button.setCheckable(True)
         self.counterlabel = QLabel("_/_")
         self.search_next_button = QPushButton("")
         self.search_next_button.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowForward))
@@ -29,7 +25,6 @@ class SearchBar(QWidget):
         self.search_prev_button.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowBack))
         self.layout.addWidget(self.search_text)
         self.layout.addWidget(self.column_combo)
-        self.layout.addWidget(self.case_button)
         self.layout.addWidget(self.counterlabel)
         self.layout.addWidget(self.search_prev_button)
         self.layout.addWidget(self.search_next_button)
@@ -43,7 +38,7 @@ class SearchBar(QWidget):
 
         self.searchresults = []
         self.current = 0
-        case_sensitive = self.case_button.isChecked()
+        case_sensitive = False
         column_name = self.column_combo.currentText()
         columns = [self._parent.treemodel.headerData(i) for i in range(self._parent.treemodel.columnCount())]
         column = columns.index(column_name)
