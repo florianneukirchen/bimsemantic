@@ -104,8 +104,7 @@ class MainWindow(QMainWindow):
                     except AttributeError:
                         pass
                     return
-                elif isinstance(parent, ):
-                    return
+                                       
                 parent = parent.parent()
 
     def open_som_dlg(self):
