@@ -2,7 +2,7 @@ from PySide6.QtCore import Qt, QSortFilterProxyModel, QTimer, QItemSelection, QI
 from PySide6.QtGui import QKeySequence
 from PySide6.QtWidgets import QTreeView, QAbstractItemView, QWidget, QMenu, QTabWidget, QTabBar, QVBoxLayout, QPushButton, QStyle, QApplication
 from PySide6.QtGui import QAction
-from bimsemantic.ui import LocationTreeModel, TypeTreeModel, FlatTreeModel, IfcTreeItem, CustomFieldType, CustomTreeMaker, IfcCustomTreeModel
+from bimsemantic.ui import LocationTreeModel, TypeTreeModel, FlatTreeModel, IfcTreeItem, SearchBar, IfcCustomTreeModel
 
 
 class IfcTabs(QWidget):
@@ -20,15 +20,9 @@ class IfcTabs(QWidget):
         self.mainwindow = parent
         self.timer = QTimer()
 
-        self.layout = QVBoxLayout(self)
-        self.setLayout(self.layout)
-
         self.tabs = QTabWidget()
         self.tabs.setTabPosition(QTabWidget.West)
         self.tabs.setMovable(True)
-
-        self.layout.addWidget(self.tabs)
-        
 
         self.customtabs = []
 
@@ -40,6 +34,15 @@ class IfcTabs(QWidget):
 
         self.flattab = IfcTreeTab(FlatTreeModel, self.ifcfiles, self) 
         self.tabs.addTab(self.flattab, self.tr("Flat"))
+
+        # Search Bar
+        self.searchbar = SearchBar(self)
+
+        self.layout = QVBoxLayout(self)
+        self.layout.setContentsMargins(4, 2, 4, 2)
+        self.layout.addWidget(self.searchbar)
+        self.setLayout(self.layout)
+        self.layout.addWidget(self.tabs)
 
         self.mainwindow.column_treemodel.columnsChanged.connect(self.update_columns)
 

@@ -121,7 +121,7 @@ class SomDockWidget(CopyMixin, QDockWidget):
 
         self.main_widget = QWidget()
         self.layout = QVBoxLayout(self.main_widget) 
-        self.layout.setContentsMargins(1, 1, 1, 1)
+        self.layout.setContentsMargins(4, 2, 4, 2)
         self.setWidget(self.main_widget)       
 
         # Tree widget
@@ -263,7 +263,7 @@ class SomDockWidget(CopyMixin, QDockWidget):
             self.mainwindow.statusbar.showMessage(self.tr("Autosearch attribute set to: %s" % f"{attribute[0]} | {attribute[1]}"))
             # Autosearch the current item
             index = self.mainwindow.tabs.tree.currentIndex()
-            source_index = self.mainwindow.tabs.tree.proxymodel.mapToSource(index)
+            source_index = self.mainwindow.tabs.proxymodel.mapToSource(index)
             if source_index.isValid():
                 item = source_index.internalPointer()
                 self.autosearch(item.ifc)

@@ -31,6 +31,10 @@ class ColheaderTreeItem(TreeItem):
         if column < 0 or column >= self._columntree.count():
             return None
         return self._columntree.column_name(column)
+    
+    @property
+    def label(self):
+        return ""
 
 
 class IfcTreeItem(TreeItem):
@@ -213,7 +217,7 @@ class IfcTreeItem(TreeItem):
     
     @property
     def label(self):
-        return None
+        return self._ifc_item.is_a()
 
     def __repr__(self):
         return f"IfcTreeItem: {self._ifc_item.is_a()} {self._ifc_item.id()}"
