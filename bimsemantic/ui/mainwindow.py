@@ -161,6 +161,8 @@ class MainWindow(QMainWindow):
         """Delete the SOM dockwidget"""
         if self.somdock:
             self.view_menu.removeAction(self.somdock.toggleViewAction())
+            for action in self.expand_som_menu.actions():
+                self.expand_som_menu.removeAction(action)
             self.search_som_act.setEnabled(False)
             self.somdock.deleteLater()
             self.somdock = None
