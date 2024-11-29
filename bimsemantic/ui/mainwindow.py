@@ -314,8 +314,7 @@ class MainWindow(QMainWindow):
         dialog_layout.addWidget(chk_with_level, 6, 1)
 
         # Get the number of selected rows
-        active_tab = self.tabs.tabs.currentWidget()
-        selected_rows = len(active_tab.tree.selectionModel().selectedRows())
+        selected_rows = len(self.tabs.tree.selectionModel().selectedRows())
 
         if selected_rows > 1:
             only_selected = QCheckBox(self.tr("Export only selected rows (%i rows)") % selected_rows)
@@ -331,11 +330,11 @@ class MainWindow(QMainWindow):
                 sep = "\t"
             add_level = chk_with_level.isChecked()
             if selected_rows > 1:
-                all = not only_selected.isChecked()
+                all_rows = not only_selected.isChecked()
             else:
-                all = True
+                all_rows = True
 
-            csv_lines = active_tab.rows_to_csv(sep=sep, all=all, add_header=True, add_level=add_level)
+            csv_lines = self.tabs.active.rows_to_csv(sep=sep, all_rows=all_rows, add_header=True, add_level=add_level)
             self.progressbar.setRange(0, 0)
 
             with open(csv_file, "w") as f:

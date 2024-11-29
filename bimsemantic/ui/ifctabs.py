@@ -8,7 +8,7 @@ from bimsemantic.ui import LocationTreeModel, TypeTreeModel, FlatTreeModel, IfcT
 class IfcTabs(QWidget):
     """Widget containig the tabs for the different tree views
     
-    Includes functionality to work with the different tree views.
+    Includes functionality and shortcuts to work with the different tree views.
 
     :param parent: Parent widget should be the main window.
     """
@@ -21,13 +21,14 @@ class IfcTabs(QWidget):
         self.timer = QTimer()
 
         self.layout = QVBoxLayout(self)
+        self.setLayout(self.layout)
 
         self.tabs = QTabWidget()
         self.tabs.setTabPosition(QTabWidget.West)
         self.tabs.setMovable(True)
 
         self.layout.addWidget(self.tabs)
-        self.setLayout(self.layout)
+        
 
         self.customtabs = []
 
@@ -65,12 +66,10 @@ class IfcTabs(QWidget):
         is triggered by a timer to keep the GUI responsive. 
         """
 
-        active_tab = self.tabs.currentWidget()
-
-        active_tab.treemodel.pset_columns_changed()
+        self.treemodel.pset_columns_changed()
 
         self.remaining_models = [self.tabs.widget(i).treemodel for i in range(self.tabs.count())]
-        self.remaining_models.remove(active_tab.treemodel)
+        self.remaining_models.remove(self.treemodel)
 
         self.mainwindow.progressbar.setRange(0, self.tabs.count())
         self.mainwindow.progressbar.setValue(1)
@@ -160,15 +159,12 @@ class IfcTabs(QWidget):
 
     def expand_active_view(self, level):
         """Expand items in active tree up to a certain level"""
-        active_tab = self.tabs.currentWidget()
-        if not active_tab:
-            return
         if level == -1:
-            active_tab.tree.collapseAll()
+            self.tree.collapseAll()
         elif level == "all":
-            active_tab.tree.expandAll()
+            self.tree.expandAll()
         else:
-            active_tab.tree.expandToDepth(level - 1) 
+            self.tree.expandToDepth(level - 1) 
 
     def remove_custom_tab(self, custom_tab):
         """Remove a custom tab after clicking the close button"""
@@ -183,6 +179,27 @@ class IfcTabs(QWidget):
         for i in range(self.tabs.count()):
             tab = self.tabs.widget(i)
             tab.clear_selection()
+
+
+    @property
+    def active(self):
+        """Get the active tab"""
+        return self.tabs.currentWidget()
+
+    @property
+    def tree(self):
+        """Get the tree view of the active tab"""
+        return self.active.tree
+
+    @property
+    def treemodel(self):
+        """Get the data model of the active tab"""
+        return self.active.treemodel
+
+    @property
+    def proxymodel(self):
+        """Get the proxy model of the active tab"""
+        return self.active.proxymodel
 
 
 class IfcTreeTab(QWidget):
@@ -367,13 +384,13 @@ class IfcTreeTab(QWidget):
             clipboard = QApplication.clipboard()
             clipboard.setText(data)    
 
-    def rows_to_csv(self, sep=";", all=False, add_header=False, add_level=False):
+    def rows_to_csv(self, sep=";", all_rows=False, add_header=False, add_level=False):
         """Generator, yields the selected rows as CSV string
         
         The columns are separated by the given separator.
         Using a generator allows to write the rows to a file line by line.
         """
-        if all:
+        if all_rows:
             indexes = self.get_all_row_indexes()
         else:
             indexes = self.tree.selectionModel().selectedRows()

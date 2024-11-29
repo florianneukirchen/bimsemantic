@@ -262,9 +262,8 @@ class SomDockWidget(CopyMixin, QDockWidget):
             self.searchbar.stop_auto_button.setToolTip(self.tr("Stop autosearch on %s" % f"{attribute[0]} | {attribute[1]}"))
             self.mainwindow.statusbar.showMessage(self.tr("Autosearch attribute set to: %s" % f"{attribute[0]} | {attribute[1]}"))
             # Autosearch the current item
-            active_tab = self.mainwindow.tabs.tabs.currentWidget()
-            index = active_tab.tree.currentIndex()
-            source_index = active_tab.proxymodel.mapToSource(index)
+            index = self.mainwindow.tabs.tree.currentIndex()
+            source_index = self.mainwindow.tabs.tree.proxymodel.mapToSource(index)
             if source_index.isValid():
                 item = source_index.internalPointer()
                 self.autosearch(item.ifc)
