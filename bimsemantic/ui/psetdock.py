@@ -88,7 +88,7 @@ class PsetDockWidget(CopyMixin, ContextMixin, QDockWidget):
             item = item.parent()
         pset_name = item.parent().label
         prop_name = item.label
-        return pset_name, prop_name
+        return (pset_name, prop_name)
 
 class PsetTreeModel(TreeModelBaseclass):
     """Model for property sets dockwidget

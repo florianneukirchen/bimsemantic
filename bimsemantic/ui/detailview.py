@@ -80,6 +80,22 @@ class DetailsDock(CopyMixin, ContextMixin, QDockWidget):
             treeview.setFirstColumnSpanned(row, parent_index, True)
         self.setWidget(treeview)
 
+    def get_pset_tuple(self, index):
+        """Get the pset tuple for the autosearch"""
+        if not index.isValid():
+            return None
+        item = index.internalPointer()
+        if not item:
+            return None
+        try:
+            if not item.parent().parent().label == self.tr("Property Sets"):
+                return None
+        except (AttributeError, IndexError):
+            return None
+        pset_name = item.parent().label
+        prop_name = item.label
+        return (pset_name, prop_name)
+    
 
 class DetailsBaseclass(TreeModelBaseclass):
     """Base class for the details dock widget models"""
@@ -407,7 +423,6 @@ class IfcDetailsTreeModel(DetailsBaseclass):
                         )
 
   
-
 
 
 class OverviewTreeModel(DetailsBaseclass):
