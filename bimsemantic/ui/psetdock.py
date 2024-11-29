@@ -63,6 +63,32 @@ class PsetDockWidget(CopyMixin, ContextMixin, QDockWidget):
         self.proxymodel.sort(0, Qt.SortOrder.AscendingOrder)
         self.tree.expandAll()
 
+    def get_pset_tuple(self, index):
+        """Get the property set tuple from the index
+        
+        Used in the context menu actions
+        :param index: The index of the item
+        :type index: QModelIndex
+        :return: The property set tuple (pset_name, prop_name)
+        :rtype: tuple
+        """
+        if not index.isValid():
+            return None
+        if self.is_qset:
+            return None
+        source_index = self.proxymodel.mapToSource(index)
+        item = source_index.internalPointer()
+        if not item:
+            return None
+        if not item.parent():
+            return None
+
+        if item.parent().parent():
+            # item is a property value
+            item = item.parent()
+        pset_name = item.parent().label
+        prop_name = item.label
+        return pset_name, prop_name
 
 class PsetTreeModel(TreeModelBaseclass):
     """Model for property sets dockwidget

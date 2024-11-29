@@ -90,4 +90,13 @@ class ContextMixin:
         if self.mainwindow.somdock and self.mainwindow.somdock.isVisible():
             context_menu.addAction(self.mainwindow.search_som_act)
         
+            if hasattr(self, "get_pset_tuple") and index.isValid():
+                pset_tuple = self.get_pset_tuple(index)
+                if pset_tuple:
+                    autosearch_action = QAction(
+                        self.tr("Autosearch"), 
+                        self,
+                        triggered=lambda: self.mainwindow.somdock.set_autosearch_attribute(pset_tuple))
+                    context_menu.addAction(autosearch_action)
+            
         context_menu.exec(tree.viewport().mapToGlobal(position))

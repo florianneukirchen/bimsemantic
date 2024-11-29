@@ -256,6 +256,7 @@ class SomDockWidget(CopyMixin, QDockWidget):
         :param attribute: The attribute to use for autosearch as a tuple (pset_name, attribute_name)
         :type attribute: tuple of None
         """
+        print(attribute)
         self._autosearch_attribute = attribute
         self.searchbar.stop_auto_button.setVisible(bool(attribute))
 
