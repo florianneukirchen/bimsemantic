@@ -83,6 +83,10 @@ class SearchBar(QWidget):
         self.current = 0
         case_sensitive = False
         column_name = self.column_combo.currentText()
+        if not column_name:
+            # If the selected column gets hidden
+            self.counterlabel.setText("-/-")
+            return
         how = self.how_combo.currentText()
         columns = [
             self._parent.treemodel.headerData(i)
