@@ -24,7 +24,7 @@ class SearchBar(QWidget):
         self.stop_auto_button = QPushButton("")
         self.stop_auto_button.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_BrowserStop))
         self.stop_auto_button.setVisible(False)
-        self.counterlabel = QLabel("_/_")
+        self.counterlabel = QLabel("-/-")
         self.search_next_button = QPushButton("")
         self.search_next_button.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowForward))
         self.search_prev_button = QPushButton("")
@@ -45,12 +45,13 @@ class SearchBar(QWidget):
         self.search_prev_button.clicked.connect(self.search_prev)
 
     def search(self):
+        self.searchresults = []
         text = self.search_text.text()
-        text.strip()
+        text = text.strip()
         if not text:
+            self.counterlabel.setText("-/-")
             return
 
-        self.searchresults = []
         self.current = 0
         case_sensitive = False
         column_name = self.column_combo.currentText()
