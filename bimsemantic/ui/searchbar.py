@@ -15,6 +15,8 @@ class SearchBar(QWidget):
         self.search_text = QLineEdit()
         self.search_text.setPlaceholderText(self.tr("Search..."))
         self.search_text.setMaximumWidth(200)
+        self.how_combo = QComboBox()
+        self.how_combo.addItems(["=", "in"])
         self.column_combo = QComboBox()
         self.column_combo.addItems([self._parent.treemodel.headerData(i) for i in range(self._parent.treemodel.columnCount()) if not self._parent.tree.isColumnHidden(i)])
         self.column_combo.setMinimumWidth(50)
@@ -28,6 +30,7 @@ class SearchBar(QWidget):
         self.search_prev_button = QPushButton("")
         self.search_prev_button.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowBack))
         self.layout.addWidget(self.search_text)
+        self.layout.addWidget(self.how_combo)
         self.layout.addWidget(self.column_combo)
         self.layout.addWidget(self.stop_auto_button)
         self.layout.addWidget(self.counterlabel)
@@ -37,6 +40,7 @@ class SearchBar(QWidget):
 
         self.search_text.returnPressed.connect(self.search)
         self.column_combo.currentIndexChanged.connect(self.search)
+        self.how_combo.currentIndexChanged.connect(self.search)
         self.search_next_button.clicked.connect(self.search_next)
         self.search_prev_button.clicked.connect(self.search_prev)
 
@@ -50,9 +54,10 @@ class SearchBar(QWidget):
         self.current = 0
         case_sensitive = False
         column_name = self.column_combo.currentText()
+        how = self.how_combo.currentText()
         columns = [self._parent.treemodel.headerData(i) for i in range(self._parent.treemodel.columnCount())]
         column = columns.index(column_name)
-        items = self._parent.treemodel.root_item.search(text, column=column, case_sensitive=case_sensitive)
+        items = self._parent.treemodel.root_item.search(text, column=column, case_sensitive=case_sensitive, how=how)
 
         for item in items:
             source_index = self._parent.treemodel.createIndex(item.row(), 0, item)

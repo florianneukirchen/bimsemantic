@@ -115,7 +115,7 @@ class TreeItem(QObject):
             return self._parent.children.index(self)
         return 0
 
-    def search(self, text, column=0, case_sensitive=False):
+    def search(self, text, column=0, case_sensitive=False, how="="):
         """Find all items with a given text in column
         
         Recursively search the children for items with the given label.
@@ -136,10 +136,14 @@ class TreeItem(QObject):
         if not case_sensitive:
             column_data = column_data.lower()
             text = text.lower()
-        if column_data == text:
-            items.append(self)
+        if how == "=":
+            if text == column_data:
+                items.append(self)
+        elif how == "in":
+            if text in column_data:
+                items.append(self)
         for child in self._children:
-            items.extend(child.search(text, column, case_sensitive))
+            items.extend(child.search(text, column, case_sensitive, how))
         return items
         
     def find_item_by_guid(self, guid):
