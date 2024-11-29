@@ -276,7 +276,7 @@ class IfcTreeTab(QWidget):
 
         # SOM list
         if self.mainwindow.somdock and self.mainwindow.somdock.isVisible():
-            self.mainwindow.somdock.select_element_by_ifc_element(item.ifc)
+            self.mainwindow.somdock.autosearch(item.ifc)
 
         items = [item for item in items if isinstance(item, IfcTreeItem)]
 

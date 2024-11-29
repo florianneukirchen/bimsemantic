@@ -111,8 +111,8 @@ class SomDockWidget(CopyMixin, QDockWidget):
         super(SomDockWidget, self).__init__(self.tr("SOM"), parent)
         self.mainwindow = parent
         self.filename = filename
-        self.follow_attribute = None 
-        self.follow_attribute = ("_6238B_Klassifizierung", "Bauteil")
+        self.autosearch_attribute = None 
+        self.autosearch_attribute = ("_6238B_Klassifizierung", "Bauteil")
 
         try:
             with open(self.filename, "r") as file:
@@ -137,9 +137,9 @@ class SomDockWidget(CopyMixin, QDockWidget):
         self.tree.setColumnWidth(0, 200)
 
         # Search widget
-        self.search_widget = SearchBar(self)
+        self.searchbar = SearchBar(self)
 
-        self.layout.addWidget(self.search_widget)
+        self.layout.addWidget(self.searchbar)
         self.layout.addWidget(self.tree)
 
         # Add menu actions
@@ -229,25 +229,27 @@ class SomDockWidget(CopyMixin, QDockWidget):
             self.tree.setColumnHidden(i, False)
     
 
-    def select_element_by_ifc_element(self, ifc_object):
+    def autosearch(self, ifc_object):
         """Select an element in the tree view by an IfcElement
         
         :param ifc_item: The IfcElement to select
         :type ifc_item: IfcElement
         """
-        if not self.follow_attribute:
+        if not self.autosearch_attribute:
             return
         
-        psets = psets = ifcopenshell.util.element.get_psets(ifc_object, psets_only=True)
+        psets = ifcopenshell.util.element.get_psets(ifc_object, psets_only=True)
         if not psets:
             return
         
         try:
-            name = psets[self.follow_attribute[0]][self.follow_attribute[1]]
+            name = psets[self.autosearch_attribute[0]][self.autosearch_attribute[1]]
         except KeyError:
             return
-        print(name)
-        self.select_element(name)
+        self.searchbar.search_text.setText(name)
+        self.searchbar.column_combo.setCurrentIndex(0)
+        self.searchbar.search()
+        
 
     def __repr__(self):
         return f"SomDockWidget {self.filename}"
