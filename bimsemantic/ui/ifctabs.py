@@ -274,6 +274,10 @@ class IfcTreeTab(QWidget):
             self.mainwindow.detailsdock.show_details(item.id)
             print("selected", item, item.id)
 
+        # SOM list
+        if self.mainwindow.somdock and self.mainwindow.somdock.isVisible():
+            self.mainwindow.somdock.select_element_by_ifc_element(item.ifc)
+
         items = [item for item in items if isinstance(item, IfcTreeItem)]
 
         # Synchronize the selection in the other tabs
@@ -293,6 +297,7 @@ class IfcTreeTab(QWidget):
                 tab = self.tabs.widget(i)
                 if tab != self:
                     tab.select_item_by_guid(guid, add=True)
+
 
 
     def clear_selection(self):

@@ -115,6 +115,23 @@ class TreeItem(QObject):
             return self._parent.children.index(self)
         return 0
 
+    def find_all_items_by_label(self, label):
+        """Find all items with a given label
+        
+        Recursively search the children for items with the given label.
+
+        :param label: Label of the items to find
+        :type tag: str
+        :return: List of IfcTreeItem instances
+        """
+
+        if self.label == label:
+            return self
+        for child in self._children:
+            result = child.find_all_items_by_label(label)
+            if result:
+                return result
+        return None
         
     def find_item_by_guid(self, guid):
         """Find children of type IfcTreeItem by GUID
@@ -195,7 +212,7 @@ class TreeModelBaseclass(QAbstractItemModel):
             if childlabel == label:
                 return child
         return None
-    
+        
     def rowCount(self, parent=QModelIndex()):
         """Get the number of rows (children) for a parent item"""
         if parent.column() > 0:

@@ -52,6 +52,7 @@ class SomTreeItem(TreeItem):
     def label(self):
         return self.name
 
+    
     def __repr__(self):
         return f"SomTreeItem {self.name}"
 
@@ -110,6 +111,8 @@ class SomDockWidget(CopyMixin, QDockWidget):
         super(SomDockWidget, self).__init__(self.tr("SOM"), parent)
         self.mainwindow = parent
         self.filename = filename
+        self.follow_attribute = None 
+        self.follow_attribute = ("_6238B_Klassifizierung", "Bauteil")
 
         try:
             with open(self.filename, "r") as file:
@@ -213,6 +216,49 @@ class SomDockWidget(CopyMixin, QDockWidget):
         """Unhide all columns in the tree view"""
         for i in range(self.treemodel.columnCount()):
             self.tree.setColumnHidden(i, False)
+
+
+    def select_element(self, name):
+        """Select an element in the tree view
+        
+        :param name: The name of the element to select
+        :type name: str
+        """
+        # name = "Tragschicht"
+        index = self.proxymodel.mapFromSource(self.find_index_by_label(name))
+        if index.isValid():
+            self.tree.setCurrentIndex(index)
+            self.tree.scrollTo(index)
+        else:
+            self.tree.clearSelection()
+
+    def find_index_by_label(self, label):
+        """Search the tree for an item by its labelg and return the QModelIndex"""
+        item = self.treemodel._rootItem.find_all_items_by_label(label)
+        if item:
+            return self.treemodel.createIndex(item.row(), 0, item)
+        return QModelIndex()
+    
+
+    def select_element_by_ifc_element(self, ifc_object):
+        """Select an element in the tree view by an IfcElement
+        
+        :param ifc_item: The IfcElement to select
+        :type ifc_item: IfcElement
+        """
+        if not self.follow_attribute:
+            return
+        
+        psets = psets = ifcopenshell.util.element.get_psets(ifc_object, psets_only=True)
+        if not psets:
+            return
+        
+        try:
+            name = psets[self.follow_attribute[0]][self.follow_attribute[1]]
+        except KeyError:
+            return
+        print(name)
+        self.select_element(name)
 
     def __repr__(self):
         return f"SomDockWidget {self.filename}"
