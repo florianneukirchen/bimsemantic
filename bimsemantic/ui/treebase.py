@@ -124,14 +124,12 @@ class TreeItem(QObject):
         :type tag: str
         :return: List of IfcTreeItem instances
         """
-
+        items = []
         if self.label == label:
-            return self
+            items.append(self)
         for child in self._children:
-            result = child.find_all_items_by_label(label)
-            if result:
-                return result
-        return None
+            items.extend(child.find_all_items_by_label(label))
+        return items
         
     def find_item_by_guid(self, guid):
         """Find children of type IfcTreeItem by GUID

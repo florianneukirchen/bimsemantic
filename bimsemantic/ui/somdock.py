@@ -234,8 +234,10 @@ class SomDockWidget(CopyMixin, QDockWidget):
 
     def find_index_by_label(self, label):
         """Search the tree for an item by its labelg and return the QModelIndex"""
-        item = self.treemodel._rootItem.find_all_items_by_label(label)
-        if item:
+        items = self.treemodel._rootItem.find_all_items_by_label(label)
+        print(items)
+        if items:
+            item = items[0]
             return self.treemodel.createIndex(item.row(), 0, item)
         return QModelIndex()
     
