@@ -32,10 +32,15 @@ class SearchBar(QWidget):
         self.layout.addStretch()
 
         self.search_text.returnPressed.connect(self.search)
+        self.column_combo.currentIndexChanged.connect(self.search)
         self.search_next_button.clicked.connect(self.search_next)
         self.search_prev_button.clicked.connect(self.search_prev)
 
     def search(self):
+        text = self.search_text.text()
+        text.strip()
+        if not text:
+            return
 
         self.searchresults = []
         self.current = 0
@@ -43,7 +48,7 @@ class SearchBar(QWidget):
         column_name = self.column_combo.currentText()
         columns = [self._parent.treemodel.headerData(i) for i in range(self._parent.treemodel.columnCount())]
         column = columns.index(column_name)
-        items = self._parent.treemodel.root_item.search(self.search_text.text(), column=column, case_sensitive=case_sensitive)
+        items = self._parent.treemodel.root_item.search(text, column=column, case_sensitive=case_sensitive)
 
         for item in items:
             source_index = self._parent.treemodel.createIndex(item.row(), 0, item)
