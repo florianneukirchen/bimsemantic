@@ -115,20 +115,31 @@ class TreeItem(QObject):
             return self._parent.children.index(self)
         return 0
 
-    def find_all_items_by_label(self, label):
-        """Find all items with a given label
+    def search(self, text, column=0, case_sensitive=False):
+        """Find all items with a given text in column
         
         Recursively search the children for items with the given label.
 
-        :param label: Label of the items to find
+        :param text: String to search for
         :type tag: str
+        :param column: The column to search in
+        :type column: int
+        :param case_sensitive: Flag for case sensitive search
+        :type case_sensitive: bool
         :return: List of IfcTreeItem instances
         """
         items = []
-        if self.label == label:
+        if column == 0:
+            column_data = self.label
+        else:
+            column_data = self.data(column)
+        if not case_sensitive:
+            column_data = column_data.lower()
+            text = text.lower()
+        if column_data == text:
             items.append(self)
         for child in self._children:
-            items.extend(child.find_all_items_by_label(label))
+            items.extend(child.search(text, column, case_sensitive))
         return items
         
     def find_item_by_guid(self, guid):
@@ -259,4 +270,9 @@ class TreeModelBaseclass(QAbstractItemModel):
         if parentItem == self._rootItem:
             return QModelIndex()
         return self.createIndex(parentItem.row(), 0, parentItem)
+    
+    @property
+    def root_item(self):
+        """The root item of the model"""
+        return self._rootItem
 

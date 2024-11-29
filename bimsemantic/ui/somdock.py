@@ -1,9 +1,9 @@
 from PySide6.QtCore import Qt, QSortFilterProxyModel, QModelIndex
 from PySide6.QtGui import QAction
-from PySide6.QtWidgets import QDockWidget, QTreeView, QMenu
+from PySide6.QtWidgets import QDockWidget, QTreeView, QMenu, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLineEdit, QStyle, QLabel
 import ifcopenshell.util.element
 import json
-from bimsemantic.ui import TreeItem, TreeModelBaseclass, CopyMixin
+from bimsemantic.ui import TreeItem, TreeModelBaseclass, CopyMixin, SearchBar
 
 
 class SomTreeItem(TreeItem):
@@ -119,8 +119,17 @@ class SomDockWidget(CopyMixin, QDockWidget):
                 data = json.load(file)
         except json.JSONDecodeError:
             raise ValueError(f"File {self.filename} is not a valid JSON file.")
-        
 
+        self.main_widget = QWidget()
+        self.layout = QVBoxLayout(self.main_widget) 
+        self.layout.setContentsMargins(1, 1, 1, 1)
+        self.setWidget(self.main_widget)       
+
+        # Search widget
+        self.search_widget = SearchBar(self)
+        self.layout.addWidget(self.search_widget)
+
+        # Tree widget
         self.treemodel = SomTreeModel(data, self)
         self.proxymodel = QSortFilterProxyModel(self)
         self.proxymodel.setSourceModel(self.treemodel)
@@ -129,7 +138,7 @@ class SomDockWidget(CopyMixin, QDockWidget):
         self.tree.setModel(self.proxymodel)
         self.tree.setSortingEnabled(True)
         self.tree.setColumnWidth(0, 200)
-        self.setWidget(self.tree)
+        self.layout.addWidget(self.tree)
 
         # Add menu actions
 
@@ -216,30 +225,6 @@ class SomDockWidget(CopyMixin, QDockWidget):
         """Unhide all columns in the tree view"""
         for i in range(self.treemodel.columnCount()):
             self.tree.setColumnHidden(i, False)
-
-
-    def select_element(self, name):
-        """Select an element in the tree view
-        
-        :param name: The name of the element to select
-        :type name: str
-        """
-        # name = "Tragschicht"
-        index = self.proxymodel.mapFromSource(self.find_index_by_label(name))
-        if index.isValid():
-            self.tree.setCurrentIndex(index)
-            self.tree.scrollTo(index)
-        else:
-            self.tree.clearSelection()
-
-    def find_index_by_label(self, label):
-        """Search the tree for an item by its labelg and return the QModelIndex"""
-        items = self.treemodel._rootItem.find_all_items_by_label(label)
-        print(items)
-        if items:
-            item = items[0]
-            return self.treemodel.createIndex(item.row(), 0, item)
-        return QModelIndex()
     
 
     def select_element_by_ifc_element(self, ifc_object):
