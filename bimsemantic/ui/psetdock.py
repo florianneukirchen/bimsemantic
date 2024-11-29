@@ -2,10 +2,10 @@ from PySide6.QtCore import Qt, QSortFilterProxyModel, QModelIndex
 from bimsemantic.ui import TreeItem, TreeModelBaseclass, CustomTreeMaker, CustomFieldType
 import ifcopenshell.util.element
 from PySide6.QtWidgets import QDockWidget, QTreeView
-from bimsemantic.ui import CopyMixin
+from bimsemantic.ui import CopyMixin, ContextMixin
 import statistics
 
-class PsetDockWidget(CopyMixin, QDockWidget):
+class PsetDockWidget(CopyMixin, ContextMixin, QDockWidget):
     """Dock widget for property sets or quantity sets
 
     Also holds the tree model and the tree view, and adds methods
@@ -26,6 +26,10 @@ class PsetDockWidget(CopyMixin, QDockWidget):
         self.mainwindow = parent
         self.reset()
 
+        # Setup Context Menu
+        self.tree.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.tree.customContextMenuRequested.connect(self.show_context_menu)
+
 
     def reset(self):
         """Reset the tree model and the tree view"""
@@ -37,15 +41,15 @@ class PsetDockWidget(CopyMixin, QDockWidget):
         self.proxymodel = QSortFilterProxyModel(self)
         self.proxymodel.setSourceModel(self.treemodel)
 
-        self.treeview = QTreeView()
-        self.treeview.setSortingEnabled(True)
-        self.treeview.setModel(self.proxymodel)
-        self.treeview.setAlternatingRowColors(True)
-        self.treeview.setColumnWidth(0, 200)
-        self.setWidget(self.treeview)
+        self.tree = QTreeView()
+        self.tree.setSortingEnabled(True)
+        self.tree.setModel(self.proxymodel)
+        self.tree.setAlternatingRowColors(True)
+        self.tree.setColumnWidth(0, 200)
+        self.setWidget(self.tree)
 
         self.proxymodel.sort(0, Qt.SortOrder.AscendingOrder)
-        self.treeview.expandAll()
+        self.tree.expandAll()
 
     def add_files(self, ifc_files):
         """Add files to the tree model
@@ -57,7 +61,7 @@ class PsetDockWidget(CopyMixin, QDockWidget):
         if self.is_qset:
             self.treemodel.calculate_statistics()
         self.proxymodel.sort(0, Qt.SortOrder.AscendingOrder)
-        self.treeview.expandAll()
+        self.tree.expandAll()
 
 
 class PsetTreeModel(TreeModelBaseclass):

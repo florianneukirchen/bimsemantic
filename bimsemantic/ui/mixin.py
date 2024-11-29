@@ -1,5 +1,5 @@
-from PySide6.QtWidgets import QTreeView, QApplication
-
+from PySide6.QtWidgets import QTreeView, QApplication, QMenu
+from PySide6.QtGui import QAction
 
 class CopyMixin:
     """Mixin class for dock widgets to copy data
@@ -24,6 +24,10 @@ class CopyMixin:
         index = tree.currentIndex()
         if index.isValid():
             data = index.data()
+            if data:
+                data = str(data)
+            else:
+                data = ""
             clipboard = QApplication.clipboard()
             clipboard.setText(data)   
 
@@ -59,3 +63,31 @@ class CopyMixin:
             data = "\t".join(data)
             clipboard = QApplication.clipboard()
             clipboard.setText(data)   
+
+
+class ContextMixin:
+    """Mixin class for docks to show context menus"""
+    def show_context_menu(self, position):
+        """Show the context menu at the given position"""
+        widget = self.widget()
+        if not widget:
+            return
+        if isinstance(widget, QTreeView):
+            tree = widget
+        else:
+            # The main widget of the dock is not the treeview
+            try:
+                tree = widget.parent().tree
+            except AttributeError:
+                return
+            
+        index = tree.indexAt(position)
+
+        context_menu = QMenu(self)
+        context_menu.addAction(self.mainwindow.copy_rows_act)
+        context_menu.addAction(self.mainwindow.copy_cell_act)
+
+        if self.mainwindow.somdock and self.mainwindow.somdock.isVisible():
+            context_menu.addAction(self.mainwindow.search_som_act)
+        
+        context_menu.exec(tree.viewport().mapToGlobal(position))

@@ -116,7 +116,7 @@ class MainWindow(QMainWindow):
         if isinstance(widget, QTreeView):
             index = widget.currentIndex()
             if index.isValid():
-                data = index.data()
+                data = str(index.data())
                 self.somdock.searchbar.search_text.setText(data)
                 self.somdock.searchbar.search()
             

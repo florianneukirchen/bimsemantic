@@ -360,6 +360,10 @@ class IfcTreeTab(QWidget):
         index = self.tree.currentIndex()
         if index.isValid():
             data = index.data()
+            if data:
+                data = str(data)
+            else:
+                data = ""
             clipboard = QApplication.clipboard()
             clipboard.setText(data)    
 
