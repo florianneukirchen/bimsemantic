@@ -125,7 +125,7 @@ class MainWindow(QMainWindow):
         
         if self.somdock:
             self.close_som()
-        # self.somdock = SomDockWidget(self, filename) # Debug
+        self.somdock = SomDockWidget(self, filename) # Debug
         try:
             self.somdock = SomDockWidget(self, filename)
         except (ValueError, AttributeError, IndexError):
