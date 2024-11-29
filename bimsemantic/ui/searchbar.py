@@ -18,6 +18,7 @@ class SearchBar(QWidget):
         self.column_combo = QComboBox()
         self.column_combo.addItems([self._parent.treemodel.headerData(i) for i in range(self._parent.treemodel.columnCount()) if not self._parent.tree.isColumnHidden(i)])
         self.column_combo.setMinimumWidth(50)
+        self.column_combo.setToolTip(self.tr("Search in column"))
         self.counterlabel = QLabel("_/_")
         self.search_next_button = QPushButton("")
         self.search_next_button.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowForward))
