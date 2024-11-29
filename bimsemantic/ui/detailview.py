@@ -3,9 +3,9 @@ from PySide6.QtWidgets import QDockWidget, QLabel, QTreeView
 import ifcopenshell.util.element
 from .treebase import TreeItem, TreeModelBaseclass
 from ifcopenshell import entity_instance
-from bimsemantic.ui import CopyMixin
+from bimsemantic.ui import CopyMixin, ContextMixin
 
-class DetailsDock(CopyMixin, QDockWidget):
+class DetailsDock(CopyMixin, ContextMixin, QDockWidget):
     """Dock widget for showing details of IFC elements or overview of files
     
     The overview is updated with new_files(ifc_files) and shown with show_details().
@@ -20,7 +20,6 @@ class DetailsDock(CopyMixin, QDockWidget):
         self.placeholder.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setWidget(self.placeholder)
         self.mainwindow = parent
-
         self.overviewtree = QTreeView()
         self.overviewmodel = None
 
@@ -32,6 +31,8 @@ class DetailsDock(CopyMixin, QDockWidget):
         """Simply create a new overview model and show it"""
         self.overviewmodel = OverviewTreeModel(self)
         self.overviewtree = QTreeView()
+        self.overviewtree.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.overviewtree.customContextMenuRequested.connect(self.show_context_menu)
         self.overviewtree.setModel(self.overviewmodel)
         self.overviewtree.expandAll()
         self.overviewtree.setColumnWidth(0, 170)
@@ -63,6 +64,10 @@ class DetailsDock(CopyMixin, QDockWidget):
             self.setWidget(self.overviewtree)
             return
         treeview = QTreeView()
+        treeview.setContextMenuPolicy(Qt.CustomContextMenu)
+        treeview.customContextMenuRequested.connect(self.show_context_menu)
+
+
         treeview.setModel(detail_model)
         treeview.setColumnWidth(0, 170)
 
