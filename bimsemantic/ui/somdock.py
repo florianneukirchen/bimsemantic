@@ -206,7 +206,7 @@ class SomDockWidget(CopyMixin, QDockWidget):
             context_menu.addAction(QAction(
             self.tr("Hide column"), 
             self,
-            triggered=lambda: self.tree.setColumnHidden(index.column(), True)))
+            triggered=lambda: self.hide_column(index.column())))
         context_menu.addAction(QAction(
             self.tr("Show hidden columns"), 
             self,
@@ -227,7 +227,16 @@ class SomDockWidget(CopyMixin, QDockWidget):
         """Unhide all columns in the tree view"""
         for i in range(self.treemodel.columnCount()):
             self.tree.setColumnHidden(i, False)
+        self.searchbar.columns_changed()
     
+    def hide_column(self, column):
+        """Hide a column in the tree view
+        
+        :param column: The column to hide
+        :type column: int
+        """
+        self.tree.setColumnHidden(column, True)
+        self.searchbar.columns_changed()
 
     def autosearch(self, ifc_object):
         """Select an element in the tree view by an IfcElement

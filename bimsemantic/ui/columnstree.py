@@ -214,8 +214,6 @@ class ColumnsTreeModel(QTreeWidget):
                 col_index = self.first_cols.index(item.text(column))
                 self.hideInfoColumn.emit(col_index, ishidden)
             else:
-                # self.blockSignals(True)
-                # self.blockSignals(False)
                 self.timer.start(10)
 
     def emit_columns_changed(self):

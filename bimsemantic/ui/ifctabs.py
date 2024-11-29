@@ -45,6 +45,7 @@ class IfcTabs(QWidget):
         self.layout.addWidget(self.tabs)
 
         self.mainwindow.column_treemodel.columnsChanged.connect(self.update_columns)
+        self.mainwindow.column_treemodel.hideInfoColumn.connect(self.searchbar.columns_changed)
 
 
 
@@ -68,8 +69,9 @@ class IfcTabs(QWidget):
         The active column is updated immediately, updating the other tree views
         is triggered by a timer to keep the GUI responsive. 
         """
-
+        # Start with the active tab
         self.treemodel.pset_columns_changed()
+        self.searchbar.columns_changed()
 
         self.remaining_models = [self.tabs.widget(i).treemodel for i in range(self.tabs.count())]
         self.remaining_models.remove(self.treemodel)

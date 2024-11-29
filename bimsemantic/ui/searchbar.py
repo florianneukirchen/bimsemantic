@@ -97,3 +97,7 @@ class SearchBar(QWidget):
         self.counterlabel.setText(f"{self.current+1}/{len(self.searchresults)}")
         self._parent.tree.setCurrentIndex(self.searchresults[self.current])
         self._parent.tree.scrollTo(self.searchresults[self.current])
+
+    def columns_changed(self):
+        self.column_combo.clear()
+        self.column_combo.addItems([self._parent.treemodel.headerData(i) for i in range(self._parent.treemodel.columnCount()) if not self._parent.tree.isColumnHidden(i)])
