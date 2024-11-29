@@ -343,9 +343,10 @@ class IfcDetailsTreeModel(DetailsBaseclass):
                 # This tuple can be used to span rows:
                 self.rows_spanned.append((pset_item.row(), parent_index))
                 for k, v in pset.items():
-                    pset_item.appendChild(
-                        TreeItem([k,v], parent=pset_item)
-                    )
+                    if k != "id":
+                        pset_item.appendChild(
+                            TreeItem([k,v], parent=pset_item)
+                        )
 
         # Quantity Sets
         qsets = ifcopenshell.util.element.get_psets(ifc_object, qtos_only=True)
