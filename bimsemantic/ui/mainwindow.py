@@ -214,7 +214,7 @@ class MainWindow(QMainWindow):
             self.column_treemodel.add_file(ifcfile)
             self.tabs.add_file(ifcfile)
             self.progressbar.setValue(i + 2)
-        self.detailsdock.new_files(self.ifcfiles)
+        self.detailsdock.new_files()
         self.statusbar.clearMessage()
         self.progressbar.reset()
 

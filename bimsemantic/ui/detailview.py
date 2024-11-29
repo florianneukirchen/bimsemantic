@@ -27,7 +27,7 @@ class DetailsDock(CopyMixin, ContextMixin, QDockWidget):
         """Show the placeholder label"""
         self.setWidget(self.placeholder)
 
-    def new_files(self, ifc_files):
+    def new_files(self):
         """Simply create a new overview model and show it"""
         self.overviewmodel = OverviewTreeModel(self)
         self.overviewtree = QTreeView()
