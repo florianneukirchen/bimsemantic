@@ -137,7 +137,7 @@ class SomDockWidget(CopyMixin, QDockWidget):
 
         # Search widget
         self.searchbar = SearchBar(self)
-        self.searchbar.stop_auto_button.clicked.connect(self.set_autosearch_attribute)
+        self.searchbar.stop_auto_button.clicked.connect(lambda: self.set_autosearch_attribute(None))
 
         self.layout.addWidget(self.searchbar)
         self.layout.addWidget(self.tree)
@@ -250,15 +250,17 @@ class SomDockWidget(CopyMixin, QDockWidget):
         self.searchbar.column_combo.setCurrentIndex(0)
         self.searchbar.search()
         
-    def set_autosearch_attribute(self, attribute=None):
+    def set_autosearch_attribute(self, attribute):
         """Set the attribute to use for autosearch
         
         :param attribute: The attribute to use for autosearch as a tuple (pset_name, attribute_name)
         :type attribute: tuple of None
         """
-        print(attribute)
         self._autosearch_attribute = attribute
-        self.searchbar.stop_auto_button.setVisible(bool(attribute))
+        self.searchbar.stop_auto_button.setVisible(attribute is not None)
+        if attribute:
+            self.searchbar.stop_auto_button.setToolTip(self.tr("Stop autosearch on %s" % f"{attribute[0]} | {attribute[1]}"))
+            self.mainwindow.statusbar.showMessage(self.tr("Autosearch attribute set to: %s" % f"{attribute[0]} | {attribute[1]}"))
 
     def __repr__(self):
         return f"SomDockWidget {self.filename}"

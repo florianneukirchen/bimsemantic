@@ -94,7 +94,7 @@ class ContextMixin:
                 pset_tuple = self.get_pset_tuple(index)
                 if pset_tuple:
                     autosearch_action = QAction(
-                        self.tr("Autosearch"), 
+                        self.tr("SOM autosearch %s" % pset_tuple[1]), 
                         self,
                         triggered=lambda: self.mainwindow.somdock.set_autosearch_attribute(pset_tuple))
                     context_menu.addAction(autosearch_action)

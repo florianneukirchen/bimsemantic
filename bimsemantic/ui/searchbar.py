@@ -21,7 +21,6 @@ class SearchBar(QWidget):
         self.column_combo.setToolTip(self.tr("Search in column"))
         self.stop_auto_button = QPushButton("")
         self.stop_auto_button.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_BrowserStop))
-        self.stop_auto_button.setToolTip(self.tr("Stop auto search"))
         self.stop_auto_button.setVisible(False)
         self.counterlabel = QLabel("_/_")
         self.search_next_button = QPushButton("")
