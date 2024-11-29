@@ -111,8 +111,7 @@ class SomDockWidget(CopyMixin, QDockWidget):
         super(SomDockWidget, self).__init__(self.tr("SOM"), parent)
         self.mainwindow = parent
         self.filename = filename
-        self.autosearch_attribute = None 
-        self.autosearch_attribute = ("_6238B_Klassifizierung", "Bauteil")
+        self._autosearch_attribute = None 
 
         try:
             with open(self.filename, "r") as file:
@@ -138,6 +137,7 @@ class SomDockWidget(CopyMixin, QDockWidget):
 
         # Search widget
         self.searchbar = SearchBar(self)
+        self.searchbar.stop_auto_button.clicked.connect(self.set_autosearch_attribute)
 
         self.layout.addWidget(self.searchbar)
         self.layout.addWidget(self.tree)
@@ -235,7 +235,7 @@ class SomDockWidget(CopyMixin, QDockWidget):
         :param ifc_item: The IfcElement to select
         :type ifc_item: IfcElement
         """
-        if not self.autosearch_attribute:
+        if not self._autosearch_attribute:
             return
         
         psets = ifcopenshell.util.element.get_psets(ifc_object, psets_only=True)
@@ -243,13 +243,21 @@ class SomDockWidget(CopyMixin, QDockWidget):
             return
         
         try:
-            name = psets[self.autosearch_attribute[0]][self.autosearch_attribute[1]]
+            name = psets[self._autosearch_attribute[0]][self._autosearch_attribute[1]]
         except KeyError:
             return
         self.searchbar.search_text.setText(name)
         self.searchbar.column_combo.setCurrentIndex(0)
         self.searchbar.search()
         
+    def set_autosearch_attribute(self, attribute=None):
+        """Set the attribute to use for autosearch
+        
+        :param attribute: The attribute to use for autosearch as a tuple (pset_name, attribute_name)
+        :type attribute: tuple of None
+        """
+        self._autosearch_attribute = attribute
+        self.searchbar.stop_auto_button.setVisible(bool(attribute))
 
     def __repr__(self):
         return f"SomDockWidget {self.filename}"
