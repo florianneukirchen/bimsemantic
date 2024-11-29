@@ -132,7 +132,7 @@ class TreeItem(QObject):
         if column == 0:
             column_data = self.label
         else:
-            column_data = self.data(column)
+            column_data = str(self.data(column))
         if not case_sensitive:
             column_data = column_data.lower()
             text = text.lower()
