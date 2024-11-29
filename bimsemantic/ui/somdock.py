@@ -193,6 +193,7 @@ class SomDockWidget(CopyMixin, QDockWidget):
         self.tree.customContextMenuRequested.connect(self.show_context_menu)
 
     def show_context_menu(self, position):
+        """Show the context menu in the som dock"""
         index = self.tree.indexAt(position)
         context_menu = QMenu(self)
         context_menu.addAction(self.mainwindow.copy_rows_act)
@@ -241,8 +242,8 @@ class SomDockWidget(CopyMixin, QDockWidget):
     def autosearch(self, ifc_object):
         """Select an element in the tree view by an IfcElement
         
-        :param ifc_item: The IfcElement to select
-        :type ifc_item: IfcElement
+        :param ifc_object: The IfcElement to select
+        :type ifc_object: IfcElement
         """
         if not self._autosearch_attribute:
             return
