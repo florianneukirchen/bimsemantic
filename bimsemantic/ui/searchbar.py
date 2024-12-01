@@ -28,12 +28,10 @@ class SearchBar(QWidget):
 
         self.layout = QHBoxLayout(self)
         self.layout.setContentsMargins(1, 1, 1, 1)
+        self.layout.setSpacing(1)
         self.search_text = QLineEdit()
         self.search_text.setPlaceholderText(self.tr("Search..."))
         self.search_text.setMaximumWidth(200)
-        self.how_combo = QComboBox()
-        self.how_combo.addItems([self.tr("Text"), self.tr("Exact"), self.tr("Wildcard"),  "Regex"])
-        self.how_combo.setMinimumWidth(50)
         self.column_combo = QComboBox()
         self.column_combo.addItems(
             [
@@ -42,6 +40,9 @@ class SearchBar(QWidget):
                 if not self._parent.tree.isColumnHidden(i)
             ]
         )
+        self.how_combo = QComboBox()
+        self.how_combo.addItems([self.tr("Text"), self.tr("Exact"), self.tr("Wildcard"),  "Regex"])
+        self.how_combo.setMinimumWidth(50)
         self.column_combo.setMinimumWidth(50)
         self.column_combo.setToolTip(self.tr("Search in column"))
         self.stop_auto_button = QPushButton("")
@@ -49,7 +50,6 @@ class SearchBar(QWidget):
             self.style().standardIcon(QStyle.StandardPixmap.SP_BrowserStop)
         )
         self.stop_auto_button.setVisible(False)
-        self.counterlabel = QLabel("-/-")
         self.search_next_button = QPushButton("")
         self.search_next_button.setIcon(
             self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowForward)
@@ -58,13 +58,14 @@ class SearchBar(QWidget):
         self.search_prev_button.setIcon(
             self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowBack)
         )
+        self.counterlabel = QLabel("-/-")
         self.layout.addWidget(self.search_text)
-        self.layout.addWidget(self.how_combo)
         self.layout.addWidget(self.column_combo)
+        self.layout.addWidget(self.how_combo)
         self.layout.addWidget(self.stop_auto_button)
-        self.layout.addWidget(self.counterlabel)
         self.layout.addWidget(self.search_prev_button)
         self.layout.addWidget(self.search_next_button)
+        self.layout.addWidget(self.counterlabel)
         self.layout.addStretch()
 
         self.search_text.returnPressed.connect(self.search)
