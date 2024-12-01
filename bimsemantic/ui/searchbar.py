@@ -169,11 +169,17 @@ class SearchBar(QWidget):
 
     def columns_changed(self):
         """Update the column combo box"""
+        current = self.column_combo.currentText()
         self.column_combo.clear()
-        self.column_combo.addItems(
-            [
+        columns = [
                 self._parent.treemodel.headerData(i)
                 for i in range(self._parent.treemodel.columnCount())
                 if not self._parent.tree.isColumnHidden(i)
             ]
+        self.column_combo.addItems(
+            columns
         )
+        if current in columns:
+            self.column_combo.setCurrentIndex(columns.index(current))
+        else:
+            self.column_combo.setCurrentIndex(0)
