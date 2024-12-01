@@ -1,4 +1,4 @@
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QRegularExpression
 from PySide6.QtWidgets import (
     QWidget,
     QHBoxLayout,
@@ -21,6 +21,7 @@ class SearchBar(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self._parent = parent
+        self.mainwindow = parent.mainwindow
 
         self.searchresults = []
         self.current = 0
@@ -31,7 +32,8 @@ class SearchBar(QWidget):
         self.search_text.setPlaceholderText(self.tr("Search..."))
         self.search_text.setMaximumWidth(200)
         self.how_combo = QComboBox()
-        self.how_combo.addItems(["=", "in"])
+        self.how_combo.addItems([self.tr("Text"), self.tr("Exact"), self.tr("Wildcard"),  "Regex"])
+        self.how_combo.setMinimumWidth(50)
         self.column_combo = QComboBox()
         self.column_combo.addItems(
             [
@@ -74,27 +76,53 @@ class SearchBar(QWidget):
     def search(self):
         """Search the text in the tree view"""
         self.searchresults = []
-        text = self.search_text.text()
-        text = text.strip()
-        if not text:
+        pattern = self.search_text.text()
+        pattern = pattern.strip()
+        if not pattern:
+            self.search_text.setStyleSheet("")
             self.counterlabel.setText("-/-")
             return
 
-        self.current = 0
-        case_sensitive = False
         column_name = self.column_combo.currentText()
         if not column_name:
             # If the selected column gets hidden
             self.counterlabel.setText("-/-")
             return
-        how = self.how_combo.currentText()
         columns = [
             self._parent.treemodel.headerData(i)
             for i in range(self._parent.treemodel.columnCount())
         ]
         column = columns.index(column_name)
+
+        how = self.how_combo.currentIndex()
+
+        if how == 0:
+            pattern = QRegularExpression.escape(pattern)
+        elif how == 1:
+            pattern = QRegularExpression.anchoredPattern(pattern) 
+        elif how == 2:
+            pattern = QRegularExpression.wildcardToRegularExpression(pattern)
+
+        else:
+            # Regex    
+            pass
+        
+        
+        options = QRegularExpression.CaseInsensitiveOption
+        regular_expression = QRegularExpression(pattern, options)
+
+        if not regular_expression.isValid():
+            self.search_text.setStyleSheet("color: red; background-color: yellow")
+            self.search_text.setToolTip(regular_expression.errorString())
+            self.mainwindow.statusbar.showMessage(f"Regex: {regular_expression.errorString()}", 5000)
+            self.counterlabel.setText("-/-")
+            return
+
+        self.search_text.setToolTip("")
+        self.search_text.setStyleSheet("")
+
         items = self._parent.treemodel.root_item.search(
-            text, column=column, case_sensitive=case_sensitive, how=how
+            regular_expression, column
         )
 
         for item in items:
@@ -112,7 +140,7 @@ class SearchBar(QWidget):
         self.searchresults.sort(
             key=lambda index: self._parent.tree.visualRect(index).top()
         )
-
+        self.current = 0
         self.counterlabel.setText(f"1/{len(self.searchresults)}")
         self._parent.tree.setCurrentIndex(self.searchresults[0])
         self._parent.tree.scrollTo(self.searchresults[0])

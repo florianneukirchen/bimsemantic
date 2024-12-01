@@ -123,40 +123,37 @@ class TreeItem(QObject):
             return self._parent.children.index(self)
         return 0
 
-    def search(self, text, column=0, case_sensitive=False, how="="):
-        """Find all items with a given text in column
+    def search(self, pattern, column=0, returnbool=False):
+        """Find all items with a given regex pattern in column
 
         Recursively search the children for items with the given label.
 
-        :param text: String to search for
-        :type text: str
+        :param pattern: Regular expression pattern to search for
+        :type text: QRegularExpression
         :param column: The column to search in
         :type column: int
-        :param case_sensitive: Flag for case sensitive search
-        :type case_sensitive: bool
-        :param how: The search mode, "=" for exact match, "in" for substring
-        :type how: str
+       
         :return: List of IfcTreeItem instances
         """
         items = []
         if column == 0:
             column_data = self.label
-            if column_data is None:
-                column_data = ""
         else:
-            column_data = str(self.data(column))
+            column_data = self.data(column)
 
-        if not case_sensitive:
-            column_data = column_data.lower()
-            text = text.lower()
-        if how == "=":
-            if text == column_data:
-                items.append(self)
-        elif how == "in":
-            if text in column_data:
-                items.append(self)
+        if column_data is None:
+            column_data = ""
+        else:
+            column_data = str(column_data)
+
+        match = pattern.match(column_data)
+        if match.hasMatch():
+            # if returnbool:
+            #     return True
+            items.append(self)
+
         for child in self._children:
-            items.extend(child.search(text, column, case_sensitive, how))
+            items.extend(child.search(pattern, column))
         return items
 
     def find_item_by_guid(self, guid):
