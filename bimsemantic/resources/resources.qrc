@@ -1,0 +1,16 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="icons">
+        <file alias="edit-copy.png">fugue_icons/document-copy.png</file>
+        <file alias="copy-cell.png">derived/copy-cell.png</file>
+        <file alias="document-open.png">fugue_icons/folder-open-document.png</file>
+        <file alias="document-close.png">fugue_icons/document--minus.png</file>
+        <file alias="funnel.png">fugue_icons/funnel.png</file>
+        <file alias="funnel--plus.png">fugue_icons/funnel--plus.png</file>
+        <file alias="custom-tree.png">fugue_icons/tree--plus.png</file>
+        <file alias="binocular.png">fugue_icons/binocular--minus.png</file>
+        <file alias="open-som.png">fugue_icons/blue-document-node.png</file>
+        <file alias="close-som.png">fugue_icons/blue-document--minus.png</file>
+        <file alias="export-csv.png">fugue_icons/document-excel-table.png</file>
+    </qresource>
+</RCC>

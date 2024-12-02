@@ -31,6 +31,7 @@ from bimsemantic.ui import (
     DetailsDock,
     SomDockWidget,
 )
+from bimsemantic.resources import resources
 
 
 class MainWindow(QMainWindow):
@@ -449,7 +450,7 @@ class MainWindow(QMainWindow):
         # File menu
         self.file_menu = self.menuBar().addMenu(self.tr("&File"))
 
-        icon = QIcon.fromTheme("document-open")
+        icon = QIcon.fromTheme("document-open", QIcon(":/icons/document-open.png"))
         self.open_act = QAction(
             icon,
             self.tr("&Open IFC..."),
@@ -461,6 +462,7 @@ class MainWindow(QMainWindow):
         self.file_menu.addAction(self.open_act)
 
         self.export_cvs_act = QAction(
+            QIcon(":/icons/export-csv.png"),
             self.tr("&Export View to CSV..."),
             self,
             shortcut="Ctrl+E",
@@ -473,27 +475,8 @@ class MainWindow(QMainWindow):
 
         self.file_menu.addSeparator()
 
-        self.open_som_act = QAction(
-            self.tr("Open SOM"),
-            self,
-            statusTip=self.tr("Load SOM list from a JSON file"),
-            triggered=self.open_som_dlg,
-        )
-        self.file_menu.addAction(self.open_som_act)
-
-        self.close_som_act = QAction(
-            self.tr("Close SOM"),
-            self,
-            statusTip=self.tr("Close the SOM list"),
-            triggered=self.close_som,
-        )
-        self.file_menu.addAction(self.close_som_act)
-
-        self.file_menu.addSeparator()
-
-        icon = QIcon.fromTheme("document-close")
         self.close_act = QAction(
-            icon,
+            QIcon(":/icons/document-close.png"),
             self.tr("&Close all IFCs"),
             self,
             shortcut="Ctrl+W",
@@ -516,6 +499,7 @@ class MainWindow(QMainWindow):
         self.edit_menu = self.menuBar().addMenu(self.tr("&Edit"))
 
         self.copy_rows_act = QAction(
+            QIcon(":/icons/edit-copy.png"),
             self.tr("&Copy"),
             self,
             shortcut="Ctrl+C",
@@ -525,6 +509,7 @@ class MainWindow(QMainWindow):
         self.edit_menu.addAction(self.copy_rows_act)
 
         self.copy_cell_act = QAction(
+            QIcon(":/icons/copy-cell.png"),
             self.tr("Copy cell"),
             self,
             shortcut="Shift+Ctrl+C",
@@ -594,10 +579,37 @@ class MainWindow(QMainWindow):
         )
         self.edit_selection_menu.addAction(self.clearselection_act)
 
+        # SOM menu
+        self.som_menu = self.menuBar().addMenu(self.tr("&Semantic"))
+
+        self.open_som_act = QAction(
+            QIcon(":/icons/open-som.png"),
+            self.tr("&Open SOM"),
+            self,
+            statusTip=self.tr("Load SOM list from a JSON file"),
+            triggered=self.open_som_dlg,
+        )
+        self.som_menu.addAction(self.open_som_act)
+
+        self.close_som_act = QAction(
+            QIcon(":/icons/close-som.png"),
+            self.tr("&Close SOM"),
+            self,
+            statusTip=self.tr("Close the SOM list"),
+            triggered=self.close_som,
+        )
+        self.som_menu.addAction(self.close_som_act)
+
+        # View - SOM menu
+        self.expand_som_menu = self.som_menu.addMenu(
+            self.tr("&Expand/Collapse SOM tree")
+        )
+
         # View menu
         self.view_menu = self.menuBar().addMenu(self.tr("&View"))
 
         self.addcustomtree_act = QAction(
+            QIcon(":/icons/custom-tree.png"),
             self.tr("&Add custom IFC treeview"),
             self,
             triggered=self.add_custom_tree,
@@ -651,11 +663,6 @@ class MainWindow(QMainWindow):
             triggered=(lambda: self.tabs.expand_active_view("all")),
         )
         self.expand_menu.addAction(self.expand_all_act)
-
-        # View - SOM menu
-        self.expand_som_menu = self.view_menu.addMenu(
-            self.tr("&Expand/Collapse SOM tree")
-        )
 
         # Help menu
         self.help_menu = self.menuBar().addMenu(self.tr("&Help"))
@@ -738,6 +745,12 @@ class MainWindow(QMainWindow):
             <p>© 2024 Florian Neukirchen<br/>
             Berliner Hochschule für Technik (BHT)<br/>
             Geoprojektarbeit</p>
+
+            <p>Contains Icons of the 
+            <a href="https://p.yusukekamiyamane.com/">Fugue Icons</a> 
+            by Yusuke Kamiyamane <br/>
+            (Creative Commons Attribution 3.0 License)
+            </p>
             """,
         )
 
