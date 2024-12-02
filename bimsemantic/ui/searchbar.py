@@ -59,6 +59,14 @@ class SearchBar(QWidget):
             self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowBack)
         )
         self.counterlabel = QLabel("-/-")
+
+        self.close_button = QPushButton("")
+        self.close_button.setIcon(
+            self.style().standardIcon(QStyle.StandardPixmap.SP_TitleBarCloseButton)
+        )
+        self.close_button.setFlat(True)
+
+
         self.layout.addWidget(self.search_text)
         self.layout.addWidget(self.column_combo)
         self.layout.addWidget(self.how_combo)
@@ -67,12 +75,17 @@ class SearchBar(QWidget):
         self.layout.addWidget(self.search_next_button)
         self.layout.addWidget(self.counterlabel)
         self.layout.addStretch()
+        self.layout.addWidget(self.close_button)
+        
 
         self.search_text.returnPressed.connect(self.search)
         self.column_combo.currentIndexChanged.connect(self.search)
         self.how_combo.currentIndexChanged.connect(self.search)
         self.search_next_button.clicked.connect(self.search_next)
         self.search_prev_button.clicked.connect(self.search_prev)
+        self.close_button.clicked.connect(self.hide)
+
+        self.hide()
 
     def search(self):
         """Search the text in the tree view"""

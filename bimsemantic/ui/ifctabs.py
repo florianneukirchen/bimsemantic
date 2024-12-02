@@ -251,6 +251,7 @@ class IfcTreeTab(QWidget):
         super(IfcTreeTab, self).__init__(parent)
         self.mainwindow = parent.mainwindow
         self.tabs = parent.tabs
+        self.tabswidget = parent
         self.count_ifc_elements = parent.count_ifc_elements
         self.treemodel = treemodelclass(ifc_files, self)
         self.ifc_files = ifc_files

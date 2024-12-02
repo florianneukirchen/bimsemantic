@@ -99,23 +99,31 @@ class MainWindow(QMainWindow):
             if json_filenames:
                 self.open_som(json_filenames[0])
 
+    def get_active_dock(self):
+        """Get the dock or tab widget of a treeview widget"""
+        widget = QApplication.focusWidget()
+        if not isinstance(widget, QTreeView):
+            return
+        parent = widget.parent()
+        while parent:
+            if isinstance(parent, (IfcTreeTab, QDockWidget)):
+                return parent
+            parent = parent.parent()
+        return None
+
+
     def copy_to_clipboard(self, only_cell=False):
         """Call the copy method of the active widget"""
-        widget = QApplication.focusWidget()
-        if isinstance(widget, QTreeView):
-            parent = widget.parent()
-            while parent:
-                if isinstance(parent, (IfcTreeTab, QDockWidget)):
-                    try:
-                        if only_cell:
-                            parent.copy_active_cell_to_clipboard()
-                        else:
-                            parent.copy_selection_to_clipboard()
-                    except AttributeError:
-                        pass
-                    return
+        
+        dock = self.get_active_dock()
+        try:
+            if only_cell:
+                dock.copy_active_cell_to_clipboard()
+            else:
+                dock.copy_selection_to_clipboard()
+        except AttributeError:
+            pass
 
-                parent = parent.parent()
 
     def somsearch(self):
         """Search the content of the active cell in the SOM"""
@@ -129,6 +137,23 @@ class MainWindow(QMainWindow):
                 data = str(index.data())
                 self.somdock.searchbar.search_text.setText(data)
                 self.somdock.searchbar.search()
+
+    def search_active(self):
+        """Search in the active view"""
+        dock = self.get_active_dock()
+        searchbar = None
+        if isinstance(dock, IfcTreeTab):
+            searchbar = dock.tabswidget.searchbar
+        else:
+            try:
+                searchbar = dock.searchbar
+            except AttributeError:
+                return
+
+        searchbar.show()
+        searchbar.search_text.setFocus()
+    
+
 
     def open_som_dlg(self):
         """Open SOM dialog to load a SOM list from a JSON file"""
@@ -542,6 +567,26 @@ class MainWindow(QMainWindow):
         self.chk_copy_with_level.setChecked(False)
         self.copyoptions_menu.addAction(self.chk_copy_with_level)
 
+        self.search_act = QAction(
+            QIcon(":/icons/binocular.png"),
+            self.tr("&Search"),
+            self,
+            statusTip=self.tr("Search in the active view"),
+            shortcut="Ctrl+F",
+            triggered=self.search_active,
+        )
+        self.edit_menu.addAction(self.search_act)
+        self.toolbar.addAction(self.search_act)
+
+        self.search_som_act = QAction(
+            self.tr("Search content in SOM"),
+            self,
+            statusTip=self.tr("Search content of active cell in SOM"),
+            triggered=self.somsearch,
+            enabled=False,
+        )
+        self.edit_menu.addAction(self.search_som_act)
+
         self.edit_menu.addSeparator()
 
         self.edit_selection_menu = self.edit_menu.addMenu(self.tr("&Selection"))
@@ -661,15 +706,6 @@ class MainWindow(QMainWindow):
             triggered=self.close_som,
         )
         self.som_menu.addAction(self.close_som_act)
-
-        self.search_som_act = QAction(
-            self.tr("Search in SOM"),
-            self,
-            statusTip=self.tr("Search content of active cell in SOM"),
-            triggered=self.somsearch,
-            enabled=False,
-        )
-        self.som_menu.addAction(self.search_som_act)
 
         self.expand_som_menu = self.som_menu.addMenu(
             self.tr("&Expand/Collapse SOM tree")
