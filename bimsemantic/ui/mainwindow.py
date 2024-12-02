@@ -1,4 +1,4 @@
-from PySide6.QtCore import Qt, QThreadPool, QEvent
+from PySide6.QtCore import Qt, QThreadPool, QEvent, QSize
 from PySide6.QtGui import QAction, QIcon, QKeySequence, QDragEnterEvent, QDropEvent
 from PySide6.QtWidgets import (
     QDockWidget,
@@ -446,7 +446,11 @@ class MainWindow(QMainWindow):
             self.tabs.make_custom_tab(name, items)
 
     def setup_menus(self):
-        """Setup the menu and actions of the main window"""
+        """Setup the menu and toolbars and actions of the main window"""
+
+        self.toolbar = self.addToolBar(self.tr("Toolbar"))
+        self.toolbar.setIconSize(QSize(16,16))
+
         # File menu
         self.file_menu = self.menuBar().addMenu(self.tr("&File"))
 
@@ -460,6 +464,7 @@ class MainWindow(QMainWindow):
             triggered=self.open_file_dlg,
         )
         self.file_menu.addAction(self.open_act)
+        self.toolbar.addAction(self.open_act)
 
         self.export_cvs_act = QAction(
             QIcon(":/icons/export-csv.png"),
@@ -472,6 +477,7 @@ class MainWindow(QMainWindow):
             triggered=self.export_to_csv,
         )
         self.file_menu.addAction(self.export_cvs_act)
+        self.toolbar.addAction(self.export_cvs_act)
 
         self.file_menu.addSeparator()
 
@@ -484,6 +490,7 @@ class MainWindow(QMainWindow):
             triggered=self.close_all,
         )
         self.file_menu.addAction(self.close_act)
+        self.toolbar.addAction(self.close_act)
 
         self.quit_act = QAction(
             self.tr("&Quit"),
@@ -497,6 +504,7 @@ class MainWindow(QMainWindow):
 
         # Edit menu
         self.edit_menu = self.menuBar().addMenu(self.tr("&Edit"))
+        self.toolbar.addSeparator()
 
         self.copy_rows_act = QAction(
             QIcon(":/icons/edit-copy.png"),
@@ -507,6 +515,7 @@ class MainWindow(QMainWindow):
             triggered=self.copy_to_clipboard,
         )
         self.edit_menu.addAction(self.copy_rows_act)
+        self.toolbar.addAction(self.copy_rows_act)
 
         self.copy_cell_act = QAction(
             QIcon(":/icons/copy-cell.png"),
@@ -517,6 +526,7 @@ class MainWindow(QMainWindow):
             triggered=lambda: self.copy_to_clipboard(only_cell=True),
         )
         self.edit_menu.addAction(self.copy_cell_act)
+        self.toolbar.addAction(self.copy_cell_act)
 
         self.copyoptions_menu = self.edit_menu.addMenu(self.tr("Copy options"))
 
@@ -531,15 +541,6 @@ class MainWindow(QMainWindow):
         )
         self.chk_copy_with_level.setChecked(False)
         self.copyoptions_menu.addAction(self.chk_copy_with_level)
-
-        self.search_som_act = QAction(
-            self.tr("Search in SOM"),
-            self,
-            statusTip=self.tr("Search content of active cell in SOM"),
-            triggered=self.somsearch,
-            enabled=False,
-        )
-        self.edit_menu.addAction(self.search_som_act)
 
         self.edit_menu.addSeparator()
 
@@ -579,31 +580,6 @@ class MainWindow(QMainWindow):
         )
         self.edit_selection_menu.addAction(self.clearselection_act)
 
-        # SOM menu
-        self.som_menu = self.menuBar().addMenu(self.tr("&Semantic"))
-
-        self.open_som_act = QAction(
-            QIcon(":/icons/open-som.png"),
-            self.tr("&Open SOM"),
-            self,
-            statusTip=self.tr("Load SOM list from a JSON file"),
-            triggered=self.open_som_dlg,
-        )
-        self.som_menu.addAction(self.open_som_act)
-
-        self.close_som_act = QAction(
-            QIcon(":/icons/close-som.png"),
-            self.tr("&Close SOM"),
-            self,
-            statusTip=self.tr("Close the SOM list"),
-            triggered=self.close_som,
-        )
-        self.som_menu.addAction(self.close_som_act)
-
-        # View - SOM menu
-        self.expand_som_menu = self.som_menu.addMenu(
-            self.tr("&Expand/Collapse SOM tree")
-        )
 
         # View menu
         self.view_menu = self.menuBar().addMenu(self.tr("&View"))
@@ -615,6 +591,7 @@ class MainWindow(QMainWindow):
             triggered=self.add_custom_tree,
         )
         self.view_menu.addAction(self.addcustomtree_act)
+        self.toolbar.addAction(self.addcustomtree_act)
 
         # View expand/collapse menu
         self.expand_menu = self.view_menu.addMenu(
@@ -663,6 +640,41 @@ class MainWindow(QMainWindow):
             triggered=(lambda: self.tabs.expand_active_view("all")),
         )
         self.expand_menu.addAction(self.expand_all_act)
+
+        # SOM menu
+        self.som_menu = self.menuBar().addMenu(self.tr("&Semantic"))
+
+        self.open_som_act = QAction(
+            QIcon(":/icons/open-som.png"),
+            self.tr("&Open SOM"),
+            self,
+            statusTip=self.tr("Load SOM list from a JSON file"),
+            triggered=self.open_som_dlg,
+        )
+        self.som_menu.addAction(self.open_som_act)
+
+        self.close_som_act = QAction(
+            QIcon(":/icons/close-som.png"),
+            self.tr("&Close SOM"),
+            self,
+            statusTip=self.tr("Close the SOM list"),
+            triggered=self.close_som,
+        )
+        self.som_menu.addAction(self.close_som_act)
+
+        self.search_som_act = QAction(
+            self.tr("Search in SOM"),
+            self,
+            statusTip=self.tr("Search content of active cell in SOM"),
+            triggered=self.somsearch,
+            enabled=False,
+        )
+        self.som_menu.addAction(self.search_som_act)
+
+        self.expand_som_menu = self.som_menu.addMenu(
+            self.tr("&Expand/Collapse SOM tree")
+        )
+
 
         # Help menu
         self.help_menu = self.menuBar().addMenu(self.tr("&Help"))
@@ -721,6 +733,10 @@ class MainWindow(QMainWindow):
         self.chk_show_qsets.triggered.connect(self.toggle_qset_dock)
         self.view_menu.addAction(self.chk_show_qsets)
         self.qsetdock = None
+
+        # Add toggle toolbar
+        self.view_menu.addSeparator()
+        self.view_menu.addAction(self.toolbar.toggleViewAction())
 
     def toggle_qset_dock(self):
         """Toggle the visibility of the Qset dock and create it if still None"""
