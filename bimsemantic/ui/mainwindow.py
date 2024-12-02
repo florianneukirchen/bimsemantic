@@ -579,6 +579,7 @@ class MainWindow(QMainWindow):
         self.toolbar.addAction(self.search_act)
 
         self.search_som_act = QAction(
+            QIcon(":/icons/binocular--arrow.png"),
             self.tr("Search content in SOM"),
             self,
             statusTip=self.tr("Search content of active cell in SOM"),
@@ -586,6 +587,7 @@ class MainWindow(QMainWindow):
             enabled=False,
         )
         self.edit_menu.addAction(self.search_som_act)
+        self.toolbar.addAction(self.search_som_act)
 
         self.edit_menu.addSeparator()
 
@@ -688,6 +690,7 @@ class MainWindow(QMainWindow):
 
         # SOM menu
         self.som_menu = self.menuBar().addMenu(self.tr("&Semantic"))
+        self.toolbar.addSeparator()
 
         self.open_som_act = QAction(
             QIcon(":/icons/open-som.png"),
@@ -697,6 +700,7 @@ class MainWindow(QMainWindow):
             triggered=self.open_som_dlg,
         )
         self.som_menu.addAction(self.open_som_act)
+        self.toolbar.addAction(self.open_som_act)
 
         self.close_som_act = QAction(
             QIcon(":/icons/close-som.png"),
@@ -711,6 +715,16 @@ class MainWindow(QMainWindow):
             self.tr("&Expand/Collapse SOM tree")
         )
 
+        self.stop_auto_act = QAction(
+            QIcon(":icons/binocular--minus.png"),
+            self.tr("Stop auto search"),
+            self,
+            statusTip=self.tr("Stop the auto search in the SOM"),
+            triggered=lambda: self.somdock.set_autosearch_attribute(None),
+            enabled=False,
+        )
+        self.som_menu.addAction(self.stop_auto_act)
+        self.toolbar.addAction(self.stop_auto_act)
 
         # Help menu
         self.help_menu = self.menuBar().addMenu(self.tr("&Help"))

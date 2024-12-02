@@ -282,10 +282,13 @@ class SomDockWidget(CopyMixin, QDockWidget):
         """
         self._autosearch_attribute = attribute
         self.searchbar.stop_auto_button.setVisible(attribute is not None)
+        self.mainwindow.stop_auto_act.setEnabled(attribute is not None)
         if attribute:
-            self.searchbar.stop_auto_button.setToolTip(
-                self.tr("Stop autosearch on %s" % f"{attribute[0]} | {attribute[1]}")
-            )
+            tooltip=self.tr("Stop autosearch on %s" % f"{attribute[0]} | {attribute[1]}")
+            self.searchbar.stop_auto_button.setToolTip(tooltip)
+            self.mainwindow.stop_auto_act.setToolTip(tooltip)
+            self.mainwindow.stop_auto_act.setEnabled(True)
+
             self.mainwindow.statusbar.showMessage(
                 self.tr(
                     "Autosearch attribute set to: %s"
@@ -298,6 +301,9 @@ class SomDockWidget(CopyMixin, QDockWidget):
             if source_index.isValid():
                 item = source_index.internalPointer()
                 self.autosearch(item.ifc)
+        else:
+            self.mainwindow.stop_auto_act.setToolTip(self.tr("Stop the auto search in the SOM"))
+
 
     def __repr__(self):
         return f"SomDockWidget {self.filename}"
