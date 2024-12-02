@@ -1,3 +1,4 @@
+from typing import Any
 from PySide6.QtCore import Qt, QRegularExpression
 from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import (
@@ -60,7 +61,9 @@ class SearchBar(QWidget):
             self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowBack)
         )
         self.counterlabel = QLabel("-/-")
-        self.how_button = HowButton(self)
+
+        is_som = hasattr(self._parent, "autosearch")
+        self.how_button = HowButton(self, is_som=is_som)
 
         self.close_button = QPushButton("")
         self.close_button.setIcon(
@@ -119,14 +122,19 @@ class SearchBar(QWidget):
             pattern = QRegularExpression.wildcardToRegularExpression(pattern)
 
         else:
-            # Regex    
+            # Regex or List Contains    
             pass
         
+
         if self.how_button.is_case_sensitive():
             options = QRegularExpression.NoPatternOption
         else:
             options = QRegularExpression.CaseInsensitiveOption
-        regular_expression = QRegularExpression(pattern, options)
+
+        if how == "List Contains":
+            regular_expression = SearchInList(pattern, options)
+        else:    
+            regular_expression = QRegularExpression(pattern, options)
 
         if not regular_expression.isValid():
             self.search_text.setStyleSheet("color: red; background-color: yellow")
@@ -202,13 +210,14 @@ class SearchBar(QWidget):
             self.column_combo.setCurrentIndex(0)
 
 class HowButton(QPushButton):
-    def __init__(self, parent):
+    def __init__(self, parent, is_som=False):
         super().__init__()
         self.setIcon(QIcon(":/icons/binocular.png"))
         self.setFlat(True)
         self.setMinimumWidth(30)
         self.setToolTip("Search mode")
         self._parent = parent
+        self.is_som = is_som
 
         self.how_menu = QMenu()
         self.setMenu(self.how_menu)
@@ -217,11 +226,15 @@ class HowButton(QPushButton):
         self.action_exact = QAction(self.tr("Exact"), self)
         self.action_wildcard = QAction(self.tr("Wildcard"), self)
         self.action_regex = QAction(self.tr("Regex"), self)
+        self.action_listcontains = QAction(self.tr("List Contains"), self)
 
         self.how_menu.addAction(self.action_text)
         self.how_menu.addAction(self.action_exact)
         self.how_menu.addAction(self.action_wildcard)
         self.how_menu.addAction(self.action_regex)
+
+        if is_som:
+            self.how_menu.addAction(self.action_listcontains)
 
         self.how_menu.addSeparator()
 
@@ -233,6 +246,7 @@ class HowButton(QPushButton):
         self.action_exact.triggered.connect(lambda: self.set_search_mode("Exact"))
         self.action_wildcard.triggered.connect(lambda: self.set_search_mode("Wildcard"))
         self.action_regex.triggered.connect(lambda: self.set_search_mode("Regex"))
+        self.action_listcontains.triggered.connect(lambda: self.set_search_mode("List Contains"))
         self.case_sensitive_action.toggled.connect(self._parent.search)
 
         self.set_search_mode("Text")
@@ -247,3 +261,56 @@ class HowButton(QPushButton):
 
     def is_case_sensitive(self):
         return self.case_sensitive_action.isChecked()
+    
+class SearchInList():
+    def __init__(self, pattern, options):
+        self.options = options
+        self._isvalid = True
+        patterns = pattern.split(",")
+        patterns = [pattern.strip() for pattern in patterns]
+        self.patterns = []
+        for pattern in patterns:
+            if "-" in pattern:
+                start, end = pattern.split("-")
+                try:
+                    start = int(start)
+                    end = int(end)
+                except ValueError:
+                    self._isvalid = False
+                range_str = [str(i) for i in range(start, end+1)]
+                self.patterns.extend(range_str)
+            else:
+                if self.options == QRegularExpression.CaseInsensitiveOption:
+                    pattern = str(pattern).lower()
+                else:
+                    pattern = str(pattern)
+                self.patterns.append(str(pattern))
+
+        if not patterns:
+            self._isvalid = False
+
+    def isValid(self):
+        return self._isvalid
+    
+    def match(self, item_list):
+        if not isinstance(item_list, list):
+            return self.Match(False)
+
+        item_list = [str(item) for item in item_list]
+        if self.options == QRegularExpression.CaseInsensitiveOption:
+            item_list = [item.lower() for item in item_list]
+
+        for pattern in self.patterns:
+            if pattern in item_list:
+                return self.Match(True)
+        return self.Match(False)
+
+    class Match:
+        def __init__(self, hasmatch):
+            self._hasmatch = hasmatch
+    
+        def hasMatch(self):
+            return self._hasmatch
+    
+        def __repr__(self):
+            return f"Match {self._hasmatch}"

@@ -42,7 +42,7 @@ class SomTreeItem(TreeItem):
             item = SomTreeItem(value, key, self, columns)
             self.appendChild(item)
 
-    def data(self, column):
+    def data(self, column, to_string=True):
         """Get the data for a column"""
         if column < 0 or column >= len(self.columns):
             return None
@@ -51,7 +51,7 @@ class SomTreeItem(TreeItem):
         else:
             key = self.columns[column]
             data = self._data.get(key, None)
-            if isinstance(data, list):
+            if isinstance(data, list) and to_string:
                 data = [str(item) for item in data]
                 return ", ".join(data)
             return data

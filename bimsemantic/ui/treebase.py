@@ -6,7 +6,7 @@ from PySide6.QtCore import (
     QObject,
 )
 
-
+from bimsemantic.ui import SearchInList
 
 
 class TreeItem(QObject):
@@ -69,13 +69,14 @@ class TreeItem(QObject):
             parent = parent.parent()
         return level
 
-    def data(self, column):
+    def data(self, column, to_string=True):
         """Get the data for a column
 
         For the first column, the number of children and leaves is added to the string.
 
         :param column: The column number
         :type column: int
+        :param to_string: Ignored in this implementation
         :return: The data for the column
         :rtype: str or None
         """
@@ -139,11 +140,12 @@ class TreeItem(QObject):
         if column == 0:
             column_data = self.label
         else:
-            column_data = self.data(column)
+            column_data = self.data(column, to_string=False)
+        
 
         if column_data is None:
             column_data = ""
-        else:
+        elif not isinstance(pattern, SearchInList):
             column_data = str(column_data)
 
         match = pattern.match(column_data)
