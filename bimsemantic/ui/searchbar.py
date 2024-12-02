@@ -1,4 +1,5 @@
 from PySide6.QtCore import Qt, QRegularExpression
+from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import (
     QWidget,
     QHBoxLayout,
@@ -7,6 +8,7 @@ from PySide6.QtWidgets import (
     QComboBox,
     QStyle,
     QLabel,
+    QMenu,
 )
 
 
@@ -29,6 +31,7 @@ class SearchBar(QWidget):
         self.layout = QHBoxLayout(self)
         self.layout.setContentsMargins(1, 1, 1, 1)
         self.layout.setSpacing(1)
+
         self.search_text = QLineEdit()
         self.search_text.setPlaceholderText(self.tr("Search..."))
         self.search_text.setMaximumWidth(200)
@@ -40,9 +43,7 @@ class SearchBar(QWidget):
                 if not self._parent.tree.isColumnHidden(i)
             ]
         )
-        self.how_combo = QComboBox()
-        self.how_combo.addItems([self.tr("Text"), self.tr("Exact"), self.tr("Wildcard"),  "Regex"])
-        self.how_combo.setMinimumWidth(50)
+
         self.column_combo.setMinimumWidth(50)
         self.column_combo.setToolTip(self.tr("Search in column"))
         self.stop_auto_button = QPushButton("")
@@ -59,6 +60,7 @@ class SearchBar(QWidget):
             self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowBack)
         )
         self.counterlabel = QLabel("-/-")
+        self.how_button = HowButton(self)
 
         self.close_button = QPushButton("")
         self.close_button.setIcon(
@@ -67,9 +69,9 @@ class SearchBar(QWidget):
         self.close_button.setFlat(True)
 
 
+        self.layout.addWidget(self.how_button)
         self.layout.addWidget(self.search_text)
         self.layout.addWidget(self.column_combo)
-        self.layout.addWidget(self.how_combo)
         self.layout.addWidget(self.stop_auto_button)
         self.layout.addWidget(self.search_prev_button)
         self.layout.addWidget(self.search_next_button)
@@ -80,7 +82,6 @@ class SearchBar(QWidget):
 
         self.search_text.returnPressed.connect(self.search)
         self.column_combo.currentIndexChanged.connect(self.search)
-        self.how_combo.currentIndexChanged.connect(self.search)
         self.search_next_button.clicked.connect(self.search_next)
         self.search_prev_button.clicked.connect(self.search_prev)
         self.close_button.clicked.connect(self.hide)
@@ -108,21 +109,23 @@ class SearchBar(QWidget):
         ]
         column = columns.index(column_name)
 
-        how = self.how_combo.currentIndex()
+        how = self.how_button.get_search_mode()
 
-        if how == 0:
+        if how == "Text":
             pattern = QRegularExpression.escape(pattern)
-        elif how == 1:
+        elif how == "Exact":
             pattern = QRegularExpression.anchoredPattern(pattern) 
-        elif how == 2:
+        elif how == "Wildcard":
             pattern = QRegularExpression.wildcardToRegularExpression(pattern)
 
         else:
             # Regex    
             pass
         
-        
-        options = QRegularExpression.CaseInsensitiveOption
+        if self.how_button.is_case_sensitive():
+            options = QRegularExpression.NoPatternOption
+        else:
+            options = QRegularExpression.CaseInsensitiveOption
         regular_expression = QRegularExpression(pattern, options)
 
         if not regular_expression.isValid():
@@ -197,3 +200,50 @@ class SearchBar(QWidget):
             self.column_combo.setCurrentIndex(columns.index(current))
         else:
             self.column_combo.setCurrentIndex(0)
+
+class HowButton(QPushButton):
+    def __init__(self, parent):
+        super().__init__()
+        self.setIcon(QIcon(":/icons/binocular.png"))
+        self.setFlat(True)
+        self.setMinimumWidth(30)
+        self.setToolTip("Search mode")
+        self._parent = parent
+
+        self.how_menu = QMenu()
+        self.setMenu(self.how_menu)
+
+        self.action_text = QAction(self.tr("Text"), self)
+        self.action_exact = QAction(self.tr("Exact"), self)
+        self.action_wildcard = QAction(self.tr("Wildcard"), self)
+        self.action_regex = QAction(self.tr("Regex"), self)
+
+        self.how_menu.addAction(self.action_text)
+        self.how_menu.addAction(self.action_exact)
+        self.how_menu.addAction(self.action_wildcard)
+        self.how_menu.addAction(self.action_regex)
+
+        self.how_menu.addSeparator()
+
+        self.case_sensitive_action = QAction(self.tr("Case Sensitive"), self)
+        self.case_sensitive_action.setCheckable(True)
+        self.how_menu.addAction(self.case_sensitive_action)
+
+        self.action_text.triggered.connect(lambda: self.set_search_mode("Text"))
+        self.action_exact.triggered.connect(lambda: self.set_search_mode("Exact"))
+        self.action_wildcard.triggered.connect(lambda: self.set_search_mode("Wildcard"))
+        self.action_regex.triggered.connect(lambda: self.set_search_mode("Regex"))
+        self.case_sensitive_action.toggled.connect(self._parent.search)
+
+        self.set_search_mode("Text")
+
+    def set_search_mode(self, mode):
+        self.setText(mode)
+        self.search_mode = mode
+        self._parent.search()
+
+    def get_search_mode(self):
+        return self.search_mode
+
+    def is_case_sensitive(self):
+        return self.case_sensitive_action.isChecked()
