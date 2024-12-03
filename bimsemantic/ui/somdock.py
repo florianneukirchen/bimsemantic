@@ -287,6 +287,7 @@ class SomDockWidget(CopyMixin, QDockWidget):
         self.searchbar.stop_auto_button.setVisible(attribute is not None)
         self.mainwindow.stop_auto_act.setEnabled(attribute is not None)
         if attribute:
+            self.searchbar.show()
             tooltip=self.tr("Stop autosearch on %s" % f"{attribute[0]} | {attribute[1]}")
             self.searchbar.stop_auto_button.setToolTip(tooltip)
             self.mainwindow.stop_auto_act.setToolTip(tooltip)
