@@ -21,10 +21,11 @@ class SearchBar(QWidget):
     :param parent: The parent widget (IfcTabs or SomDockWidget)
     """
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, filtermode=False):
         super().__init__(parent)
         self._parent = parent
         self.mainwindow = parent.mainwindow
+        self.filtermode = filtermode
 
         self.searchresults = []
         self.current = 0
@@ -34,7 +35,11 @@ class SearchBar(QWidget):
         self.layout.setSpacing(1)
 
         self.search_text = QLineEdit()
-        self.search_text.setPlaceholderText(self.tr("Search..."))
+        if filtermode:
+            txt = self.tr("Filter...")
+        else:
+            txt = self.tr("Search...")
+        self.search_text.setPlaceholderText(txt)
         self.search_text.setMaximumWidth(200)
         self.column_combo = QComboBox()
         self.column_combo.addItems(
@@ -46,7 +51,10 @@ class SearchBar(QWidget):
         )
 
         self.column_combo.setMinimumWidth(50)
-        self.column_combo.setToolTip(self.tr("Search in column"))
+        if filtermode:
+            self.column_combo.setToolTip(self.tr("Filter on column"))
+        else:
+            self.column_combo.setToolTip(self.tr("Search in column"))
         self.stop_auto_button = QPushButton("")
         self.stop_auto_button.setIcon(
             self.style().standardIcon(QStyle.StandardPixmap.SP_BrowserStop)
@@ -63,7 +71,8 @@ class SearchBar(QWidget):
         self.counterlabel = QLabel("-/-")
 
         is_som = hasattr(self._parent, "autosearch")
-        self.how_button = HowButton(self, is_som=is_som)
+        self.how_button = HowButton(self, is_som=is_som, is_filter=filtermode)
+
 
         self.close_button = QPushButton("")
         self.close_button.setIcon(
@@ -79,6 +88,12 @@ class SearchBar(QWidget):
         self.layout.addWidget(self.search_prev_button)
         self.layout.addWidget(self.search_next_button)
         self.layout.addWidget(self.counterlabel)
+
+        if filtermode:
+            self.reset_filter_button = QPushButton("Reset Filter")
+            self.layout.addWidget(self.reset_filter_button)
+            self.reset_filter_button.clicked.connect(self.remove_filter)
+
         self.layout.addStretch()
         self.layout.addWidget(self.close_button)
         
@@ -99,6 +114,8 @@ class SearchBar(QWidget):
         if not pattern:
             self.search_text.setStyleSheet("")
             self.counterlabel.setText("-/-")
+            if self.filtermode:
+                self.remove_filter()
             return
 
         column_name = self.column_combo.currentText()
@@ -132,7 +149,7 @@ class SearchBar(QWidget):
             options = QRegularExpression.CaseInsensitiveOption
 
         if how == "List Contains":
-            regular_expression = SearchInList(pattern, options)
+            regular_expression = "" # TODO implement List Contains
         else:    
             regular_expression = QRegularExpression(pattern, options)
 
@@ -145,6 +162,11 @@ class SearchBar(QWidget):
 
         self.search_text.setToolTip("")
         self.search_text.setStyleSheet("")
+
+        if self.filtermode:
+            self._parent.proxymodel.setFilterKeyColumn(column)
+            self._parent.proxymodel.setFilterRegularExpression(regular_expression)
+            return
 
         items = self._parent.treemodel.root_item.search(
             regular_expression, column
@@ -209,10 +231,19 @@ class SearchBar(QWidget):
         else:
             self.column_combo.setCurrentIndex(0)
 
+    def remove_filter(self):
+        """Remove the filter from the proxy model"""
+        self.search_text.setText("")
+        self._parent.proxymodel.setFilterRegularExpression(QRegularExpression())
+
+
 class HowButton(QPushButton):
-    def __init__(self, parent, is_som=False):
+    def __init__(self, parent, is_som=False, is_filter=False):
         super().__init__()
-        self.setIcon(QIcon(":/icons/binocular.png"))
+        if is_filter:
+            self.setIcon(QIcon(":/icons/funnel.png"))
+        else:
+            self.setIcon(QIcon(":/icons/binocular.png"))
         self.setFlat(True)
         self.setMinimumWidth(30)
         self.setToolTip("Search mode")

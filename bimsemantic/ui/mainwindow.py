@@ -138,12 +138,17 @@ class MainWindow(QMainWindow):
                 self.somdock.searchbar.search_text.setText(data)
                 self.somdock.searchbar.search()
 
-    def search_active(self):
-        """Search in the active view"""
+    def search_active(self, filtermode=False):
+        """Search in the active view or show filterbar"""
         dock = self.get_active_dock()
         searchbar = None
         if isinstance(dock, IfcTreeTab):
-            searchbar = dock.tabswidget.searchbar
+            dock = dock.tabswidget
+        if filtermode:
+            try:
+                searchbar = dock.filterbar
+            except AttributeError:
+                return
         else:
             try:
                 searchbar = dock.searchbar
@@ -578,6 +583,19 @@ class MainWindow(QMainWindow):
         self.edit_menu.addAction(self.search_act)
         self.toolbar.addAction(self.search_act)
 
+
+        self.filter_act = QAction(
+            QIcon(":/icons/funnel.png"),
+            self.tr("&Filter"),
+            self,
+            statusTip=self.tr("Filter the active view"),
+            shortcut="Shift+Ctrl+F",
+            triggered=lambda: self.search_active(True),
+        )
+        self.edit_menu.addAction(self.filter_act)
+        self.toolbar.addAction(self.filter_act)
+
+
         self.search_som_act = QAction(
             QIcon(":/icons/binocular--arrow.png"),
             self.tr("Search content in SOM"),
@@ -588,6 +606,7 @@ class MainWindow(QMainWindow):
         )
         self.edit_menu.addAction(self.search_som_act)
         self.toolbar.addAction(self.search_som_act)
+
 
         self.edit_menu.addSeparator()
 

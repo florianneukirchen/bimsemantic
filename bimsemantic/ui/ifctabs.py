@@ -62,10 +62,12 @@ class IfcTabs(QWidget):
 
         # Search Bar
         self.searchbar = SearchBar(self)
+        self.filterbar = SearchBar(self, filtermode=True)
 
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(4, 2, 4, 2)
         self.layout.addWidget(self.searchbar)
+        self.layout.addWidget(self.filterbar)
         self.setLayout(self.layout)
         self.layout.addWidget(self.tabs)
 
@@ -259,6 +261,7 @@ class IfcTreeTab(QWidget):
 
         # Use a Proxy model to enable sorting
         self.proxymodel = QSortFilterProxyModel(self)
+        self.proxymodel.setRecursiveFilteringEnabled(True)
         self.proxymodel.setSourceModel(self.treemodel)
 
         self.tree = QTreeView()

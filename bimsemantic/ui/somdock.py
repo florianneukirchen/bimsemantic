@@ -147,8 +147,11 @@ class SomDockWidget(CopyMixin, QDockWidget):
         self.searchbar.stop_auto_button.clicked.connect(
             lambda: self.set_autosearch_attribute(None)
         )
+        self.filterbar = SearchBar(self, filtermode=True)
+
 
         self.layout.addWidget(self.searchbar)
+        self.layout.addWidget(self.filterbar)
         self.layout.addWidget(self.tree)
 
         # Add menu actions

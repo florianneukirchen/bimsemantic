@@ -25,12 +25,11 @@ class ColheaderTreeItem(TreeItem):
         self._children = []
         self._id = None
 
-    def data(self, column, to_string=True):
+    def data(self, column):
         """Get the column name at the column index
 
         :param column: Column index
         :type column: int
-        :param to_string: Ignored in this implementation
         :return: Column name
         :rtype: str
         """
@@ -79,7 +78,7 @@ class IfcTreeItem(TreeItem):
         if filename:
             self._filenames.append(filename)
 
-    def data(self, column, to_string=True):
+    def data(self, column):
         """Get the data for the column using IfcOpenShell
 
         The info colums are always part of the view, but may be hidden.
@@ -89,7 +88,6 @@ class IfcTreeItem(TreeItem):
 
         :param column: Column index
         :type column: int
-        :param to_string: Ignored in this implementation
         :return: Data for the column
         :rtype: str or None
         """

@@ -69,14 +69,13 @@ class TreeItem(QObject):
             parent = parent.parent()
         return level
 
-    def data(self, column, to_string=True):
+    def data(self, column):
         """Get the data for a column
 
         For the first column, the number of children and leaves is added to the string.
 
         :param column: The column number
         :type column: int
-        :param to_string: Ignored in this implementation
         :return: The data for the column
         :rtype: str or None
         """
@@ -124,7 +123,7 @@ class TreeItem(QObject):
             return self._parent.children.index(self)
         return 0
 
-    def search(self, pattern, column=0, returnbool=False):
+    def search(self, pattern, column=0):
         """Find all items with a given regex pattern in column
 
         Recursively search the children for items with the given label.
@@ -140,18 +139,14 @@ class TreeItem(QObject):
         if column == 0:
             column_data = self.label
         else:
-            column_data = self.data(column, to_string=False)
+            column_data = self.data(column)
         
 
         if column_data is None:
             column_data = ""
-        elif not isinstance(pattern, SearchInList):
-            column_data = str(column_data)
 
         match = pattern.match(column_data)
         if match.hasMatch():
-            # if returnbool:
-            #     return True
             items.append(self)
 
         for child in self._children:
