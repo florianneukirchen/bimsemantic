@@ -11,22 +11,16 @@ class CopyMixin:
 
     def copy_active_cell_to_clipboard(self):
         """Copy the active cell to the clipboard"""
-        widget = self.widget()
-        if not widget:
-            return
-        if isinstance(widget, QTreeView):
-            tree = widget
+        if hasattr(self, "overviewtree"):
+            # This is the detail dock, the tree can change (overviewtree or not)
+            tree = self.widget()
         else:
-            # The main widget of the dock is not the treeview
-            try:
-                tree = widget.parent().tree
-            except AttributeError:
-                return
+            tree = self.tree
 
         index = tree.currentIndex()
         if index.isValid():
             data = index.data()
-            if data:
+            if data is not None:
                 data = str(data)
             else:
                 data = ""
