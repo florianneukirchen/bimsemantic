@@ -142,3 +142,9 @@ and then release translation with:
 ```
 pyside6-lrelease bimsemantic/i18n/bimsemantic_de.ts
 ```
+
+### Resources
+
+```
+pyside6-rcc resources.qrc -o resources.py
+```

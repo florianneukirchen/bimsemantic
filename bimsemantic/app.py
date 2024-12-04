@@ -2,6 +2,7 @@ import sys
 import os
 from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import QTranslator, QLocale, QLibraryInfo
+from PySide6.QtGui import QIcon
 
 # Add package to python path
 package_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -12,6 +13,8 @@ from bimsemantic.ui import MainWindow
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    app.setApplicationName("BIMSemantic")
+    app.setWindowIcon(QIcon(":/icons/app-icon.png"))
 
     translator = QTranslator(app)
     locale = QLocale.system().name()
