@@ -26,6 +26,7 @@ class SearchBar(QWidget):
         self._parent = parent
         self.mainwindow = parent.mainwindow
         self.filtermode = filtermode
+        self.is_som = hasattr(self._parent, "autosearch")
 
         self.searchresults = []
         self.current = 0
@@ -70,8 +71,8 @@ class SearchBar(QWidget):
         )
         self.counterlabel = QLabel("-/-")
 
-        is_som = hasattr(self._parent, "autosearch")
-        self.how_button = HowButton(self, is_som=is_som, is_filter=filtermode)
+        
+        self.how_button = HowButton(self, is_som=self.is_som, is_filter=filtermode)
 
 
         self.close_button = QPushButton("")
@@ -168,6 +169,7 @@ class SearchBar(QWidget):
         if self.filtermode:
             self._parent.proxymodel.setFilterKeyColumn(column)
             self._parent.proxymodel.setFilterRegularExpression(regular_expression)
+            self.mainwindow.filterindicator.enable_filter(self.is_som)
             return
 
         items = self._parent.treemodel.root_item.search(
@@ -237,6 +239,7 @@ class SearchBar(QWidget):
         """Remove the filter from the proxy model"""
         self.search_text.setText("")
         self._parent.proxymodel.setFilterRegularExpression(QRegularExpression())
+        self.mainwindow.filterindicator.disable_filter(self.is_som)
 
 
 class HowButton(QPushButton):
@@ -294,7 +297,42 @@ class HowButton(QPushButton):
 
     def is_case_sensitive(self):
         return self.case_sensitive_action.isChecked()
-    
+
+
+class FilterIndicator(QPushButton):
+    def __init__(self, mainwindow):
+        super().__init__()
+        self.mainwindow = mainwindow
+        self.setFlat(True)
+        self.setIcon(QIcon(":/icons/funnel.png"))
+        self.setToolTip(self.tr("Filter active"))
+        self.menu = QMenu()
+        self.setMenu(self.menu)
+        self.clear_ifc_action = QAction(self.tr("Clear IFC filter"), self)
+        self.clear_ifc_action.isEnabled = False
+        self.clear_som_action = QAction(self.tr("Clear SOM filter"), self)
+        self.clear_som_action.isEnabled = False
+        self.menu.addAction(self.clear_ifc_action)
+        self.menu.addAction(self.clear_som_action)
+        self.hide()
+
+    def enable_filter(self, is_som):
+        if is_som:
+            self.clear_som_action.setEnabled(True)
+        else:
+            self.clear_ifc_action.setEnabled(True)
+        self.show()
+
+    def disable_filter(self, is_som):
+        if is_som:
+            self.clear_som_action.setEnabled(False)
+        else:
+            self.clear_ifc_action.setEnabled(False)
+        if not self.clear_ifc_action.isEnabled and not self.clear_som_action.isEnabled:
+            self.hide()
+
+
+
 class SearchInList():
     def __init__(self, pattern, options):
         self.options = options

@@ -31,6 +31,7 @@ from bimsemantic.ui import (
     PsetDockWidget,
     DetailsDock,
     SomDockWidget,
+    FilterIndicator,
 )
 from bimsemantic.resources import resources
 
@@ -49,6 +50,8 @@ class MainWindow(QMainWindow):
         self.progressbar = QProgressBar()
         self.progressbar.setMaximumWidth(150)
         self.infolabel = QLabel(self.tr("No open file"))
+        self.filterindicator = FilterIndicator(self)
+        self.statusbar.addPermanentWidget(self.filterindicator)
         self.statusbar.addPermanentWidget(self.infolabel)
         self.statusbar.addPermanentWidget(self.progressbar)
 
