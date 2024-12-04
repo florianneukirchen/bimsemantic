@@ -9,7 +9,6 @@
         <file alias="funnel--plus.png">fugue_icons/funnel--plus.png</file>
         <file alias="custom-tree.png">fugue_icons/tree--plus.png</file>
         <file alias="binocular.png">fugue_icons/binocular.png</file>
-        <file alias="binocular--minus.png">fugue_icons/binocular--minus.png</file>
         <file alias="binocular--arrow.png">fugue_icons/binocular--arrow.png</file>
         <file alias="open-som.png">fugue_icons/blue-document-node.png</file>
         <file alias="close-som.png">fugue_icons/blue-document--minus.png</file>

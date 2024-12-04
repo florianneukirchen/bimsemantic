@@ -16,6 +16,7 @@ from PySide6.QtWidgets import (
     QCheckBox,
     QFrame,
     QApplication,
+    QStyle,
 )
 
 # from ifcopenshell import entity_instance
@@ -735,7 +736,7 @@ class MainWindow(QMainWindow):
         )
 
         self.stop_auto_act = QAction(
-            QIcon(":icons/binocular--minus.png"),
+            self.style().standardIcon(QStyle.StandardPixmap.SP_BrowserStop),
             self.tr("Stop auto search"),
             self,
             statusTip=self.tr("Stop the auto search in the SOM"),
