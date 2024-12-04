@@ -121,7 +121,7 @@ class MainWindow(QMainWindow):
                 dock.copy_active_cell_to_clipboard()
             else:
                 dock.copy_selection_to_clipboard()
-        except AttributeError:
+        except AttributeError: 
             pass
 
 

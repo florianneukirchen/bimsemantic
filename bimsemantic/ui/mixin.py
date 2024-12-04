@@ -35,34 +35,62 @@ class CopyMixin:
 
     def copy_selection_to_clipboard(self):
         """Copy the active row to the clipboard"""
-        widget = self.widget()
-        if not widget:
-            return
-        if isinstance(widget, QTreeView):
-            tree = widget
+        if hasattr(self, "overviewtree"):
+            # This is the detail dock, it does not have a proxy model and 
+            # the tree can change (overviewtree or not)
+            tree = self.widget()
+            model = tree.model()
+            proxymodel = None
         else:
-            # The main widget of the dock is not the treeview
-            try:
-                tree = widget.parent().tree
-            except AttributeError:
-                return
+            tree = self.tree
+            model = self.treemodel
+            proxymodel = self.proxymodel
 
+        # Index of active cell
         index = tree.currentIndex()
         if index.isValid():
             row = index.row()
             parent = index.parent()
-            model = tree.model()
+
             data = []
+            # Iterate through the columns of the active row
             for col in range(model.columnCount()):
                 if tree.isColumnHidden(col):
                     continue
-                index = model.index(row, col, parent)
+                if proxymodel:
+                    index = proxymodel.index(row, col, parent)
+                else:
+                    index = model.index(row, col, parent)
                 row_data = index.data()
-                if row_data:
+                if row_data is not None:
                     data.append(str(row_data))
                 else:
                     data.append("")
+
+            add_level = self.mainwindow.chk_copy_with_level.isChecked()
+            if add_level:
+                if proxymodel is not None:
+                    index = proxymodel.mapToSource(index)
+                item = index.internalPointer()
+                level = item.level()
+                data.insert(0, str(level))     
+
             data = "\t".join(data)
+
+
+            if self.mainwindow.chk_copy_with_headers.isChecked() and proxymodel is not None:
+                # the detail view does not have a header and does not have a proxy model
+                header = []
+                if add_level:
+                    header.append("Level")
+                for col in range(model.columnCount()):
+                    if tree.isColumnHidden(col):
+                        continue
+                    header.append(str(model.headerData(col)))
+                header = "\t".join(header)
+                data = header + "\n" + data
+
+
             clipboard = QApplication.clipboard()
             clipboard.setText(data)
 
