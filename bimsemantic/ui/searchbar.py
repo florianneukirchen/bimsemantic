@@ -81,9 +81,7 @@ class SearchBar(QWidget):
         )
         self.counterlabel = QLabel("-/-")
 
-        
-        self.how_button = HowButton(self, is_som=self.is_som, is_filter=filtermode)
-
+        self.how_button = HowButton(self, is_filter=filtermode)
 
         self.close_button = QPushButton("")
         self.close_button.setIcon(
@@ -150,9 +148,15 @@ class SearchBar(QWidget):
             pattern = QRegularExpression.anchoredPattern(pattern) 
         elif how == "Wildcard":
             pattern = QRegularExpression.wildcardToRegularExpression(pattern)
+        elif how == "List Contains":
+            elements = pattern.split(",")
+            elements = [element.strip() for element in elements]
+            if len(elements) > 1:
+                pattern = "|".join(elements)
+                pattern = f"({pattern})"
 
         else:
-            # Regex or List Contains    
+            # Regex     
             pass
         
 
@@ -161,10 +165,8 @@ class SearchBar(QWidget):
         else:
             options = QRegularExpression.CaseInsensitiveOption
 
-        if how == "List Contains":
-            regular_expression = "" # TODO implement List Contains
-        else:    
-            regular_expression = QRegularExpression(pattern, options)
+
+        regular_expression = QRegularExpression(pattern, options)
 
         if not regular_expression.isValid():
             self.search_text.setStyleSheet("color: red; background-color: yellow")
@@ -255,7 +257,7 @@ class SearchBar(QWidget):
 
 
 class HowButton(QPushButton):
-    def __init__(self, parent, is_som=False, is_filter=False):
+    def __init__(self, parent, is_filter=False):
         super().__init__()
         if is_filter:
             self.setIcon(QIcon(":/icons/funnel.png"))
@@ -265,7 +267,6 @@ class HowButton(QPushButton):
         self.setMinimumWidth(30)
         self.setToolTip("Search mode")
         self._parent = parent
-        self.is_som = is_som
 
         self.how_menu = QMenu()
         self.setMenu(self.how_menu)
@@ -280,9 +281,7 @@ class HowButton(QPushButton):
         self.how_menu.addAction(self.action_exact)
         self.how_menu.addAction(self.action_wildcard)
         self.how_menu.addAction(self.action_regex)
-
-        if is_som:
-            self.how_menu.addAction(self.action_listcontains)
+        self.how_menu.addAction(self.action_listcontains)
 
         self.how_menu.addSeparator()
 
@@ -335,56 +334,3 @@ class FilterIndicator(QPushButton):
             self.hide()
 
 
-
-class SearchInList():
-    def __init__(self, pattern, options):
-        self.options = options
-        self._isvalid = True
-        patterns = pattern.split(",")
-        patterns = [pattern.strip() for pattern in patterns]
-        self.patterns = []
-        for pattern in patterns:
-            if "-" in pattern:
-                start, end = pattern.split("-")
-                try:
-                    start = int(start)
-                    end = int(end)
-                except ValueError:
-                    self._isvalid = False
-                range_str = [str(i) for i in range(start, end+1)]
-                self.patterns.extend(range_str)
-            else:
-                if self.options == QRegularExpression.CaseInsensitiveOption:
-                    pattern = str(pattern).lower()
-                else:
-                    pattern = str(pattern)
-                self.patterns.append(str(pattern))
-
-        if not patterns:
-            self._isvalid = False
-
-    def isValid(self):
-        return self._isvalid
-    
-    def match(self, item_list):
-        if not isinstance(item_list, list):
-            return self.Match(False)
-
-        item_list = [str(item) for item in item_list]
-        if self.options == QRegularExpression.CaseInsensitiveOption:
-            item_list = [item.lower() for item in item_list]
-
-        for pattern in self.patterns:
-            if pattern in item_list:
-                return self.Match(True)
-        return self.Match(False)
-
-    class Match:
-        def __init__(self, hasmatch):
-            self._hasmatch = hasmatch
-    
-        def hasMatch(self):
-            return self._hasmatch
-    
-        def __repr__(self):
-            return f"Match {self._hasmatch}"

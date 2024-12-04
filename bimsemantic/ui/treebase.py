@@ -6,7 +6,6 @@ from PySide6.QtCore import (
     QObject,
 )
 
-from bimsemantic.ui import SearchInList
 
 
 class TreeItem(QObject):
