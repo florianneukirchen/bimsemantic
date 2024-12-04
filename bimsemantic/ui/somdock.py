@@ -135,6 +135,7 @@ class SomDockWidget(CopyMixin, QDockWidget):
         self.treemodel = SomTreeModel(data, self)
         self.proxymodel = QSortFilterProxyModel(self)
         self.proxymodel.setSourceModel(self.treemodel)
+        self.proxymodel.setRecursiveFilteringEnabled(True)
 
         self.tree = QTreeView(self)
         self.tree.setModel(self.proxymodel)
