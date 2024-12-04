@@ -87,12 +87,14 @@ class SearchBar(QWidget):
         self.layout.addWidget(self.stop_auto_button)
         self.layout.addWidget(self.search_prev_button)
         self.layout.addWidget(self.search_next_button)
-        self.layout.addWidget(self.counterlabel)
+        
 
         if filtermode:
             self.reset_filter_button = QPushButton("Reset Filter")
             self.layout.addWidget(self.reset_filter_button)
             self.reset_filter_button.clicked.connect(self.remove_filter)
+        else:
+            self.layout.addWidget(self.counterlabel)
 
         self.layout.addStretch()
         self.layout.addWidget(self.close_button)
