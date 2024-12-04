@@ -26,7 +26,17 @@ class SearchBar(QWidget):
         self._parent = parent
         self.mainwindow = parent.mainwindow
         self.filtermode = filtermode
+
         self.is_som = hasattr(self._parent, "autosearch")
+
+        if self.filtermode:
+            if self.is_som:
+                self.indicator_act = QAction(self.tr("Clear SOM filter"), self)
+            else:
+                self.indicator_act = QAction(self.tr("Clear IFC filter"), self)
+            self.indicator_act.setEnabled(False)
+            self.mainwindow.filterindicator.menu.addAction(self.indicator_act)
+            self.indicator_act.triggered.connect(self.remove_filter)
 
         self.searchresults = []
         self.current = 0
@@ -169,7 +179,8 @@ class SearchBar(QWidget):
         if self.filtermode:
             self._parent.proxymodel.setFilterKeyColumn(column)
             self._parent.proxymodel.setFilterRegularExpression(regular_expression)
-            self.mainwindow.filterindicator.enable_filter(self.is_som)
+            self.mainwindow.filterindicator.show()
+            self.indicator_act.setEnabled(True)
             return
 
         items = self._parent.treemodel.root_item.search(
@@ -239,7 +250,8 @@ class SearchBar(QWidget):
         """Remove the filter from the proxy model"""
         self.search_text.setText("")
         self._parent.proxymodel.setFilterRegularExpression(QRegularExpression())
-        self.mainwindow.filterindicator.disable_filter(self.is_som)
+        self.indicator_act.setEnabled(False)
+        self.mainwindow.filterindicator.check()
 
 
 class HowButton(QPushButton):
@@ -300,6 +312,7 @@ class HowButton(QPushButton):
 
 
 class FilterIndicator(QPushButton):
+    """Indicator for the status bar"""
     def __init__(self, mainwindow):
         super().__init__()
         self.mainwindow = mainwindow
@@ -308,27 +321,17 @@ class FilterIndicator(QPushButton):
         self.setToolTip(self.tr("Filter active"))
         self.menu = QMenu()
         self.setMenu(self.menu)
-        self.clear_ifc_action = QAction(self.tr("Clear IFC filter"), self)
-        self.clear_ifc_action.isEnabled = False
-        self.clear_som_action = QAction(self.tr("Clear SOM filter"), self)
-        self.clear_som_action.isEnabled = False
-        self.menu.addAction(self.clear_ifc_action)
-        self.menu.addAction(self.clear_som_action)
         self.hide()
 
-    def enable_filter(self, is_som):
-        if is_som:
-            self.clear_som_action.setEnabled(True)
-        else:
-            self.clear_ifc_action.setEnabled(True)
-        self.show()
 
-    def disable_filter(self, is_som):
-        if is_som:
-            self.clear_som_action.setEnabled(False)
-        else:
-            self.clear_ifc_action.setEnabled(False)
-        if not self.clear_ifc_action.isEnabled and not self.clear_som_action.isEnabled:
+    def check(self):
+        """Hide if no filter is active"""
+        about_to_hide = True
+        for action in self.menu.actions():
+            if action.isEnabled():
+                about_to_hide = False
+                break
+        if about_to_hide:
             self.hide()
 
 
