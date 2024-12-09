@@ -47,6 +47,7 @@ class MainWindow(QMainWindow):
         self.setGeometry(100, 100, 800, 600)
 
         self.ifcfiles = IfcFiles()
+        self.idsrules = []
 
         self.statusbar = self.statusBar()
         self.progressbar = QProgressBar()
@@ -167,7 +168,7 @@ class MainWindow(QMainWindow):
 
 
     def open_som_dlg(self):
-        """Open SOM dialog to load a SOM list from a JSON file"""
+        """Open SOM file dialog to load a SOM list from a JSON file"""
         filename, _ = QFileDialog.getOpenFileName(
             self,
             self.tr("Open SOM list"),
@@ -202,6 +203,7 @@ class MainWindow(QMainWindow):
         self.progressbar.setRange(0, 100)
         self.statusbar.showMessage(self.tr("SOM loaded"), 5000)
 
+
     def close_som(self):
         """Delete the SOM dockwidget"""
         if self.somdock:
@@ -211,6 +213,18 @@ class MainWindow(QMainWindow):
             self.search_som_act.setEnabled(False)
             self.somdock.deleteLater()
             self.somdock = None
+
+    def load_ids_dlg(self):
+        """Open a dialog to load IDS rules"""
+        filename, _ = QFileDialog.getOpenFileName(
+            self,
+            self.tr("Load IDS rules"),
+            "",
+            self.tr("IDS files (*.ids)"),
+        )
+        if filename:
+            print(filename)
+
 
     def open_file_dlg(self):
         """Open file dialog for IFC files"""
@@ -763,6 +777,17 @@ class MainWindow(QMainWindow):
         self.som_menu.addAction(self.stop_auto_act)
         self.toolbar.addAction(self.stop_auto_act)
 
+        # Validation menu
+        self.validation_menu = self.menuBar().addMenu(self.tr("&Validation"))
+
+        self.load_ids_act = QAction(
+            self.tr("&Load IDS rules"),
+            self,
+            statusTip=self.tr("Load IDS file with validation rules"),
+            triggered=self.load_ids_dlg,
+        )
+        self.validation_menu.addAction(self.load_ids_act)
+
         # Help menu
         self.help_menu = self.menuBar().addMenu(self.tr("&Help"))
 
@@ -799,6 +824,11 @@ class MainWindow(QMainWindow):
         self.tabifyDockWidget(self.columnsdock, self.psetdock)
         self.detailsdock.raise_()
 
+        # Validaton dock
+        self.validationdock = QDockWidget(self.tr("&Validation"), self)
+        self.addDockWidget(Qt.BottomDockWidgetArea, self.validationdock)
+        self.validationdock.hide()
+
         # Add actions to menu
         self.overview_act = QAction(
             self.tr("&Files in details dock"),
@@ -821,7 +851,8 @@ class MainWindow(QMainWindow):
         self.view_menu.addAction(self.chk_show_qsets)
         self.qsetdock = None
 
-        # Add toggle toolbar
+        # more toggle actions
+        self.view_menu.addAction(self.validationdock.toggleViewAction())
         self.view_menu.addSeparator()
         self.view_menu.addAction(self.toolbar.toggleViewAction())
 
