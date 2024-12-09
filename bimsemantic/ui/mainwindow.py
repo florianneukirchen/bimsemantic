@@ -34,6 +34,7 @@ from bimsemantic.ui import (
     DetailsDock,
     SomDockWidget,
     FilterIndicator,
+    ValidationDockWidget,
 )
 from bimsemantic.resources import resources
 
@@ -102,9 +103,16 @@ class MainWindow(QMainWindow):
             json_filenames = [
                 filename for filename in filenames if filename.endswith(".json")
             ]
+            ids_filenames = [
+                filename for filename in filenames if filename.endswith(".ids")
+            ]
             self.open_ifc_files(ifc_filenames)
             if json_filenames:
                 self.open_som(json_filenames[0])
+            if ids_filenames:
+                for filename in ids_filenames:
+                    self.validationdock.add_file(filename)
+                self.validationdock.show()
 
     def get_active_dock(self):
         """Get the dock or tab widget of a treeview widget"""
@@ -223,7 +231,8 @@ class MainWindow(QMainWindow):
             self.tr("IDS files (*.ids)"),
         )
         if filename:
-            print(filename)
+            self.validationdock.add_file(filename)
+            self.validationdock.show()
 
 
     def open_file_dlg(self):
@@ -825,7 +834,7 @@ class MainWindow(QMainWindow):
         self.detailsdock.raise_()
 
         # Validaton dock
-        self.validationdock = QDockWidget(self.tr("&Validation"), self)
+        self.validationdock = ValidationDockWidget(self)
         self.addDockWidget(Qt.BottomDockWidgetArea, self.validationdock)
         self.validationdock.hide()
 

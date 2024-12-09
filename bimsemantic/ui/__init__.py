@@ -1,6 +1,7 @@
 from .mixin import *
 from .searchbar import *
 from .detailview import *
+from .validationdock import *
 from .customtreedlg import *
 from .ifctrees import *
 from .ifctabs import IfcTabs, IfcTreeTab

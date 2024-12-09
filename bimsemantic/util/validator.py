@@ -7,7 +7,9 @@ class IfsValidator:
     def __init__(self, filename):
         if not os.path.exists(filename):
             raise FileNotFoundError(f"File {filename} not found.")
-        self.filename = filename
+        self._abspath = os.path.abspath(filename)
+        self._filename = os.path.basename(self._abspath)
+
         self.rules = ifctester.ids.open(filename)
         self.report = None
 
@@ -21,6 +23,14 @@ class IfsValidator:
         if not self.report:
             raise ValueError("No report. Run validate() first.")
         self.report.to_file(filename)
+
+    @property
+    def filename(self):
+        return self._filename
+    
+    @property
+    def abspath(self):
+        return self._abspath
 
 
 if __name__ == "__main__":
