@@ -17,6 +17,8 @@ from PySide6.QtWidgets import (
     QFrame,
     QApplication,
     QStyle,
+    QToolButton,
+    QMenu,
 )
 
 # from ifcopenshell import entity_instance
@@ -549,7 +551,6 @@ class MainWindow(QMainWindow):
             triggered=self.copy_to_clipboard,
         )
         self.edit_menu.addAction(self.copy_rows_act)
-        self.toolbar.addAction(self.copy_rows_act)
 
         self.copy_cell_act = QAction(
             QIcon(":/icons/copy-cell.png"),
@@ -560,7 +561,6 @@ class MainWindow(QMainWindow):
             triggered=lambda: self.copy_to_clipboard(only_cell=True),
         )
         self.edit_menu.addAction(self.copy_cell_act)
-        self.toolbar.addAction(self.copy_cell_act)
 
         self.copyoptions_menu = self.edit_menu.addMenu(self.tr("Copy options"))
 
@@ -575,6 +575,20 @@ class MainWindow(QMainWindow):
         )
         self.chk_copy_with_level.setChecked(False)
         self.copyoptions_menu.addAction(self.chk_copy_with_level)
+
+        # Toolbar 
+        copybutton = QToolButton()
+        copybutton.setIcon(QIcon(":/icons/edit-copy.png"))
+        copybutton.setPopupMode(QToolButton.MenuButtonPopup)
+        copybutton.setToolTip(self.tr("Copy selected rows to clipboard"))
+        copybutton.setDefaultAction(self.copy_rows_act)
+        copybutton.addAction(self.chk_copy_with_headers)
+        copybutton.addAction(self.chk_copy_with_level)
+        self.toolbar.addWidget(copybutton)
+
+        self.toolbar.addAction(self.copy_cell_act)
+
+        # Edit - Search
 
         self.search_act = QAction(
             QIcon(":/icons/binocular.png"),
@@ -893,3 +907,5 @@ class SelectByDialog(QDialog):
         if self.label != "ID":
             return None
         return self.combo.currentText()
+
+
