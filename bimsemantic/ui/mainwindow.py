@@ -840,6 +840,10 @@ class MainWindow(QMainWindow):
             by Yusuke Kamiyamane <br/>
             (Creative Commons Attribution 3.0 License)
             </p>
+
+            <p>
+            The app icon is AI generated with <a href="https://leonardo.ai/">Leonardo.ai</a>.
+            </p>
             """,
         )
 
