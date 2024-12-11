@@ -4,7 +4,6 @@ import ifcopenshell.util.element
 from PySide6.QtWidgets import QDockWidget, QTreeView
 from bimsemantic.ui import CopyMixin, ContextMixin
 from bimsemantic.util import IfsValidator
-import statistics
 
 
 class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
@@ -20,6 +19,7 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
         self.tree.setModel(self.proxymodel)
         self.tree.setSortingEnabled(True)
         self.tree.setAlternatingRowColors(True)
+        self.tree.setColumnWidth(0, 250)
         self.setWidget(self.tree)
 
 
@@ -48,4 +48,11 @@ class ValidationTreeModel(TreeModelBaseclass):
             parent=self._rootItem,
         )
         self._rootItem.appendChild(file_item)
+        for spec in validator.rules.specifications:
+            spec_item = TreeItem(
+                [spec.name, ""],
+                parent=file_item,
+            )
+            file_item.appendChild(spec_item)
+            
         self.endResetModel()
