@@ -44,7 +44,7 @@ class ValidationTreeModel(TreeModelBaseclass):
     def add_file(self, validator):
         self.beginResetModel()
         file_item = TreeItem(
-            [validator.filename, ""],
+            [f"{validator.title} | {validator.filename}", ""],
             parent=self._rootItem,
         )
         self._rootItem.appendChild(file_item)

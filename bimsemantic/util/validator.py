@@ -11,10 +11,11 @@ class IfsValidator:
         self._filename = os.path.basename(self._abspath)
 
         self.rules = ifctester.ids.open(filename)
+        self._title = self.rules.info['title']
         self.report = None
 
-    def validate(self, model):
-        self.rules.validate(model)
+    def validate(self, ifc_file):
+        self.rules.validate(ifc_file.model)
         self.report = ifctester.reporter.Bcf(self.rules)
         # Return the report as JSON
         return self.report.report()
@@ -31,6 +32,13 @@ class IfsValidator:
     @property
     def abspath(self):
         return self._abspath
+    
+    @property
+    def title(self):
+        return self._title
+    
+    def __repr__(self):
+        return f"IfsValidator({self._title}, {self._filename})"
 
 
 if __name__ == "__main__":
