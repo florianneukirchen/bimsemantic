@@ -23,7 +23,7 @@ from PySide6.QtWidgets import (
 
 # from ifcopenshell import entity_instance
 import bimsemantic
-from bimsemantic.util import IfcFiles
+from bimsemantic.util import IfcFiles, Validators
 from bimsemantic.ui import (
     IfcTabs,
     IfcTreeTab,
@@ -347,6 +347,9 @@ class MainWindow(QMainWindow):
                 custom_tab.deleteLater()
 
         self.detailsdock.reset()
+        validators = Validators()
+        validators.results_by_guid = {}
+        validators.reporters = {}
         self.ifcfiles = IfcFiles()
         self.column_treemodel = ColumnsTreeModel(parent=self)
         self.psetdock.reset()

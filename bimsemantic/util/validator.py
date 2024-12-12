@@ -25,6 +25,7 @@ class Validators:
         self.ifc_files = ifc_files
         self._initialized = True
 
+
     def add_validator(self, validator):
         self.validators.append(validator)
 
@@ -78,6 +79,8 @@ class Validators:
     @property
     def is_validated(self):
         return self.results_by_guid != {}
+
+
 
 class IfsValidator:
     def __init__(self, filename):
