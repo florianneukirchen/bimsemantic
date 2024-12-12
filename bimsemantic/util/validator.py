@@ -5,11 +5,25 @@ import os
 
 
 class Validators:
-    def __init__(self, ifc_files):
+    _instance = None
+
+    def __new__(cls, ifc_files=None):
+        # Singleton pattern
+        # https://python-patterns.guide/gang-of-four/singleton/
+        if cls._instance is None:
+            cls._instance = super(Validators, cls).__new__(cls)
+            cls._instance.__init__(ifc_files)
+            cls._instance._initialized = False
+        return cls._instance
+    
+    def __init__(self, ifc_files=None):
+        if hasattr(self, '_initialized'):
+            return
         self.validators = []
         self.reporters = {}
         self.results_by_guid = {}
         self.ifc_files = ifc_files
+        self._initialized = True
 
     def add_validator(self, validator):
         self.validators.append(validator)
@@ -22,6 +36,7 @@ class Validators:
                 reporter = validator.validate_file(ifc_file)
                 self.reporters[validator.title][ifc_file.filename] = reporter
                 self.analyze_results(reporter)
+        print(self.results_by_guid)
                 
     def analyze_results(self, reporter):
         for spec in reporter.results['specifications']:
