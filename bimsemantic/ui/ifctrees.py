@@ -5,6 +5,7 @@ from bimsemantic.ui import (
     CustomTreeMaker,
     CustomFieldType,
 )
+from bimsemantic.util import Validators
 import ifcopenshell.util.element
 
 
@@ -64,6 +65,7 @@ class IfcTreeItem(TreeItem):
         self._children = []
         self._filenames = []
         self._columntree = columntree
+        self._validators = Validators()
         if self._ifc_item.is_a("IfcElementType"):
             linked_object_type = None
         else:
@@ -136,7 +138,12 @@ class IfcTreeItem(TreeItem):
             return container
         if column == 10:
             # Validation
-            return None
+            if self.guid in self._validators.results_by_guid:
+                passed, failed = self._validators.results_by_guid[self.guid]
+                return f"{passed} passed {failed} failed"
+            else:
+                return None
+            
 
         psets = ifcopenshell.util.element.get_psets(self._ifc_item)
         pset_name, attribute = self._columntree.col(column)

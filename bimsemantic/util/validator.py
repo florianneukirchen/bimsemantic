@@ -36,7 +36,6 @@ class Validators:
                 reporter = validator.validate_file(ifc_file)
                 self.reporters[validator.title][ifc_file.filename] = reporter
                 self.analyze_results(reporter)
-        print(self.results_by_guid)
                 
     def analyze_results(self, reporter):
         for spec in reporter.results['specifications']:
@@ -66,7 +65,7 @@ class Validators:
 
     @property
     def is_validated(self):
-        return self.results_by_guid == {}
+        return self.results_by_guid != {}
 
 class IfsValidator:
     def __init__(self, filename):

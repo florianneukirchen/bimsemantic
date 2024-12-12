@@ -31,6 +31,15 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
 
     def run_all_validations(self):
         self.validators.validate()
+        # Update column 10 in the ifc tree views and eventually unhide it
+        for i in range(self.mainwindow.tabs.tabs.count()):
+            proxymodel = self.mainwindow.tabs.tabs.widget(i).proxymodel
+            top_left = proxymodel.index(0, 10)
+            bottom_right = proxymodel.index(proxymodel.rowCount() - 1, 10)
+            proxymodel.dataChanged.emit(top_left, bottom_right, [Qt.DisplayRole])
+            tree = self.mainwindow.tabs.tabs.widget(i).tree
+            tree.setColumnHidden(10, False)
+
         
 class ValidationTreeModel(TreeModelBaseclass):
     def __init__(self, data, parent):
