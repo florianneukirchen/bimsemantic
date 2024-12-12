@@ -29,7 +29,9 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
         self.treemodel.add_file(validator)
         self.tree.expandAll()
 
-
+    def run_all_validations(self):
+        self.validators.validate()
+        
 class ValidationTreeModel(TreeModelBaseclass):
     def __init__(self, data, parent):
         super(ValidationTreeModel, self).__init__(data, parent)
