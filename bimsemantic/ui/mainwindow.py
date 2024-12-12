@@ -797,12 +797,20 @@ class MainWindow(QMainWindow):
         )
         self.validation_menu.addAction(self.load_ids_act)
 
+        self.close_ids_act = QAction(
+            self.tr("&Close IDS file"),
+            self,
+            statusTip=self.tr("Close IDS file with validation rules"),
+        )
+        self.validation_menu.addAction(self.close_ids_act)
+
         self.run_all_validations_act = QAction(
             self.tr("&Run all validations"),
             self,
             statusTip=self.tr("Run validation using all validation rules"),
         )
         self.validation_menu.addAction(self.run_all_validations_act)
+
 
         # Help menu
         self.help_menu = self.menuBar().addMenu(self.tr("&Help"))
@@ -845,6 +853,7 @@ class MainWindow(QMainWindow):
         self.addDockWidget(Qt.BottomDockWidgetArea, self.validationdock)
         self.validationdock.hide()
         self.run_all_validations_act.triggered.connect(self.validationdock.run_all_validations)
+        self.close_ids_act.triggered.connect(self.validationdock.close_file)
 
         # Add actions to menu
         self.overview_act = QAction(

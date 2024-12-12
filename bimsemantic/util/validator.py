@@ -28,6 +28,18 @@ class Validators:
     def add_validator(self, validator):
         self.validators.append(validator)
 
+    def remove_validator(self, filename):
+
+        for validator in self.validators:
+            if validator.filename == filename:
+                self.validators.remove(validator)
+                if validator.title in self.reporters:
+                    del self.reporters[validator.title]
+                break
+
+        self.results_by_guid = {}
+
+
     def validate(self):
         for validator in self.validators:
             if not validator.title in self.reporters:

@@ -34,6 +34,10 @@ class TreeItem(QObject):
         """Add a child item to the item"""
         self._children.append(item)
 
+    def removeChild(self, item):
+        """Remove a child item from the item"""
+        self._children.remove(item)
+
     def child(self, row):
         """Get a child item by its row
 

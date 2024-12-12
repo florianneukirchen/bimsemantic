@@ -29,8 +29,25 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
         self.treemodel.add_file(validator)
         self.tree.expandAll()
 
+    def close_file(self):
+        active = self.tree.currentIndex()
+        if not active.isValid():
+            self.mainwindow.statusbar.showMessage(self.tr("No file selected"), 5000)
+            return
+        item = self.proxymodel.mapToSource(active).internalPointer()
+        filename = item.id
+        if filename is None:
+            # A spec item was selected
+            filename = item.parent().id
+        self.validators.remove_validator(filename)
+        self.treemodel.remove_file(filename)
+        self.update_ifc_views()
+
     def run_all_validations(self):
         self.validators.validate()
+        self.update_ifc_views()
+
+    def update_ifc_views(self):
         # Update column 10 in the ifc tree views and eventually unhide it
         for i in range(self.mainwindow.tabs.tabs.count()):
             proxymodel = self.mainwindow.tabs.tabs.widget(i).proxymodel
@@ -57,6 +74,7 @@ class ValidationTreeModel(TreeModelBaseclass):
         file_item = TreeItem(
             [f"{validator.title} | {validator.filename}", ""],
             parent=self._rootItem,
+            id=validator.filename,
         )
         self._rootItem.appendChild(file_item)
         for spec in validator.rules.specifications:
@@ -66,4 +84,13 @@ class ValidationTreeModel(TreeModelBaseclass):
             )
             file_item.appendChild(spec_item)
             
+        self.endResetModel()
+
+    def remove_file(self, filename):
+        for child in self._rootItem.children:
+            if child.id == filename:
+                file_item = child
+                break
+        self.beginResetModel()
+        self._rootItem.removeChild(file_item)
         self.endResetModel()
