@@ -3,6 +3,56 @@ import ifctester.reporter
 import ifcopenshell
 import os
 
+
+class Validators:
+    def __init__(self, ifc_files):
+        self.validators = []
+        self.reporters = {}
+        self.results_by_guid = {}
+        self.ifc_files = ifc_files
+
+    def add_validator(self, validator):
+        self.validators.append(validator)
+
+    def validate(self):
+        for validator in self.validators:
+            if not validator.title in self.reporters:
+                self.reporters[validator.title] = {}
+            for ifc_file in self.ifc_files:
+                reporter = validator.validate_file(ifc_file)
+                self.reporters[validator.title][ifc_file.filename] = reporter
+                self.analyze_results(reporter)
+                
+    def analyze_results(self, reporter):
+        for spec in reporter.results['specifications']:
+            for requirement in spec['requirements']:
+                for entity in requirement['failed_entities']:
+                    element = entity['element']
+                    self.add_failed(element.GlobalId) 
+                for entity in requirement['passed_entities']:
+                    element = entity['element']
+                    self.add_passed(element.GlobalId) 
+
+    def add_passed(self, guid):
+        if not guid in self.results_by_guid:
+            self.results_by_guid[guid] = [1,0]
+        else:
+            self.results_by_guid[guid][0] += 1
+
+    def add_failed(self, guid):
+        if not guid in self.results_by_guid:
+            self.results_by_guid[guid] = [0,1]
+        else:
+            self.results_by_guid[guid][1] += 1
+
+    def save_bcf(self, validator_title, ifc_filename, output_filename):
+        reporter = self.reporters[validator_title][ifc_filename]
+        reporter.to_file(output_filename)
+
+    @property
+    def is_validated(self):
+        return self.results_by_guid == {}
+
 class IfsValidator:
     def __init__(self, filename):
         if not os.path.exists(filename):
@@ -12,18 +62,14 @@ class IfsValidator:
 
         self.rules = ifctester.ids.open(filename)
         self._title = self.rules.info['title']
-        self.report = None
 
-    def validate(self, ifc_file):
+    def validate_file(self, ifc_file):
         self.rules.validate(ifc_file.model)
-        self.report = ifctester.reporter.Bcf(self.rules)
-        # Return the report as JSON
-        return self.report.report()
+        reporter = ifctester.reporter.Bcf(self.rules)
+        reporter.report()
+        return reporter
     
-    def save_bcf(self, filename):
-        if not self.report:
-            raise ValueError("No report. Run validate() first.")
-        self.report.to_file(filename)
+    
 
     @property
     def filename(self):
@@ -39,6 +85,8 @@ class IfsValidator:
     
     def __repr__(self):
         return f"IfsValidator({self._title}, {self._filename})"
+
+
 
 
 if __name__ == "__main__":

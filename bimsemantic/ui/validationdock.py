@@ -3,14 +3,14 @@ from bimsemantic.ui import TreeItem, TreeModelBaseclass
 import ifcopenshell.util.element
 from PySide6.QtWidgets import QDockWidget, QTreeView
 from bimsemantic.ui import CopyMixin, ContextMixin
-from bimsemantic.util import IfsValidator
+from bimsemantic.util import IfsValidator, Validators
 
 
 class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
     def __init__(self, parent):
         super().__init__(self.tr("&Validation"), parent)
         self.mainwindow = parent
-        self.validators = []
+        self.validators = Validators(self.mainwindow.ifcfiles)
         
         self.treemodel = ValidationTreeModel(None, self)
         self.proxymodel = QSortFilterProxyModel()
@@ -25,7 +25,7 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
 
     def add_file(self, filename):
         validator = IfsValidator(filename)
-        self.validators.append(validator)
+        self.validators.add_validator(validator)
         self.treemodel.add_file(validator)
         self.tree.expandAll()
 
