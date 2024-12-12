@@ -88,13 +88,3 @@ class IfsValidator:
 
 
 
-
-if __name__ == "__main__":
-    folder = '/media/riannek/PortableSSD/ids_testcases'
-    ifc_file = os.path.join(folder, "IDS_wooden-windows_IFC.ifc")
-    model = ifcopenshell.open(ifc_file)
-    ids_file = os.path.join(folder, "IDS_wooden-windows.ids")
-    validator = IfsValidator(ids_file)
-    report = validator.validate(model)
-    print(report)
-    validator.save_bcf("report.bcfzip")
