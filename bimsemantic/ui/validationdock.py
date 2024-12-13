@@ -65,21 +65,21 @@ class ValidationTreeModel(TreeModelBaseclass):
 
     def setup_root_item(self):
         self._rootItem = TreeItem(
-            ["Foo", "Bar"],
+            ["Name", "Description"],
             showchildcount=False,
         )
 
     def add_file(self, validator):
         self.beginResetModel()
         file_item = TreeItem(
-            [f"{validator.title} | {validator.filename}", ""],
+            [f"{validator.title} | {validator.filename}", validator.rules.info['description']],
             parent=self._rootItem,
             id=validator.filename,
         )
         self._rootItem.appendChild(file_item)
         for spec in validator.rules.specifications:
             spec_item = TreeItem(
-                [spec.name, ""],
+                [spec.name, spec.description],
                 parent=file_item,
             )
             file_item.appendChild(spec_item)
