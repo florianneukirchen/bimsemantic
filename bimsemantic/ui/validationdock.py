@@ -63,18 +63,18 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
 class ValidationTreeModel(TreeModelBaseclass):
     def __init__(self, data, parent):
         super(ValidationTreeModel, self).__init__(data, parent)
-        self.column_count = 3
+        self.column_count = 4
 
     def setup_root_item(self):
         self._rootItem = TreeItem(
-            ["Rules", "Description", "If/then"],
+            ["Rules", "Description", "If/then", "Results"],
             showchildcount=False,
         )
 
     def add_file(self, validator):
         self.beginResetModel()
         file_item = TreeItem(
-            [f"{validator.title} | {validator.filename}", validator.rules.info['description']],
+            [f"{validator.title} | {validator.filename}", validator.rules.info.get('description', None)],
             parent=self._rootItem,
             id=validator.filename,
         )
