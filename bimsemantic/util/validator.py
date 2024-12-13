@@ -49,6 +49,8 @@ class Validators:
                 reporter = validator.validate_file(ifc_file)
                 self.reporters[validator.title][ifc_file.filename] = reporter
                 self.analyze_results(reporter)
+
+        print(self.reporters)
                 
     def analyze_results(self, reporter):
         for spec in reporter.results['specifications']:
@@ -94,6 +96,7 @@ class Validators:
                                     'requirement': requirement['description'],
                                     'reason': entity['reason'],
                                     'spec description': spec['description'],
+                                    'ICF file': filename,
                                 }
                                 failed_specs.append(info)
                         for entity in requirement['passed_entities']:
@@ -103,6 +106,7 @@ class Validators:
                                     'spec': spec['name'],
                                     'requirement': requirement['description'],
                                     'spec description': spec['description'],
+                                    'ICF file': filename,
                                 }
                                 passed_specs.append(info)
         return failed_specs, passed_specs

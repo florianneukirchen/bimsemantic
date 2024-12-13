@@ -460,7 +460,7 @@ class IfcDetailsTreeModel(DetailsBaseclass):
                     spec_item = TreeItem([spec["spec"]], parent=failed_item)
                     failed_item.appendChild(spec_item)
                     for k, v in spec.items():
-                        if k != "spec" and not v is None:
+                        if v and k != "spec":
                             spec_item.appendChild(TreeItem([k, v], parent=spec_item))
 
             if passed_specs:
@@ -472,7 +472,7 @@ class IfcDetailsTreeModel(DetailsBaseclass):
                     spec_item = TreeItem([spec["spec"]], parent=passed_item)
                     passed_item.appendChild(spec_item)
                     for k, v in spec.items():
-                        if k != "spec" and not v is None:
+                        if v and k != "spec":
                             spec_item.appendChild(TreeItem([k, v], parent=spec_item))
 
 
