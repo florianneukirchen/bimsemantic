@@ -112,7 +112,10 @@ class MainWindow(QMainWindow):
                 self.open_som(json_filenames[0])
             if ids_filenames:
                 for filename in ids_filenames:
-                    self.validationdock.add_file(filename)
+                    try:
+                        self.validationdock.add_file(filename)
+                    except ValueError:
+                        self.statusbar.showMessage(self.tr("File is not a valid IDS file"), 5000)
                 self.validationdock.show()
 
     def get_active_dock(self):
@@ -232,7 +235,12 @@ class MainWindow(QMainWindow):
             self.tr("IDS files (*.ids)"),
         )
         if filename:
-            self.validationdock.add_file(filename)
+            try:
+                self.validationdock.add_file(filename)
+            except FileNotFoundError:
+                self.statusbar.showMessage(self.tr("File not found"), 5000)
+            except ValueError:
+                self.statusbar.showMessage(self.tr("File is not a valid IDS file"), 5000)
             self.validationdock.show()
 
 

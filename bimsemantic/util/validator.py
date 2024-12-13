@@ -1,7 +1,10 @@
+import xml.etree.ElementTree as ET
+import os
 import ifctester
 import ifctester.reporter
 import ifcopenshell
-import os
+
+
 
 
 class Validators:
@@ -129,7 +132,10 @@ class IfsValidator:
         self._abspath = os.path.abspath(filename)
         self._filename = os.path.basename(self._abspath)
 
-        self.rules = ifctester.ids.open(filename)
+        try:
+            self.rules = ifctester.ids.open(filename)
+        except ET.ParseError:
+            raise ValueError(f"File {self._abspath} is not a valid IFS file.")
         self._title = self.rules.info['title']
 
     def validate_file(self, ifc_file):
