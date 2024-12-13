@@ -35,13 +35,15 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
             self.mainwindow.statusbar.showMessage(self.tr("No file selected"), 5000)
             return
         item = self.proxymodel.mapToSource(active).internalPointer()
-        filename = item.id
-        if filename is None:
-            # A spec item was selected
-            filename = item.parent().id
+        filename = self._item_filename(item)
         self.validators.remove_validator(filename)
         self.treemodel.remove_file(filename)
         self.update_ifc_views()
+
+    def _item_filename(self, item):
+        if item.level() > 0:
+            return self._item_filename(item.parent())
+        return item.id
 
     def run_all_validations(self):
         self.validators.validate()
@@ -61,11 +63,11 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
 class ValidationTreeModel(TreeModelBaseclass):
     def __init__(self, data, parent):
         super(ValidationTreeModel, self).__init__(data, parent)
-        self.column_count = 2
+        self.column_count = 3
 
     def setup_root_item(self):
         self._rootItem = TreeItem(
-            ["Name", "Description"],
+            ["Rules", "Description", "If/then"],
             showchildcount=False,
         )
 
@@ -77,12 +79,29 @@ class ValidationTreeModel(TreeModelBaseclass):
             id=validator.filename,
         )
         self._rootItem.appendChild(file_item)
+
+        # IfcTester is undocumented, for info on the to_sting() method
+        # of Facet (and subclasses) see the source code in:
+        # https://github.com/IfcOpenShell/IfcOpenShell/blob/v0.8.0/src/ifctester/ifctester/facet.py
+        # https://github.com/IfcOpenShell/IfcOpenShell/blob/v0.8.0/src/ifctester/ifctester/reporter.py
+
         for spec in validator.rules.specifications:
+            applicability = [a.to_string("applicability") for a in spec.applicability]
+            applicability = " / ".join(applicability)
             spec_item = TreeItem(
-                [spec.name, spec.description],
+                [spec.name, spec.description, applicability],
                 parent=file_item,
             )
             file_item.appendChild(spec_item)
+
+            for req in spec.requirements:
+                namestring = self.tr("Requirement (%s)") % req.__class__.__name__
+                req_item = TreeItem(
+                    [namestring, req.instructions, f"⇒ {req.to_string('requirement', spec, req)}"],
+                    parent=spec_item,
+                )
+                spec_item.appendChild(req_item)
+
             
         self.endResetModel()
 
