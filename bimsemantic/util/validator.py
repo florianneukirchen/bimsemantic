@@ -37,8 +37,8 @@ class Validators:
         for validator in self.validators:
             if validator.filename == filename:
                 self.validators.remove(validator)
-                if validator.title in self.reporters:
-                    del self.reporters[validator.title]
+                if validator.id in self.reporters:
+                    del self.reporters[validator.id]
                 break
 
         self.results_by_guid = {}
@@ -48,14 +48,13 @@ class Validators:
         self.results_by_guid = {}
         self.reporters = {}
         for validator in self.validators:
-            if not validator.title in self.reporters:
-                self.reporters[validator.title] = {}
+            if not validator.id in self.reporters:
+                self.reporters[validator.id] = {}
             for ifc_file in self.ifc_files:
                 reporter = validator.validate_file(ifc_file)
-                self.reporters[validator.title][ifc_file.filename] = reporter
+                self.reporters[validator.id][ifc_file.filename] = reporter
                 self.analyze_results(reporter)
 
-        print(self.reporters)
                 
     def analyze_results(self, reporter):
         for spec in reporter.results['specifications']:
@@ -133,6 +132,7 @@ class IfsValidator:
             raise FileNotFoundError(f"File {filename} not found.")
         self._abspath = os.path.abspath(filename)
         self._filename = os.path.basename(self._abspath)
+        self.id = self._filename
 
         try:
             self.rules = ifctester.ids.open(filename)

@@ -47,7 +47,35 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
 
     def run_all_validations(self):
         self.validators.validate()
+        self.update_results_column()
+        self.tree.expandAll()
         self.update_ifc_views()
+
+    def update_results_column(self):
+        root = self.treemodel._rootItem
+        self.treemodel.beginResetModel()
+        for validator_item in root.children:
+            for spec_item in validator_item.children:
+                passed_checks = 0
+                failed_checks = 0
+                for ifc_file in self.mainwindow.ifcfiles:
+                    reporter = self.validators.reporters[validator_item.id][ifc_file.filename]
+                    spec = reporter.results['specifications'][spec_item.row()]
+                    passed_checks += spec['total_checks_pass']
+                    failed_checks += spec['total_checks_fail']
+                spec_item.set_data(3, f"{failed_checks} failed, {passed_checks} passed")
+                for i, req_item in enumerate(spec_item.children):
+                    passed_checks = 0
+                    failed_checks = 0
+                    for ifc_file in self.mainwindow.ifcfiles:
+                        reporter = self.validators.reporters[validator_item.id][ifc_file.filename]
+                        spec = reporter.results['specifications'][spec_item.row()]
+                        req = spec['requirements'][i]
+                        passed_checks += len(req['passed_entities'])
+                        failed_checks += len(req['failed_entities'])
+                    req_item.set_data(3, f"{failed_checks} failed, {passed_checks} passed")
+        self.treemodel.endResetModel()
+
 
     def update_ifc_views(self):
         # Update column 10 in the ifc tree views and eventually unhide it
@@ -58,7 +86,6 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
             proxymodel.dataChanged.emit(top_left, bottom_right, [Qt.DisplayRole])
             tree = self.mainwindow.tabs.tabs.widget(i).tree
             tree.setColumnHidden(10, False)
-
         
 class ValidationTreeModel(TreeModelBaseclass):
     def __init__(self, data, parent):
@@ -73,12 +100,15 @@ class ValidationTreeModel(TreeModelBaseclass):
 
     def add_file(self, validator):
         self.beginResetModel()
-        file_item = TreeItem(
-            [f"{validator.title} | {validator.filename}", validator.rules.info.get('description', None)],
+        validator_item = TreeItem(
+            [
+                f"{validator.title} | {validator.filename}", 
+                validator.rules.info.get('description', None)
+            ],
             parent=self._rootItem,
-            id=validator.filename,
+            id=validator.id,
         )
-        self._rootItem.appendChild(file_item)
+        self._rootItem.appendChild(validator_item)
 
         # IfcTester is undocumented, for info on the to_sting() method
         # of Facet (and subclasses) see the source code in:
@@ -89,20 +119,28 @@ class ValidationTreeModel(TreeModelBaseclass):
             applicability = [a.to_string("applicability") for a in spec.applicability]
             applicability = " / ".join(applicability)
             spec_item = TreeItem(
-                [spec.name, spec.description, applicability],
-                parent=file_item,
+                [
+                    spec.name, 
+                    spec.description, 
+                    applicability,
+                    ""
+                ],
+                parent=validator_item,
             )
-            file_item.appendChild(spec_item)
+            validator_item.appendChild(spec_item)
 
             for req in spec.requirements:
                 namestring = self.tr("Requirement (%s)") % req.__class__.__name__
                 req_item = TreeItem(
-                    [namestring, req.instructions, f"⇒ {req.to_string('requirement', spec, req)}"],
+                    [
+                        namestring, 
+                        req.instructions, 
+                        f"⇒ {req.to_string('requirement', spec, req)}",
+                        "",
+                    ],
                     parent=spec_item,
                 )
                 spec_item.appendChild(req_item)
-
-            
         self.endResetModel()
 
     def remove_file(self, filename):

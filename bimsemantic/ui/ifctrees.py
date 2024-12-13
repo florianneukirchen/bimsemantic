@@ -140,7 +140,7 @@ class IfcTreeItem(TreeItem):
             # Validation
             if self.guid in self._validators.results_by_guid:
                 passed, failed = self._validators.results_by_guid[self.guid]
-                return f"{passed} passed {failed} failed"
+                return f"{failed} failed, {passed} passed"
             else:
                 return None
             
