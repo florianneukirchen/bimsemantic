@@ -4,7 +4,7 @@ import ifcopenshell.util.element
 from .treebase import TreeItem, TreeModelBaseclass
 from ifcopenshell import entity_instance
 from bimsemantic.ui import CopyMixin, ContextMixin
-
+from bimsemantic.util import Validators
 
 class DetailsDock(CopyMixin, ContextMixin, QDockWidget):
     """Dock widget for showing details of IFC elements or overview of files
@@ -24,6 +24,7 @@ class DetailsDock(CopyMixin, ContextMixin, QDockWidget):
         self.mainwindow = parent
         self.overviewtree = QTreeView()
         self.overviewmodel = None
+        self.validators = Validators()
 
     def reset(self):
         """Show the placeholder label"""
@@ -439,6 +440,40 @@ class IfcDetailsTreeModel(DetailsBaseclass):
                     self.rows_spanned.append((pset_item.row(), parent_index))
                     for k, v in pset.items():
                         pset_item.appendChild(TreeItem([k, v], parent=pset_item))
+
+        # Validation results
+        validators = Validators()
+        failed_specs, passed_specs = validators.get_validation_for_element(
+            ifc_object.GlobalId, self.filenames
+        )
+
+        if failed_specs or passed_specs:
+            validation_item = TreeItem(["Validation"], parent=object_item)
+            object_item.appendChild(validation_item)
+
+            if failed_specs:
+                failed_item = TreeItem(
+                    [self.tr("Failed"), ""], parent=validation_item
+                )
+                validation_item.appendChild(failed_item)
+                for spec in failed_specs:
+                    spec_item = TreeItem([spec["spec"]], parent=failed_item)
+                    failed_item.appendChild(spec_item)
+                    for k, v in spec.items():
+                        if k != "spec" and not v is None:
+                            spec_item.appendChild(TreeItem([k, v], parent=spec_item))
+
+            if passed_specs:
+                passed_item = TreeItem(
+                    [self.tr("Passed"), ""], parent=validation_item
+                )
+                validation_item.appendChild(passed_item)
+                for spec in passed_specs:
+                    spec_item = TreeItem([spec["spec"]], parent=passed_item)
+                    passed_item.appendChild(spec_item)
+                    for k, v in spec.items():
+                        if k != "spec" and not v is None:
+                            spec_item.appendChild(TreeItem([k, v], parent=spec_item))
 
 
 class OverviewTreeModel(DetailsBaseclass):

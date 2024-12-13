@@ -48,6 +48,7 @@ class MainWindow(QMainWindow):
         self.setGeometry(100, 100, 800, 600)
 
         self.ifcfiles = IfcFiles()
+        self.validators = Validators(self.ifcfiles)
         self.idsrules = []
 
         self.statusbar = self.statusBar()

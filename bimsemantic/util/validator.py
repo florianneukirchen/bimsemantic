@@ -72,6 +72,42 @@ class Validators:
         else:
             self.results_by_guid[guid][1] += 1
 
+    def get_validation_for_element(self, guid, filenames):
+        
+        failed_specs = []
+        passed_specs = []
+
+        if self.reporters == {}:
+            return failed_specs, passed_specs
+        
+        for validator_title, validator_files in self.reporters.items():
+
+            for filename in filenames:
+                #for reporter in validator_files[filename]:
+                for spec in validator_files[filename].results['specifications']:
+                    for requirement in spec['requirements']:
+                        for entity in requirement['failed_entities']:
+                            if entity['element'].GlobalId == guid:
+                                info = {
+                                    'validator': validator_title,
+                                    'spec': spec['name'],
+                                    'requirement': requirement['description'],
+                                    'reason': entity['reason'],
+                                    'spec description': spec['description'],
+                                }
+                                failed_specs.append(info)
+                        for entity in requirement['passed_entities']:
+                            if entity['element'].GlobalId == guid:
+                                info = {
+                                    'validator': validator_title,
+                                    'spec': spec['name'],
+                                    'requirement': requirement['description'],
+                                    'spec description': spec['description'],
+                                }
+                                passed_specs.append(info)
+        return failed_specs, passed_specs
+
+
     def save_bcf(self, validator_title, ifc_filename, output_filename):
         reporter = self.reporters[validator_title][ifc_filename]
         reporter.to_file(output_filename)
