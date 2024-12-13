@@ -45,6 +45,8 @@ class Validators:
 
 
     def validate(self):
+        self.results_by_guid = {}
+        self.reporters = {}
         for validator in self.validators:
             if not validator.title in self.reporters:
                 self.reporters[validator.title] = {}
