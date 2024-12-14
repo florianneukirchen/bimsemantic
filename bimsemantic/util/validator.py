@@ -93,7 +93,7 @@ class Validators:
         if self.reporters == {}:
             return failed_specs, passed_specs
         
-        for validator_title, validator_files in self.reporters.items():
+        for validator_id, validator_files in self.reporters.items():
 
             for filename in filenames:
                 #for reporter in validator_files[filename]:
@@ -102,7 +102,7 @@ class Validators:
                         for entity in requirement['failed_entities']:
                             if entity['element'].GlobalId == guid:
                                 info = {
-                                    'validator': validator_title,
+                                    'validator': validator_id,
                                     'spec': spec['name'],
                                     'requirement': requirement['description'],
                                     'reason': entity['reason'],
@@ -113,7 +113,7 @@ class Validators:
                         for entity in requirement['passed_entities']:
                             if entity['element'].GlobalId == guid:
                                 info = {
-                                    'validator': validator_title,
+                                    'validator': validator_id,
                                     'spec': spec['name'],
                                     'requirement': requirement['description'],
                                     'spec description': spec['description'],
@@ -123,8 +123,8 @@ class Validators:
         return failed_specs, passed_specs
 
 
-    def save_bcf(self, validator_title, ifc_filename, output_filename):
-        reporter = self.reporters[validator_title][ifc_filename]
+    def save_bcf(self, validator_id, ifc_filename, output_filename):
+        reporter = self.reporters[validator_id][ifc_filename]
         reporter.to_file(output_filename)
 
     @property
