@@ -82,6 +82,7 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
         self.tree.expandAll()
         self.update_ifc_views()
         self.mainwindow.save_validation_act.setEnabled(True)
+        self.show() # Show the dock in case it was hidden
 
     def run_selected_validation(self):
         """Run only the selected validator and update the views"""
