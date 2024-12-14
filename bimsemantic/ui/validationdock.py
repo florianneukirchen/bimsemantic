@@ -111,12 +111,31 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
                 failed_checks = 0
                 # valreporters is dict with filename as key and reporter as value
                 # or None if the validator has not been run
+                # or reporter if it is the integrity validator
                 valreporters = self.validators.reporters.get(validator_item.id, None)
                 if valreporters is None:
                     spec_item.set_data(3, "")
                     for req_item in spec_item.children:
                         req_item.set_data(3, "")
                     continue
+
+                # Integrity validator (only one for all IFC files)
+                if validator_item.id == "integrity":
+                    reporter = valreporters
+                    spec = reporter.results['specifications'][spec_item.row()]
+                    passed_checks += spec['total_checks_pass']
+                    failed_checks += spec['total_checks_fail']
+                    spec_item.set_data(3, f"{failed_checks} failed, {passed_checks} passed")
+                    for i, req_item in enumerate(spec_item.children):
+                        passed_checks = 0
+                        failed_checks = 0
+                        req = spec['requirements'][i]
+                        passed_checks += len(req['passed_entities'])
+                        failed_checks += len(req['failed_entities'])
+                        req_item.set_data(3, f"{failed_checks} failed, {passed_checks} passed")
+                    continue
+
+                # All other validators    
                 for ifc_file in self.mainwindow.ifcfiles:
                     # Not all files must be in the keys of the dict
                     reporter = valreporters.get(ifc_file.filename, None)

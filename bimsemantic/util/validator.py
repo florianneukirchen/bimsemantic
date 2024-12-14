@@ -103,10 +103,7 @@ class Validators:
                 # This is the only one not to be run on the IFC files seperately
                 reporter = validator.validate()
                 self.analyze_results(reporter)
-                # Simply add the reporter to all filenames 
-                # in order to have the same structure in the dict
-                for ifc_file in self.ifc_files:
-                    self.reporters[validator.id][ifc_file.filename] = reporter
+                self.reporters[validator.id] = reporter
             else:
                 for ifc_file in self.ifc_files:
                     reporter = validator.validate_file(ifc_file)
@@ -165,8 +162,12 @@ class Validators:
         for validator_id, validator_files in self.reporters.items():
 
             for filename in filenames:
-                #for reporter in validator_files[filename]:
-                for spec in validator_files[filename].results['specifications']:
+                if validator_id == "integrity":
+                    specs = validator_files.results['specifications']
+                else:
+                    specs = validator_files[filename].results['specifications']
+
+                for spec in specs:
                     for requirement in spec['requirements']:
                         for entity in requirement['failed_entities']:
                             if entity['element'].GlobalId == guid:
@@ -176,8 +177,9 @@ class Validators:
                                     'requirement': requirement['description'],
                                     'reason': entity['reason'],
                                     'spec description': spec['description'],
-                                    'ICF file': filename,
                                 }
+                                if not validator_id == "integrity":
+                                    info['ICF file'] = filename
                                 failed_specs.append(info)
                         for entity in requirement['passed_entities']:
                             if entity['element'].GlobalId == guid:
@@ -186,9 +188,13 @@ class Validators:
                                     'spec': spec['name'],
                                     'requirement': requirement['description'],
                                     'spec description': spec['description'],
-                                    'ICF file': filename,
                                 }
+                                if not validator_id == "integrity":
+                                    info['ICF file'] = filename
                                 passed_specs.append(info)
+                if validator_id == "integrity":
+                    # Only add one entry for integrity check
+                    break
         return failed_specs, passed_specs
 
 
