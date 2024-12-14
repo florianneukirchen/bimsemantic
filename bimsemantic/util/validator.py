@@ -128,7 +128,7 @@ class Validators:
         reporter.to_file(output_filename)
 
     @property
-    def is_validated(self):
+    def status(self):
         return self.results_by_guid != {}
 
 
