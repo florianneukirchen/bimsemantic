@@ -356,28 +356,6 @@ class LocationTreeModel(IfcTreeModelBaseClass):
         for site in ifc_file.model.by_type("IfcSite"):
             self.add_items(site, project_item, filename)
 
-        self.notcontainedlabel = self.tr("Container is %s") % self.nan
-        notcontained_item = self.get_child_by_label(
-            self._rootItem, self.notcontainedlabel
-        )
-        if not notcontained_item:
-            notcontained_item = TreeItem([self.notcontainedlabel], self._rootItem)
-            self._rootItem.appendChild(notcontained_item)
-
-        # Also add the elements that don't have a spatial container
-        for element in ifc_file.model.by_type("IfcElement"):
-            if not element.ContainedInStructure:
-                element_item = self.get_child_by_guid(
-                    notcontained_item, element.GlobalId
-                )
-                if element_item:
-                    element_item.add_filename(filename)
-                else:
-                    element_item = IfcTreeItem(
-                        element, notcontained_item, self.columntree, filename
-                    )
-                    notcontained_item.appendChild(element_item)
-
         self.endResetModel()
 
         self.tab.proxymodel.sort(0, Qt.SortOrder.AscendingOrder)
@@ -392,14 +370,46 @@ class LocationTreeModel(IfcTreeModelBaseClass):
         else:
             item = IfcTreeItem(ifc_object, parent, self.columntree, filename)
             parent.appendChild(item)
+
+        children = []
+        elements = []
+
+        # There are many kinds of relationships in IFC 
         try:
-            elements = ifc_object.ContainsElements[0].RelatedElements
-        except IndexError:
+            contains = ifc_object.ContainsElements # Returns a tuple (set in IFC)
+            for c in contains:
+                elements.extend(c.RelatedElements)
+        except AttributeError:
             elements = []
+
         try:
-            children = ifc_object.IsDecomposedBy[0].RelatedObjects
-        except IndexError:
-            children = []
+            decomposed = ifc_object.IsDecomposedBy
+            for d in decomposed:
+                children.extend(d.RelatedObjects)
+        except AttributeError:
+            pass
+
+        try:
+            openings = ifc_object.HasOpenings
+            for o in openings:
+                children.append(o.RelatedOpeningElement)
+        except AttributeError:
+            pass
+
+        try:
+            fillings = ifc_object.HasFillings
+            for f in fillings:
+                children.append(f.RelatedBuildingElement)
+        except AttributeError:
+            pass
+
+        try:
+            connected = ifc_object.ConnectedTo
+            for c in connected:
+                children.extend(c.RelatedElements)
+        except AttributeError:
+            pass
+
 
         for element in elements:
             element_item = self.get_child_by_guid(item, element.GlobalId)
@@ -409,8 +419,26 @@ class LocationTreeModel(IfcTreeModelBaseClass):
                 element_item = IfcTreeItem(element, item, self.columntree, filename)
                 item.appendChild(element_item)
 
+            # Elements may be composed by other elements
+            related = []
+            try:
+                dec = element.IsDecomposedBy
+                for d in dec:
+                    related.extend(d.RelatedObjects)
+            except AttributeError:
+                pass
+            for rel in related:
+                rel_item = self.get_child_by_guid(element_item, rel.GlobalId)
+                if rel_item:
+                    rel_item.add_filename(filename)
+                else:
+                    rel_item = IfcTreeItem(rel, element_item, self.columntree, filename)
+                    element_item.appendChild(rel_item)
+
+
         for child in children:
             self.add_items(child, item, filename)
+
 
     def expand_default(self):
         """Called when the tree view is updated to expand the tree
@@ -418,13 +446,7 @@ class LocationTreeModel(IfcTreeModelBaseClass):
         If not overwritten in derived classes, expand all levels
         """
         self.tab.tree.expandAll()
-        notcontained_item = self.get_child_by_label(
-            self._rootItem, self.notcontainedlabel
-        )
-        if notcontained_item:
-            source_index = self.index(notcontained_item.row(), 0, QModelIndex())
-            proxy_index = self.tab.proxymodel.mapFromSource(source_index)
-            self.tab.tree.collapse(proxy_index)
+
 
     def __repr__(self):
         return "LocationTreeModel"
