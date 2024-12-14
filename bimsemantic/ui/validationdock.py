@@ -3,7 +3,7 @@ from bimsemantic.ui import TreeItem, TreeModelBaseclass
 import ifcopenshell.util.element
 from PySide6.QtWidgets import QDockWidget, QTreeView
 from bimsemantic.ui import CopyMixin, ContextMixin
-from bimsemantic.util import IfsValidator, Validators
+from bimsemantic.util import IdsValidator, Validators
 
 
 class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
@@ -28,7 +28,7 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
 
     def add_file(self, filename):
         """Add IDS validator"""
-        validator = IfsValidator(filename)
+        validator = IdsValidator(filename)
         self.validators.add_validator(validator)
         self.treemodel.add_file(validator)
         self.tree.expandAll()

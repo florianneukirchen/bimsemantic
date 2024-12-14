@@ -48,7 +48,7 @@ class Validators:
         """Add a validator to the collection
         
         :param validator: The validator to add
-        :type validator: IfsValidator
+        :type validator: IdsValidator
         """
         self.validators.append(validator)
 
@@ -215,12 +215,12 @@ class Validators:
         """True if the validator has been run"""
         return validator_id in self.reporters
 
-class IfsValidator:
-    """Validator using rules from IFS file
+class IdsValidator:
+    """Validator using rules from IDS file
 
     The filename is used as the id of the validator.
     
-    :param filename: The filename or path of the IFS file
+    :param filename: The filename or path of the IDS file
     :type filename: str
     """
     def __init__(self, filename):
@@ -233,7 +233,7 @@ class IfsValidator:
         try:
             self.rules = ifctester.ids.open(filename)
         except ET.ParseError:
-            raise ValueError(f"File {self._abspath} is not a valid IFS file.")
+            raise ValueError(f"File {self._abspath} is not a valid IDS file.")
         self._title = self.rules.info['title']
 
     def validate_file(self, ifc_file):
@@ -253,21 +253,21 @@ class IfsValidator:
 
     @property
     def filename(self):
-        """The name of the IFS file"""
+        """The name of the IDS file"""
         return self._filename
     
     @property
     def abspath(self):
-        """Absolute path of the IFS file"""
+        """Absolute path of the IDS file"""
         return self._abspath
     
     @property
     def title(self):
-        """Title of the IFS file"""
+        """Title of the IDS file"""
         return self._title
     
     def __repr__(self):
-        return f"IfsValidator({self._title}, {self._filename})"
+        return f"IdsValidator({self._title}, {self._filename})"
 
 
 
