@@ -104,6 +104,7 @@ class Validators:
             if validator.id == "integrity":
                 # This is the only one not to be run on the IFC files seperately
                 reporter = validator.validate()
+                self.analyze_results(reporter)
                 # Simply add the reporter to all filenames 
                 # in order to have the same structure in the dict
                 for ifc_file in self.ifc_files:
@@ -128,6 +129,7 @@ class Validators:
                 for entity in requirement['passed_entities']:
                     element = entity['element']
                     self.add_passed(element.GlobalId) 
+
 
     def add_passed(self, guid):
         """Helper to add a passed validation to the results"""
@@ -365,6 +367,10 @@ class IntegrityValidator:
             
             left_psets = ifcopenshell.util.element.get_psets(left)
 
+            passed_id = True
+            passed_info = True
+            passed_psets = True
+
             for filename in item.filenames[1:]:
                 right = self.ifc_files.get_element_by_guid(guid, filename)
                 right_info = right.get_info()
@@ -377,47 +383,56 @@ class IntegrityValidator:
                 right_psets = ifcopenshell.util.element.get_psets(right)
 
                 if left_id != right_id:
-                    self.requirements[0]['status'] = False
-                    self.requirements[0]['failed_entities'].append({
-                        'element': left,
-                        'reason': f"ID mismatch: {left_id} != {right_id} ({left_filename} - {filename})",
-                    })
-                    self.spec['total_checks_fail'] += 1
-                    self.spec['status'] = False
-                else:
-                    self.requirements[0]['passed_entities'].append({
-                        'element': left,
-                    })
-                    self.spec['total_checks_pass'] += 1
+                    passed_id = False
 
                 if left_info != right_info:
+                    passed_info = False
                     
-                    self.requirements[1]['status'] = False
-                    self.requirements[1]['failed_entities'].append({
-                        'element': left,
-                        'reason': f"Attribute mismatch: {left_info} != {right_info} ({left_filename} - {filename})",
-                    })
-                    self.spec['total_checks_fail'] += 1
-                    self.spec['status'] = False
-                else:
-                    self.requirements[1]['passed_entities'].append({
-                        'element': left,
-                    })
-                    self.spec['total_checks_pass'] += 1
-
                 if left_psets != right_psets:
-                    self.requirements[2]['status'] = False
-                    self.requirements[2]['failed_entities'].append({
-                        'element': left,
-                        'reason': f"Pset mismatch: {left_psets} != {right_psets} ({left_filename} - {filename})",
-                    })
-                    self.spec['total_checks_fail'] += 1
-                    self.spec['status'] = False
-                else:
-                    self.requirements[2]['passed_entities'].append({
-                        'element': left,
-                    })
-                    self.spec['total_checks_pass'] += 1
+                    passed_psets = False
+
+            if not passed_id:
+                self.requirements[0]['status'] = False
+                self.requirements[0]['failed_entities'].append({
+                    'element': left,
+                    'reason': f"ID mismatch: {left_id} != {right_id}",
+                })
+                self.spec['total_checks_fail'] += 1
+                self.spec['status'] = False
+            else:
+                self.requirements[0]['passed_entities'].append({
+                    'element': left,
+                })
+                self.spec['total_checks_pass'] += 1
+
+
+            if not passed_info:
+                self.requirements[1]['status'] = False
+                self.requirements[1]['failed_entities'].append({
+                    'element': left,
+                    'reason': f"Attribute mismatch: {left_info} != {right_info}",
+                })
+                self.spec['total_checks_fail'] += 1
+                self.spec['status'] = False
+            else:
+                self.requirements[1]['passed_entities'].append({
+                    'element': left,
+                })
+                self.spec['total_checks_pass'] += 1
+
+            if not passed_psets:
+                self.requirements[2]['status'] = False
+                self.requirements[2]['failed_entities'].append({
+                    'element': left,
+                    'reason': f"Pset mismatch: {left_psets} != {right_psets}",
+                })
+                self.spec['total_checks_fail'] += 1
+                self.spec['status'] = False
+            else:
+                self.requirements[2]['passed_entities'].append({
+                    'element': left,
+                })
+                self.spec['total_checks_pass'] += 1
 
     # Helpers to mimic the interface of IdsValidator
     class Spec:
