@@ -35,14 +35,14 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
             self.mainwindow.statusbar.showMessage(self.tr("No file selected"), 5000)
             return
         item = self.proxymodel.mapToSource(active).internalPointer()
-        filename = self._item_filename(item)
-        self.validators.remove_validator(filename)
-        self.treemodel.remove_file(filename)
+        validator_id = self.get_validator_id(item)
+        self.validators.remove_validator(validator_id)
+        self.treemodel.remove_file(validator_id)
         self.update_ifc_views()
 
-    def _item_filename(self, item):
+    def get_validator_id(self, item):
         if item.level() > 0:
-            return self._item_filename(item.parent())
+            return self.get_validator_id(item.parent())
         return item.id
 
     def run_all_validations(self):
@@ -51,6 +51,18 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
         self.tree.expandAll()
         self.update_ifc_views()
 
+    def run_selected_validation(self):
+        active = self.tree.currentIndex()
+        if not active.isValid():
+            self.mainwindow.statusbar.showMessage(self.tr("No validator selected"), 5000)
+            return
+        item = self.proxymodel.mapToSource(active).internalPointer()
+        validator_id = self.get_validator_id(item)
+        self.validators.validate(validator_id)
+        self.update_results_column()
+        self.update_ifc_views()
+        self.tree.expandAll()
+
     def update_results_column(self):
         root = self.treemodel._rootItem
         self.treemodel.beginResetModel()
@@ -58,6 +70,14 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
             for spec_item in validator_item.children:
                 passed_checks = 0
                 failed_checks = 0
+                # reporters is dict with filename as key and reporter as value
+                # or None if the validator has not been run
+                reporters = self.validators.reporters.get(validator_item.id, None)
+                if reporters is None:
+                    spec_item.set_data(3, "")
+                    for req_item in spec_item.children:
+                        req_item.set_data(3, "")
+                    continue
                 for ifc_file in self.mainwindow.ifcfiles:
                     reporter = self.validators.reporters[validator_item.id][ifc_file.filename]
                     spec = reporter.results['specifications'][spec_item.row()]

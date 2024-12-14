@@ -823,6 +823,12 @@ class MainWindow(QMainWindow):
         )
         self.validation_menu.addAction(self.run_all_validations_act)
 
+        self.run_selected_validation_act = QAction(
+            self.tr("Run &selected validation"),
+            self,
+            statusTip=self.tr("Run validation with the selected validator"),
+        )
+        self.validation_menu.addAction(self.run_selected_validation_act)
 
         # Help menu
         self.help_menu = self.menuBar().addMenu(self.tr("&Help"))
@@ -865,6 +871,7 @@ class MainWindow(QMainWindow):
         self.addDockWidget(Qt.BottomDockWidgetArea, self.validationdock)
         self.validationdock.hide()
         self.run_all_validations_act.triggered.connect(self.validationdock.run_all_validations)
+        self.run_selected_validation_act.triggered.connect(self.validationdock.run_selected_validation)
         self.close_ids_act.triggered.connect(self.validationdock.close_file)
 
         # Add actions to menu

@@ -32,10 +32,10 @@ class Validators:
     def add_validator(self, validator):
         self.validators.append(validator)
 
-    def remove_validator(self, filename):
+    def remove_validator(self, validator_id):
 
         for validator in self.validators:
-            if validator.filename == filename:
+            if validator.id == validator_id:
                 self.validators.remove(validator)
                 if validator.id in self.reporters:
                     del self.reporters[validator.id]
@@ -44,10 +44,17 @@ class Validators:
         self.results_by_guid = {}
 
 
-    def validate(self):
+    def validate(self, validator_id=None):
+        if validator_id is None:
+            validators = self.validators
+        else:
+            for validator in self.validators:
+                if validator.id == validator_id:
+                    validators = [validator]
+                    break
         self.results_by_guid = {}
         self.reporters = {}
-        for validator in self.validators:
+        for validator in validators:
             if not validator.id in self.reporters:
                 self.reporters[validator.id] = {}
             for ifc_file in self.ifc_files:
