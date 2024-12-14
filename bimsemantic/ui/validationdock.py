@@ -22,7 +22,6 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
         self.tree.setColumnWidth(0, 250)
         self.setWidget(self.tree)
 
-
     def add_file(self, filename):
         validator = IfsValidator(filename)
         self.validators.add_validator(validator)
@@ -50,6 +49,7 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
         self.update_results_column()
         self.tree.expandAll()
         self.update_ifc_views()
+        self.mainwindow.save_validation_act.setEnabled(True)
 
     def run_selected_validation(self):
         active = self.tree.currentIndex()
@@ -62,6 +62,7 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
         self.update_results_column()
         self.update_ifc_views()
         self.tree.expandAll()
+        self.mainwindow.save_validation_act.setEnabled(True)
 
     def update_results_column(self):
         root = self.treemodel._rootItem

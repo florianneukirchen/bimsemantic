@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 import os
+import json
 import ifctester
 import ifctester.reporter
 import ifcopenshell
@@ -43,6 +44,11 @@ class Validators:
 
         self.results_by_guid = {}
 
+    def get_validator(self, validator_id):
+        for validator in self.validators:
+            if validator.id == validator_id:
+                return validator
+        return None
 
     def validate(self, validator_id=None):
         if validator_id is None:
@@ -123,15 +129,26 @@ class Validators:
         return failed_specs, passed_specs
 
 
-    def save_bcf(self, validator_id, ifc_filename, output_filename):
+    def save_results(self, validator_id, ifc_filename, output_filename, as_bcf):
         reporter = self.reporters[validator_id][ifc_filename]
-        reporter.to_file(output_filename)
+        if as_bcf:
+            reporter.to_file(output_filename)
+        else:
+            # Need to turn all the ifcopenshell objects into strings
+            results = reporter.results.copy()
+            for spec in results['specifications']:
+                for requirement in spec['requirements']:
+                    for entity in requirement['failed_entities']:
+                        entity['element'] = entity['element'].to_string()
+                    for entity in requirement['passed_entities']:
+                        entity['element'] = entity['element'].to_string()
 
-    @property
-    def status(self):
-        return self.results_by_guid != {}
+            with open(output_filename, 'w') as f:
+                json.dump(results, f, indent=4)
+            
 
-
+    def status(self, validator_id):
+        return validator_id in self.reporters
 
 class IfsValidator:
     def __init__(self, filename):

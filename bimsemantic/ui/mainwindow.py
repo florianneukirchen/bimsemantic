@@ -434,6 +434,46 @@ class MainWindow(QMainWindow):
             self.progressbar.setRange(0, 100)
             self.statusbar.showMessage(self.tr("Exported to %s") % csv_file, 5000)
 
+    def save_validation_dlg(self):
+        """Save validation results to a zipped BCF file or as JSON"""
+        dialog = QFileDialog(self, self.tr("Save validation results"))
+        dialog.setAcceptMode(QFileDialog.AcceptSave)
+        dialog.setNameFilters([self.tr("BCF (*.bcfzip)"), self.tr("JSON (*.json)")])
+        dialog.setOption(QFileDialog.DontUseNativeDialog, True)
+        dialog_layout = dialog.layout()
+        hline = QFrame()
+        hline.setFrameShape(QFrame.HLine)
+        hline.setFrameShadow(QFrame.Sunken)
+        dialog_layout.addWidget(hline, 4, 1)
+        label = QLabel(self.tr("Select Validator:"))
+        dialog_layout.addWidget(label, 5, 0)
+        validator_combo = QComboBox()
+        validator_combo.addItems(self.validators.reporters.keys())
+        dialog_layout.addWidget(validator_combo, 5, 1)
+
+        if len(self.ifcfiles) > 1:
+
+            label = QLabel(self.tr("Select IFC file:"))
+            dialog_layout.addWidget(label, 6, 0)
+            ifc_combo = QComboBox()
+            ifc_combo.addItems([ifc.filename for ifc in self.ifcfiles])
+            dialog_layout.addWidget(ifc_combo, 6, 1)
+
+        if dialog.exec():
+            filename = dialog.selectedFiles()[0]
+            validator_id = validator_combo.currentText()
+            if len(self.ifcfiles) == 1:
+                ifc_filename = self.ifcfiles[0].filename
+            else:
+                ifc_filename = ifc_combo.currentText()
+            as_bcf = dialog.selectedNameFilter() == self.tr("BCF (*.bcfzip)")
+            if as_bcf and not filename.lower().endswith(".bcfzip"):
+                filename += ".bcfzip"
+            elif not as_bcf and not filename.lower().endswith(".json"):
+                filename += ".json"
+            self.validators.save_results(validator_id, ifc_filename, filename, as_bcf)
+            self.statusbar.showMessage(self.tr("Saved to %s") % filename, 5000)
+
     def select_by_guid(self):
         """Dialog to select an IFC element by GUID and call the algorithm to select it"""
         dlg = SelectByDialog("GUID", self)
@@ -802,7 +842,7 @@ class MainWindow(QMainWindow):
         self.validation_menu = self.menuBar().addMenu(self.tr("&Validation"))
 
         self.load_ids_act = QAction(
-            self.tr("&Load IDS rules"),
+            self.tr("&Load IDS file"),
             self,
             statusTip=self.tr("Load IDS file with validation rules"),
             triggered=self.load_ids_dlg,
@@ -815,6 +855,8 @@ class MainWindow(QMainWindow):
             statusTip=self.tr("Close IDS file with validation rules"),
         )
         self.validation_menu.addAction(self.close_ids_act)
+
+        self.validation_menu.addSeparator()
 
         self.run_all_validations_act = QAction(
             self.tr("&Run all validations"),
@@ -829,6 +871,17 @@ class MainWindow(QMainWindow):
             statusTip=self.tr("Run validation with the selected validator"),
         )
         self.validation_menu.addAction(self.run_selected_validation_act)
+
+        self.validation_menu.addSeparator()
+
+        self.save_validation_act = QAction(
+            self.tr("&Save validation result"),
+            self,
+            statusTip=self.tr("Save the validation result of the selected validator as BCF or JSON"),
+            triggered=self.save_validation_dlg,
+            enabled = False,
+        )
+        self.validation_menu.addAction(self.save_validation_act)
 
         # Help menu
         self.help_menu = self.menuBar().addMenu(self.tr("&Help"))
