@@ -3,7 +3,7 @@ from bimsemantic.ui import TreeItem, TreeModelBaseclass
 import ifcopenshell.util.element
 from PySide6.QtWidgets import QDockWidget, QTreeView
 from bimsemantic.ui import CopyMixin, ContextMixin
-from bimsemantic.util import IdsValidator, Validators
+from bimsemantic.util import IdsValidator, IntegrityValidator, Validators
 
 
 class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
@@ -14,9 +14,16 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
     def __init__(self, parent):
         super().__init__(self.tr("&Validation"), parent)
         self.mainwindow = parent
-        self.validators = Validators(self.mainwindow.ifcfiles)
+        self.validators = Validators()
+        integ_validator = IntegrityValidator(
+            self.mainwindow.ifcfiles,
+            self.mainwindow.tabs,
+        )
+        self.validators.add_validator(integ_validator)
+
+        print(self.validators.validators)
         
-        self.treemodel = ValidationTreeModel(None, self)
+        self.treemodel = ValidationTreeModel([integ_validator], self)
         self.proxymodel = QSortFilterProxyModel()
         self.proxymodel.setSourceModel(self.treemodel)
         self.tree = QTreeView()
@@ -149,7 +156,7 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
 class ValidationTreeModel(TreeModelBaseclass):
     """Model for the validators and their results
     
-    :param data: Ignored in this case, can be None
+    :param data: List of build in validators
     """
     def __init__(self, data, parent):
         super(ValidationTreeModel, self).__init__(data, parent)
@@ -160,6 +167,10 @@ class ValidationTreeModel(TreeModelBaseclass):
             ["Rules", "Description", "If/then", "Results"],
             showchildcount=False,
         )
+
+    def setup_model_data(self, data, parent):
+        for validator in data:
+            self.add_file(validator)
 
     def add_file(self, validator):
         """Add a IDS validator to the tree

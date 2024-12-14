@@ -4,7 +4,7 @@ import json
 import ifctester
 import ifctester.reporter
 import ifcopenshell
-
+import ifcopenshell.util.element
 
 
 
@@ -53,11 +53,13 @@ class Validators:
         self.validators.append(validator)
 
     def remove_validator(self, validator_id):
-        """Remove a validator from the collection
+        """Remove an IDS validator from the collection
         
         :param validator_id: The ID of the validator to remove
         :type validator_id: str
         """
+        if validator_id == "integrity":
+            return
         for validator in self.validators:
             if validator.id == validator_id:
                 self.validators.remove(validator)
@@ -91,15 +93,26 @@ class Validators:
                 if validator.id == validator_id:
                     validators = [validator]
                     break
+
         self.results_by_guid = {}
         self.reporters = {}
+
         for validator in validators:
             if not validator.id in self.reporters:
                 self.reporters[validator.id] = {}
-            for ifc_file in self.ifc_files:
-                reporter = validator.validate_file(ifc_file)
-                self.reporters[validator.id][ifc_file.filename] = reporter
-                self.analyze_results(reporter)
+
+            if validator.id == "integrity":
+                # This is the only one not to be run on the IFC files seperately
+                reporter = validator.validate()
+                # Simply add the reporter to all filenames 
+                # in order to have the same structure in the dict
+                for ifc_file in self.ifc_files:
+                    self.reporters[validator.id][ifc_file.filename] = reporter
+            else:
+                for ifc_file in self.ifc_files:
+                    reporter = validator.validate_file(ifc_file)
+                    self.reporters[validator.id][ifc_file.filename] = reporter
+                    self.analyze_results(reporter)
 
     def analyze_results(self, reporter):
         """Count the number of passed and failed validations for each element
@@ -249,7 +262,6 @@ class IdsValidator:
         reporter.report()
         return reporter
     
-    
 
     @property
     def filename(self):
@@ -270,4 +282,174 @@ class IdsValidator:
         return f"IdsValidator({self._title}, {self._filename})"
 
 
+
+class IntegrityValidator:
+    """If entities are in several IFC files, they should be the same
+    
+    Checks the attributes and psets for entities with the same GUID 
+    in different IFC files.
+
+    The interface mimics IdsValidator, but the rules are hardcoded.
+    """
+
+    def __init__(self, ifc_files, ifc_tabs):
+        self.ifc_files = ifc_files
+        self.treemodel = ifc_tabs.locationtab.treemodel
+        self.title = "Integrity check"
+        self.filename = ""
+        self.id = "integrity"
+
+        # Dict with the structure required by the BCF reporter
+        self.results = {
+            'title': self.title,
+            'specifications': [{
+                'name': self.title,
+                'description': "Check if entities with the same GUID are the same",
+                'applicability': ['All entities'],
+                'status': True, # True means all passed
+                'requirements': [],
+                'total_checks_pass': 0,
+                'total_checks_fail': 0,
+            }]
+        }
+
+        requirements = [
+            "The ID should be the same in all files",
+            "The attributes should be the same in all files",
+            "The property sets should be the same in all files",
+        ]
+
+        for requirement in requirements:
+            self.results['specifications'][0]['requirements'].append({
+                'description': requirement,
+                'passed_entities': [],
+                'failed_entities': [],
+                'status': True,
+            })
+        
+        self.requirements = self.results['specifications'][0]['requirements']
+        self.spec = self.results['specifications'][0]
+
+    def validate(self):
+        """Run the validation on all IFC files"""
+        for item in self.treemodel._rootItem.children:
+            self.check_item(item)
+        # Init a BCF reporter without IDS, and set the results
+        # Undocumented API, see
+        # https://github.com/IfcOpenShell/IfcOpenShell/blob/v0.8.0/src/ifctester/ifctester/reporter.py#L35
+        reporter = ifctester.reporter.Bcf(None)
+        reporter.results = self.results
+        return reporter
+
+
+    def check_item(self, item):
+        """Check a tree item and all its childs"""
+        for child in item.children:
+            self.check_item(child)
+
+        if hasattr(item, 'filenames') and len(item.filenames) > 1:
+            guid = item.guid
+            left_filename = item.filenames[0]
+            left = self.ifc_files.get_element_by_guid(guid, left_filename)
+
+            left_info = left.get_info()
+            left_id = left_info.pop('id')
+            for k, v in left_info.items():
+                if isinstance(v, (ifcopenshell.entity_instance, tuple)):
+                    left_info[k] = str(v)
+            
+            left_psets = ifcopenshell.util.element.get_psets(left)
+
+            for filename in item.filenames[1:]:
+                right = self.ifc_files.get_element_by_guid(guid, filename)
+                right_info = right.get_info()
+                right_id = right_info.pop('id')
+
+                for k, v in right_info.items():
+                    if isinstance(v, (ifcopenshell.entity_instance, tuple)):
+                        right_info[k] = str(v)
+
+                right_psets = ifcopenshell.util.element.get_psets(right)
+
+                if left_id != right_id:
+                    self.requirements[0]['status'] = False
+                    self.requirements[0]['failed_entities'].append({
+                        'element': left,
+                        'reason': f"ID mismatch: {left_id} != {right_id} ({left_filename} - {filename})",
+                    })
+                    self.spec['total_checks_fail'] += 1
+                    self.spec['status'] = False
+                else:
+                    self.requirements[0]['passed_entities'].append({
+                        'element': left,
+                    })
+                    self.spec['total_checks_pass'] += 1
+
+                if left_info != right_info:
+                    
+                    for k,v in left_info.items():
+                        if v != right_info[k]:
+                            print(k)
+                            print(v)
+                            print(right_info[k])
+                    self.requirements[1]['status'] = False
+                    self.requirements[1]['failed_entities'].append({
+                        'element': left,
+                        'reason': f"Attribute mismatch: {left_info} != {right_info} ({left_filename} - {filename})",
+                    })
+                    self.spec['total_checks_fail'] += 1
+                    self.spec['status'] = False
+                else:
+                    self.requirements[1]['passed_entities'].append({
+                        'element': left,
+                    })
+                    self.spec['total_checks_pass'] += 1
+
+                if left_psets != right_psets:
+                    self.requirements[2]['status'] = False
+                    self.requirements[2]['failed_entities'].append({
+                        'element': left,
+                        'reason': f"Pset mismatch: {left_psets} != {right_psets} ({left_filename} - {filename})",
+                    })
+                    self.spec['total_checks_fail'] += 1
+                    self.spec['status'] = False
+                else:
+                    self.requirements[2]['passed_entities'].append({
+                        'element': left,
+                    })
+                    self.spec['total_checks_pass'] += 1
+
+    # Helpers to mimic the interface of IdsValidator
+    class Spec:
+        def __init__(self, spec):
+            self.spec = spec    
+            self.applicability = [self.Applicability()]
+            self.requirements = [self.Requirement(req) for req in spec['requirements']]
+            self.name = spec['name']
+            self.description = spec['description']
+
+        class Applicability:
+            def to_string(self, *args):
+                return "All entities"
+            
+        class Requirement:
+            def __init__(self, req):
+                self.req = req
+                self.description = req['description']
+                self.instructions = ""
+                
+            def to_string(self, *args):
+                return self.req['description']
+
+    class Rules:
+        def __init__(self, specs):
+            self.info = {'title': "Integrity check"}  
+            self.specifications = [IntegrityValidator.Spec(spec) for spec in specs]
+
+    @property
+    def rules(self):
+        """The rules of the validator"""
+        return self.Rules(self.results['specifications'])
+            
+            
 
