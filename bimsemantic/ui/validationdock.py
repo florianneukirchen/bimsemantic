@@ -100,30 +100,38 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
             for spec_item in validator_item.children:
                 passed_checks = 0
                 failed_checks = 0
-                # reporters is dict with filename as key and reporter as value
+                # valreporters is dict with filename as key and reporter as value
                 # or None if the validator has not been run
-                reporters = self.validators.reporters.get(validator_item.id, None)
-                if reporters is None:
+                valreporters = self.validators.reporters.get(validator_item.id, None)
+                if valreporters is None:
                     spec_item.set_data(3, "")
                     for req_item in spec_item.children:
                         req_item.set_data(3, "")
                     continue
                 for ifc_file in self.mainwindow.ifcfiles:
-                    reporter = self.validators.reporters[validator_item.id][ifc_file.filename]
-                    spec = reporter.results['specifications'][spec_item.row()]
-                    passed_checks += spec['total_checks_pass']
-                    failed_checks += spec['total_checks_fail']
+                    # Not all files must be in the keys of the dict
+                    reporter = valreporters.get(ifc_file.filename, None)
+                    if reporter:
+                        spec = reporter.results['specifications'][spec_item.row()]
+                        passed_checks += spec['total_checks_pass']
+                        failed_checks += spec['total_checks_fail']
+
                 spec_item.set_data(3, f"{failed_checks} failed, {passed_checks} passed")
+
+                # Update the requirement items
                 for i, req_item in enumerate(spec_item.children):
                     passed_checks = 0
                     failed_checks = 0
                     for ifc_file in self.mainwindow.ifcfiles:
-                        reporter = self.validators.reporters[validator_item.id][ifc_file.filename]
-                        spec = reporter.results['specifications'][spec_item.row()]
-                        req = spec['requirements'][i]
-                        passed_checks += len(req['passed_entities'])
-                        failed_checks += len(req['failed_entities'])
+                        reporter = valreporters.get(ifc_file.filename, None)
+                        if reporter:
+                            spec = reporter.results['specifications'][spec_item.row()]
+                            req = spec['requirements'][i]
+                            passed_checks += len(req['passed_entities'])
+                            failed_checks += len(req['failed_entities'])
+
                     req_item.set_data(3, f"{failed_checks} failed, {passed_checks} passed")
+                    
         self.treemodel.endResetModel()
 
 
