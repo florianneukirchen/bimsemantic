@@ -298,7 +298,10 @@ class IntegrityValidator:
         self.title = "Integrity check"
         self.filename = ""
         self.id = "integrity"
+        self.reset_results()
+        
 
+    def reset_results(self):
         # Dict with the structure required by the BCF reporter
         self.results = {
             'title': self.title,
@@ -326,12 +329,14 @@ class IntegrityValidator:
                 'failed_entities': [],
                 'status': True,
             })
-        
+
         self.requirements = self.results['specifications'][0]['requirements']
         self.spec = self.results['specifications'][0]
 
+
     def validate(self):
         """Run the validation on all IFC files"""
+        self.reset_results()
         for item in self.treemodel._rootItem.children:
             self.check_item(item)
         # Init a BCF reporter without IDS, and set the results
