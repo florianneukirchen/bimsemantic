@@ -20,9 +20,7 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
             self.mainwindow.tabs,
         )
         self.validators.add_validator(integ_validator)
-
-        print(self.validators.validators)
-        
+      
         self.treemodel = ValidationTreeModel([integ_validator], self)
         self.proxymodel = QSortFilterProxyModel()
         self.proxymodel.setSourceModel(self.treemodel)

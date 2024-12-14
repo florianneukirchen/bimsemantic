@@ -392,11 +392,6 @@ class IntegrityValidator:
 
                 if left_info != right_info:
                     
-                    for k,v in left_info.items():
-                        if v != right_info[k]:
-                            print(k)
-                            print(v)
-                            print(right_info[k])
                     self.requirements[1]['status'] = False
                     self.requirements[1]['failed_entities'].append({
                         'element': left,
