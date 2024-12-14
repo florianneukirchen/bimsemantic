@@ -589,6 +589,13 @@ class OverviewTreeModel(DetailsBaseclass):
             self.new_item(self.tr("Qset count"), ifcfile.qset_count(), ifcfile_item)
 
 class ValidationTreeModel(DetailsBaseclass):
+    """Tree model for the validation results
+    
+    Simply show json-like data in a tree view
+
+    :param data: The validation data as json-like dict
+    :type data: dict
+    """
 
 
     def setup_model_data(self, data, parent):
