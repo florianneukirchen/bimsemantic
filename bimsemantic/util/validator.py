@@ -58,8 +58,6 @@ class Validators:
         :param validator_id: The ID of the validator to remove
         :type validator_id: str
         """
-        if validator_id == "integrity":
-            return
         for validator in self.validators:
             if validator.id == validator_id:
                 self.validators.remove(validator)

@@ -46,18 +46,21 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
             return
         item = self.proxymodel.mapToSource(active).internalPointer()
         validator_id = self.get_validator_id(item)
+        if validator_id == "integrity":
+            return
         self.validators.remove_validator(validator_id)
         self.treemodel.remove_file(validator_id)
         self.update_ifc_views()
 
     def close_all_files(self):
         """Close all IDS validators"""
-        self.validators.validators = []
+        # Keep only integrity validator
+        for validator in self.validators.validators[1:]:
+            self.treemodel.remove_file(validator.id)
+        self.validators.validators = self.validators.validators[0:1]
         self.validators.reporters = {}
         self.validators.results_by_guid = {}
-        self.treemodel.beginResetModel()
-        self.treemodel.setup_root_item()
-        self.treemodel.endResetModel()
+
         self.tree.expandAll()
         self.update_ifc_views()
 
