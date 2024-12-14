@@ -30,6 +30,42 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
         self.tree.setAlternatingRowColors(True)
         self.tree.setColumnWidth(0, 250)
         self.setWidget(self.tree)
+        self.tree.selectionModel().selectionChanged.connect(self.on_selection_changed)
+
+    def on_selection_changed(self, selected, deselected):
+        """Update the context menu when the selection changes"""
+        active = self.tree.currentIndex()
+        if not active.isValid():
+            return
+        item = self.proxymodel.mapToSource(active).internalPointer()
+        row = item.row()
+        level = item.level()
+
+        validator_id = self.get_validator_id(item)
+
+        reporters = self.validators.reporters.get(validator_id, None)
+        if not reporters:
+            return
+        data = {}
+        if validator_id == "integrity":
+            reporter = reporters
+            if level == 0:
+                data[self.tr("Integrity")] = reporter.results
+            elif level == 1:
+                data[self.tr("Integrity")] = reporter.results['specifications'][row] 
+            elif level == 2:
+                data[self.tr("Integrity")] = reporter.results['specifications'][item.parent().row()]['requirements'][row]
+        else:
+            for filename, reporter in reporters.items():
+                if level == 0:
+                    data[filename] = reporter.results
+                elif level == 1:
+                    data[filename] = reporter.results['specifications'][row] 
+                elif level == 2:
+                    data[filename] = reporter.results['specifications'][item.parent().row()]['requirements'][row]
+
+        self.mainwindow.detailsdock.show_details(data)
+        
 
     def add_file(self, filename):
         """Add IDS validator"""

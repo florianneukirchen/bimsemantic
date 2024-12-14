@@ -1,4 +1,4 @@
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QModelIndex
 from PySide6.QtWidgets import QDockWidget, QLabel, QTreeView
 import ifcopenshell.util.element
 from .treebase import TreeItem, TreeModelBaseclass
@@ -63,6 +63,8 @@ class DetailsDock(CopyMixin, ContextMixin, QDockWidget):
             return
         if isinstance(data, entity_instance):
             detail_model = IfcDetailsTreeModel(data, self, filenames)
+        elif isinstance(data, dict):
+            detail_model = ValidationTreeModel(data, self)
         else:
             self.setWidget(self.overviewtree)
             return
@@ -208,18 +210,31 @@ class DetailsBaseclass(TreeModelBaseclass):
         main_item = TreeItem([key_label, value_label], parent=parent)
         parent.appendChild(main_item)
 
-        for k, v in entity.get_info().items():
+        # entity may be a dict if showing validation results
+        if isinstance(entity, dict):
+            entity_info = entity
+        else:
+
+            entity_info = entity.get_info()
+
+        for k, v in  entity_info.items():
             if v and not k in ["id", "type", "HasPropertySets"]:
-                if isinstance(v, tuple):
+                if isinstance(v, (tuple, list)):
                     for i, v in enumerate(v):
                         if isinstance(v, ifcopenshell.entity_instance):
+                            self.item_with_subitems(v, main_item, f"{k} {i+1}")
+                        elif isinstance(v, dict):
+                            # For validators
                             self.item_with_subitems(v, main_item, f"{k} {i+1}")
                         else:
                             main_item.appendChild(
                                 TreeItem([f"{k} {i+1}", v], parent=main_item)
                             )
+                elif isinstance(v, dict):
+                    # For validators
+                    self.item_with_subitems(v, main_item, k)
                 else:
-                    main_item.appendChild(TreeItem([k, v], parent=main_item))
+                    main_item.appendChild(TreeItem([k, str(v)], parent=main_item))
 
         return main_item
 
@@ -572,3 +587,19 @@ class OverviewTreeModel(DetailsBaseclass):
             )
             self.new_item(self.tr("Pset count"), ifcfile.pset_count(), ifcfile_item)
             self.new_item(self.tr("Qset count"), ifcfile.qset_count(), ifcfile_item)
+
+class ValidationTreeModel(DetailsBaseclass):
+
+
+    def setup_model_data(self, data, parent):
+        root_item = parent
+        self.rows_spanned = []
+
+        for k, v in data.items():
+            label = self.tr("Validation: %s") % k
+            self.item_with_subitems(v, root_item, label)
+
+        for i in range(0, root_item.child_count()):
+            self.rows_spanned.append((i, QModelIndex()))
+
+
