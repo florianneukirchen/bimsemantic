@@ -235,7 +235,7 @@ class IfcDetailsTreeModel(DetailsBaseclass):
 
     def __init__(self, ifc_element, parent, filenames=None):
         self.filenames = filenames
-        self._mainwindow = parent
+        self._mainwindow = parent.mainwindow
         element = ifc_element
         super(IfcDetailsTreeModel, self).__init__(element, parent)
 
