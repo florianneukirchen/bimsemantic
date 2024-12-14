@@ -856,6 +856,13 @@ class MainWindow(QMainWindow):
         )
         self.validation_menu.addAction(self.close_ids_act)
 
+        self.close_all_ids_act = QAction(
+            self.tr("Close all IDS files"),
+            self,
+            statusTip=self.tr("Close all IDS files"),
+        )
+        self.validation_menu.addAction(self.close_all_ids_act)
+
         self.validation_menu.addSeparator()
 
         self.run_all_validations_act = QAction(
@@ -926,6 +933,7 @@ class MainWindow(QMainWindow):
         self.run_all_validations_act.triggered.connect(self.validationdock.run_all_validations)
         self.run_selected_validation_act.triggered.connect(self.validationdock.run_selected_validation)
         self.close_ids_act.triggered.connect(self.validationdock.close_file)
+        self.close_all_ids_act.triggered.connect(self.validationdock.close_all_files)
 
         # Add actions to menu
         self.overview_act = QAction(

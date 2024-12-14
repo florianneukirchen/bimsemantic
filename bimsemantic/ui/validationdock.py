@@ -45,6 +45,17 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
         self.treemodel.remove_file(validator_id)
         self.update_ifc_views()
 
+    def close_all_files(self):
+        """Close all IDS validators"""
+        self.validators.validators = []
+        self.validators.reporters = {}
+        self.validators.results_by_guid = {}
+        self.treemodel.beginResetModel()
+        self.treemodel.setup_root_item()
+        self.treemodel.endResetModel()
+        self.tree.expandAll()
+        self.update_ifc_views()
+
     def get_validator_id(self, item):
         """Get the ID of the validator for tree item
         
