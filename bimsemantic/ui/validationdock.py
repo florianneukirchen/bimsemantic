@@ -7,6 +7,10 @@ from bimsemantic.util import IfsValidator, Validators
 
 
 class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
+    """Dock widget with the validators and their results
+
+    :param parent: The parent widget (main window)
+    """
     def __init__(self, parent):
         super().__init__(self.tr("&Validation"), parent)
         self.mainwindow = parent
@@ -23,12 +27,14 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
         self.setWidget(self.tree)
 
     def add_file(self, filename):
+        """Add IDS validator"""
         validator = IfsValidator(filename)
         self.validators.add_validator(validator)
         self.treemodel.add_file(validator)
         self.tree.expandAll()
 
     def close_file(self):
+        """Close the selected IDS validator"""
         active = self.tree.currentIndex()
         if not active.isValid():
             self.mainwindow.statusbar.showMessage(self.tr("No file selected"), 5000)
@@ -40,11 +46,21 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
         self.update_ifc_views()
 
     def get_validator_id(self, item):
+        """Get the ID of the validator for tree item
+        
+        Also works for child items (specifications and requirements)
+
+        :param item: The tree item
+        :type item: TreeItem
+        :return: The ID of the validator
+        :rtype: str
+        """
         if item.level() > 0:
             return self.get_validator_id(item.parent())
         return item.id
 
     def run_all_validations(self):
+        """Run all validators and update the views"""
         self.validators.validate()
         self.update_results_column()
         self.tree.expandAll()
@@ -52,6 +68,7 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
         self.mainwindow.save_validation_act.setEnabled(True)
 
     def run_selected_validation(self):
+        """Run only the selected validator and update the views"""
         active = self.tree.currentIndex()
         if not active.isValid():
             self.mainwindow.statusbar.showMessage(self.tr("No validator selected"), 5000)
@@ -65,6 +82,7 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
         self.mainwindow.save_validation_act.setEnabled(True)
 
     def update_results_column(self):
+        """Update the results column in the validators dock"""
         root = self.treemodel._rootItem
         self.treemodel.beginResetModel()
         for validator_item in root.children:
@@ -99,6 +117,7 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
 
 
     def update_ifc_views(self):
+        """Tell all views in the ifc tabs that the column data changed"""
         # Update column 10 in the ifc tree views and eventually unhide it
         for i in range(self.mainwindow.tabs.tabs.count()):
             proxymodel = self.mainwindow.tabs.tabs.widget(i).proxymodel
@@ -109,6 +128,10 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
             tree.setColumnHidden(10, False)
         
 class ValidationTreeModel(TreeModelBaseclass):
+    """Model for the validators and their results
+    
+    :param data: Ignored in this case, can be None
+    """
     def __init__(self, data, parent):
         super(ValidationTreeModel, self).__init__(data, parent)
         self.column_count = 4
@@ -120,6 +143,11 @@ class ValidationTreeModel(TreeModelBaseclass):
         )
 
     def add_file(self, validator):
+        """Add a IDS validator to the tree
+        
+        :param validator: The IDS validator
+        :type validator: IdsValidator
+        """
         self.beginResetModel()
         validator_item = TreeItem(
             [
@@ -165,6 +193,11 @@ class ValidationTreeModel(TreeModelBaseclass):
         self.endResetModel()
 
     def remove_file(self, filename):
+        """Remove a IDS validator from the tree
+        
+        :param filename: The filename of the IDS validator
+        :type filename: str
+        """
         for child in self._rootItem.children:
             if child.id == filename:
                 file_item = child
