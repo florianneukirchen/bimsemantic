@@ -80,7 +80,7 @@ class IdsEditDialog(QDialog):
         layout = self.main_layout.layout()
         layout.addWidget(QLabel(self.tr("Title")), 0, 0)
         self.title = QLineEdit()
-        self.title.setText("No Title")
+        self.title.setText("Unnamed")
         layout.addWidget(self.title, 0, 1)
 
         layout.addWidget(QLabel(self.tr("Description")), 1, 0)
@@ -125,6 +125,7 @@ class IdsEditDialog(QDialog):
         self.spec_cardinality = QComboBox()
         self.spec_cardinality.addItems(self.cardinalities)
         layout.addWidget(self.spec_cardinality, 4, 1)
+        self.spec_cardinality.currentTextChanged.connect(self.cardinality_changed)
 
         # missing: ifcVersion
 
@@ -227,6 +228,18 @@ class IdsEditDialog(QDialog):
         self.save_fac_btn = QPushButton(self.tr("Save"))
         self.save_fac_btn.clicked.connect(self.save_facet)
         buttonlayout.addWidget(self.save_fac_btn)
+
+    def cardinality_changed(self, text):
+        # In theory this influences the text of the requirements, see line 131 in 
+        # https://github.com/IfcOpenShell/IfcOpenShell/blob/v0.8.0/src/ifctester/ifctester/facet.py
+        # However it does not have an effect, seems to be a bug in ifctester
+        for index in range(self.specifications.count()):
+            requirement = self.current_requirement[index]
+            if not isinstance(requirement, ifctester.ids.Entity):
+                dummy_spec = ifctester.ids.Specification()
+                dummy_spec.set_usage(text.lower())
+                item = self.requirements.item(index)
+                item.setText(requirement.to_string("requirement", dummy_spec, requirement))
 
     def show_main_layout(self):
         self.stacked_layout.setCurrentWidget(self.main_layout)
