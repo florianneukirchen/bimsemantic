@@ -1,5 +1,6 @@
 from .mixin import *
 from .searchbar import *
+from .idseditor import *
 from .detailview import *
 from .validationdock import *
 from .customtreedlg import *
