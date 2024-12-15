@@ -33,7 +33,6 @@ class IdsEditDialog(QDialog):
         super().__init__(parent=parent)
         self.mainwindow = parent
         self.filename = filename
-        self.dirty = False
 
         self.current_spec = None
         self.current_facet = None
@@ -576,6 +575,17 @@ class IdsEditDialog(QDialog):
         item.setText(facet.to_string(used_for, spec, facet))
         self.show_spec_layout()
 
+
+    def accept(self):
+        # This is run if the user clicks OK
+        self.ids.title = self.title.text()
+        self.ids.description = self.description.text()
+        print("info", self.ids.info)
+        print(self.ids.to_string())
+
+        super().accept()
+
+
 class ChooseFacetDialog(QDialog):
     def __init__(self, parent):
         super().__init__(parent=parent)
@@ -633,4 +643,4 @@ if __name__ == "__main__":
 
     dialog = IdsEditDialog(None)
     dialog.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
