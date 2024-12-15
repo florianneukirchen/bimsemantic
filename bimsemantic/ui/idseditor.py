@@ -234,7 +234,9 @@ class IdsEditDialog(QDialog):
         # In theory this influences the text of the requirements, see line 131 in 
         # https://github.com/IfcOpenShell/IfcOpenShell/blob/v0.8.0/src/ifctester/ifctester/facet.py
         # However it does not have an effect, seems to be a bug in ifctester
-        for index in range(self.specifications.count()):
+        print(self.requirements.count())
+        print(self.current_requirement)
+        for index in range(self.requirements.count()):
             requirement = self.current_requirement[index]
             if not isinstance(requirement, ifctester.ids.Entity):
                 dummy_spec = ifctester.ids.Specification()
