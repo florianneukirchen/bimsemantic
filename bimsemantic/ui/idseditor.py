@@ -73,6 +73,8 @@ class IdsEditDialog(QDialog):
             self.ids = ifctester.ids.open(filename)
         else:
             self.ids = ifctester.ids.Ids()
+            self.buttonBox.button(QDialogButtonBox.Save).setEnabled(False)
+
 
 
     def setup_main_layout(self):
@@ -433,6 +435,8 @@ class IdsEditDialog(QDialog):
         spec.set_usage(cardinality)
         # missing: ifcVersion
         self.show_main_layout()
+        if self.specifications.count() > 0:
+            self.buttonBox.button(QDialogButtonBox.Save).setEnabled(True)
 
     def remove_specification(self):
         selected_items = self.specifications.selectedItems()
@@ -441,6 +445,9 @@ class IdsEditDialog(QDialog):
         for item in selected_items:
             self.ids.specifications.pop(self.specifications.row(item))
             self.specifications.takeItem(self.specifications.row(item))
+
+        if self.specifications.count() == 0:
+            self.buttonBox.button(QDialogButtonBox.Save).setEnabled(False)
 
     def add_applicability(self):
         dialog = ChooseFacetDialog(self)
