@@ -20,6 +20,10 @@ from PySide6.QtWidgets import (
     QCalendarWidget,
     QWidget,
     QComboBox,
+    QButtonGroup,
+    QRadioButton,
+    QSpacerItem,
+    QSizePolicy,
 )
 import ifctester
 
@@ -33,6 +37,9 @@ class IdsEditDialog(QDialog):
 
         self.current_spec = None
         self.current_facet = None
+
+        self.current_applicability = []
+        self.current_requirement = []
 
         self.setWindowTitle(self.tr("Edit IDS"))
 
@@ -107,17 +114,17 @@ class IdsEditDialog(QDialog):
         layout.addWidget(self.spec_description, 1, 1)
 
         layout.addWidget(QLabel(self.tr("Instructions")), 2, 0)
-        self.instructions = QLineEdit()
-        layout.addWidget(self.instructions, 2, 1)
+        self.spec_instructions = QLineEdit()
+        layout.addWidget(self.spec_instructions, 2, 1)
 
         layout.addWidget(QLabel(self.tr("Identifier")), 3, 0)
         self.identifier = QLineEdit()
         layout.addWidget(self.identifier, 3, 1)
 
         layout.addWidget(QLabel(self.tr("Cardinality")), 4, 0)
-        self.cardinality = QComboBox()
-        self.cardinality.addItems(self.cardinalities)
-        layout.addWidget(self.cardinality, 4, 1)
+        self.spec_cardinality = QComboBox()
+        self.spec_cardinality.addItems(self.cardinalities)
+        layout.addWidget(self.spec_cardinality, 4, 1)
 
         # missing: ifcVersion
 
@@ -164,15 +171,62 @@ class IdsEditDialog(QDialog):
         buttonlayout3.addWidget(self.save_spec_btn)
 
     def setup_facet_layout(self):
-        self.facet_layout.layout().addWidget(QLabel(self.tr("Requirement Name")), 0, 0)
-        self.facet_name = QLineEdit()
-        self.facet_layout.layout().addWidget(self.facet_name, 0, 1)
+        layout = self.facet_layout.layout()
+        layout.setContentsMargins(10, 10, 10, 10)
+        self.used_for_label = QLabel()
+        self.facet_type_label = QLabel()
+        font = self.facet_type_label.font()
+        font.setPointSize(16)
+        font.setBold(True)
+        self.facet_type_label.setFont(font)
+        self.used_for_label.setFont(font)
+        layout.addWidget(self.facet_type_label, 0, 0)
+        layout.addWidget(self.used_for_label, 0, 1)
+        
+        self.label1 = QLabel()
+        self.label2 = QLabel()
+        self.label3 = QLabel()
+        self.label4 = QLabel()
+        self.label5 = QLabel()
+        self.instructions_label = QLabel("Instructions")
+        self.cardinality_label = QLabel("Cardinality")
+
+        layout.addWidget(self.label1, 1, 0)
+        layout.addWidget(self.label2, 2, 0)
+        layout.addWidget(self.label3, 3, 0)
+        layout.addWidget(self.label4, 4, 0)
+        layout.addWidget(self.label5, 5, 0)
+        layout.addWidget(self.instructions_label, 6, 0)
+        layout.addWidget(self.cardinality_label, 7, 0)
+
+        self.parameter1 = QLineEdit()
+        self.parameter2 = QLineEdit()
+        self.parameter3 = QLineEdit()
+        self.parameter4 = QLineEdit()
+        self.parameter5 = QLineEdit()
+        self.facet_instructions = QLineEdit()
+        self.facet_cardinality = QComboBox()
+        self.facet_cardinality.addItems(self.cardinalities)
+
+        layout.addWidget(self.parameter1, 1, 1)
+        layout.addWidget(self.parameter2, 2, 1)
+        layout.addWidget(self.parameter3, 3, 1)
+        layout.addWidget(self.parameter4, 4, 1)
+        layout.addWidget(self.parameter5, 5, 1)
+        layout.addWidget(self.facet_instructions, 6, 1)
+        layout.addWidget(self.facet_cardinality, 7, 1)
+
+        spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        layout.addItem(spacer, 8, 1)
 
         buttonlayout = QHBoxLayout()
-        self.facet_layout.layout().addLayout(buttonlayout, 1, 1)
-        self.back_to_spec = QPushButton(self.tr("Back"))
+        layout.addLayout(buttonlayout, 9, 1)
+        self.back_to_spec = QPushButton(self.tr("Cancel"))
         self.back_to_spec.clicked.connect(self.show_spec_layout)
         buttonlayout.addWidget(self.back_to_spec)
+        self.save_fac_btn = QPushButton(self.tr("Save"))
+        self.save_fac_btn.clicked.connect(self.save_facet)
+        buttonlayout.addWidget(self.save_fac_btn)
 
     def show_main_layout(self):
         self.stacked_layout.setCurrentWidget(self.main_layout)
@@ -180,7 +234,124 @@ class IdsEditDialog(QDialog):
     def show_spec_layout(self):
         self.stacked_layout.setCurrentWidget(self.spec_layout)
 
-    def show_facet_layout(self):
+    def show_facet_layout(self, facet_type, facet=None):
+        self.facet_type_label.setText(facet_type)
+        if facet_type == "Entity":
+            self.label1.setText("Name")
+            self.label2.setText("predefinedType")
+            self.label3.hide()
+            self.label4.hide()
+            self.label5.hide()
+            self.cardinality_label.hide()
+            self.parameter3.hide()
+            self.parameter4.hide()
+            self.parameter5.hide()
+            self.facet_cardinality.hide()
+            if facet:
+                self.parameter1.setText(facet.name)
+                self.parameter2.setText(facet.predefinedType)
+            else:
+                self.parameter1.clear()
+                self.parameter2.clear()
+        elif facet_type == "Attribute":
+            self.label1.setText("Name")
+            self.label2.setText("Value")
+            self.label3.hide()
+            self.label4.hide()
+            self.label5.hide()
+            self.cardinality_label.show()
+            self.parameter4.hide()
+            self.parameter5.hide()
+            self.facet_cardinality.show()
+            if facet:
+                self.parameter1.setText(facet.name)
+                self.parameter2.setText(facet.value)
+            else:
+                self.parameter1.clear()
+                self.parameter2.clear()
+        elif facet_type == "Property":
+            self.label1.setText("Property Set")
+            self.label2.setText("Property Name")
+            self.label3.setText("Value")
+            self.label4.setText("Data Type")
+            self.label5.setText("URI")
+            self.label3.show()
+            self.label4.show()
+            self.label5.show()
+            self.cardinality_label.show()
+            self.parameter4.show()
+            self.parameter5.show()
+            self.facet_cardinality.show()
+            if facet:
+                self.parameter1.setText(facet.propertySet)
+                self.parameter2.setText(facet.baseName)
+                self.parameter3.setText(facet.value)
+                self.parameter4.setText(facet.dataType)
+                self.parameter5.setText(facet.uri)
+            else:
+                self.parameter1.clear()
+                self.parameter2.clear()
+                self.parameter3.clear()
+                self.parameter4.clear()
+                self.parameter5.clear()
+        elif facet_type == "PartOf":
+            self.label1.setText("Name")
+            self.label2.setText("Predifined Type")
+            self.label3.setText("Relation")
+            self.label3.show()
+            self.label4.hide()
+            self.label5.hide()
+            self.cardinality_label.show()
+            self.parameter4.hide()
+            self.parameter5.hide()
+            self.facet_cardinality.show()
+            if facet:
+                self.parameter1.setText(facet.name)
+                self.parameter2.setText(facet.predefinedType)
+                self.parameter3.setText(facet.relation)
+            else:
+                self.parameter1.clear()
+                self.parameter2.clear()
+                self.parameter3.clear()
+        elif facet_type == "Material":
+            self.label1.setText("Value")
+            self.label2.setText("URI")
+            self.label3.hide()
+            self.label4.hide()
+            self.label5.hide()
+            self.cardinality_label.show()
+            self.parameter3.hide()
+            self.parameter4.hide()
+            self.parameter5.hide()
+            self.facet_cardinality.show()
+            if facet:
+                self.parameter1.setText(facet.value)
+                self.parameter2.setText(facet.uri)
+            else:
+                self.parameter1.clear()
+                self.parameter2.clear()
+        elif facet_type == "Classification":
+            self.label1.setText("Value")
+            self.label2.setText("System")
+            self.label3.setText("URI")
+            self.label3.show()
+            self.label4.hide()
+            self.label5.hide()
+            self.cardinality_label.show()
+            self.parameter4.hide()
+            self.parameter5.hide()
+            self.facet_cardinality.show()
+            if facet:
+                self.parameter1.setText(facet.value)
+                self.parameter2.setText(facet.system)
+                self.parameter3.setText(facet.uri)
+            else:
+                self.parameter1.clear()
+                self.parameter2.clear()
+                self.parameter3.clear()
+        else:
+            return
+            
         self.stacked_layout.setCurrentWidget(self.facet_layout)
 
     def add_specification(self):
@@ -188,11 +359,13 @@ class IdsEditDialog(QDialog):
         self.spec_name.setText(self.tr("New Specification"))
         self.stacked_layout.setCurrentWidget(self.spec_layout)
         self.spec_description.clear()
-        self.instructions.clear()
+        self.spec_instructions.clear()
         self.identifier.clear()
-        self.cardinality.setCurrentIndex(0)
+        self.spec_cardinality.setCurrentIndex(0)
         self.applicability.clear()
         self.requirements.clear()
+        self.current_applicability = []
+        self.current_requirement = []
 
     def edit_specification(self):
         selected_items = self.specifications.selectedItems()
@@ -200,12 +373,20 @@ class IdsEditDialog(QDialog):
             return
         self.current_spec = selected_items[0]  
         spec = self.ids.specifications[self.specifications.row(self.current_spec)]
+        self.current_applicability = spec.applicability
+        for facet in spec.applicability:
+            item = QListWidgetItem(facet.to_string("applicability"))
+            self.applicability.addItem(item)
+        self.current_requirement = spec.requirements
+        for facet in spec.requirements:
+            item = QListWidgetItem(facet.to_string("requirement"))
+            self.requirements.addItem(item)
         self.spec_name.setText(spec.name)
         self.spec_description.setText(spec.description)
-        self.instructions.setText(spec.instructions)
+        self.spec_instructions.setText(spec.instructions)
         self.identifier.setText(spec.identifier)
         cardinality = spec.get_usage().capitalize()
-        self.cardinality.setCurrentIndex(self.cardinalities.index(cardinality))
+        self.spec_cardinality.setCurrentIndex(self.cardinalities.index(cardinality))
         self.stacked_layout.setCurrentWidget(self.spec_layout)
 
     def save_specification(self):
@@ -219,9 +400,11 @@ class IdsEditDialog(QDialog):
             spec = self.ids.specifications[self.specifications.row(self.current_spec)]
         spec.name = self.spec_name.text()
         spec.description = self.spec_description.text()
-        spec.instructions = self.instructions.text()
+        spec.instructions = self.spec_instructions.text()
         spec.identifier = self.identifier.text()
-        cardinality = self.cardinality.currentText().lower()
+        cardinality = self.spec_cardinality.currentText().lower()
+        spec.applicability = self.current_applicability
+        spec.requirements = self.current_requirement
         spec.set_usage(cardinality)
         # missing: ifcVersion
         self.show_main_layout()
@@ -235,10 +418,22 @@ class IdsEditDialog(QDialog):
             self.specifications.takeItem(self.specifications.row(item))
 
     def add_applicability(self):
-        pass
+        dialog = ChooseFacetDialog(self)
+        if dialog.exec():
+            facet_type = dialog.get_facet()
+            if facet_type:
+                self.current_facet = None
+                self.used_for_label.setText("Applicability")
+                self.show_facet_layout(facet_type)
 
     def edit_applicability(self):
-        pass
+        selected_items = self.applicability.selectedItems()
+        if not selected_items:
+            return
+        self.current_facet = selected_items[0]
+        facet = self.current_applicability[self.applicability.row(self.current_facet)]
+        self.used_for_label.setText("Applicability")
+        self.show_facet_layout(facet.__class__.__name__, facet)
 
     def remove_applicability(self):
         pass
@@ -252,8 +447,122 @@ class IdsEditDialog(QDialog):
     def remove_requirement(self):
         pass
 
+    def save_facet(self):
+        used_for = self.used_for_label.text().lower()
+        if used_for == "applicability":
+            listview = self.applicability
+            spec_part = self.current_applicability
+        else:
+            listview = self.requirements
+            spec_part = self.current_requirement
 
+        if self.current_facet is None:
+            # New facet
+            facet_type = self.facet_type_label.text()
+            if facet_type == "Entity":
+                facet = ifctester.ids.Entity()
+            elif facet_type == "Attribute":
+                facet = ifctester.ids.Attribute()
+            elif facet_type == "Property":
+                facet = ifctester.ids.Property()
+            elif facet_type == "PartOf":
+                facet = ifctester.ids.PartOf()
+            elif facet_type == "Material":
+                facet = ifctester.ids.Material()
+            elif facet_type == "Classification":
+                facet = ifctester.ids.Classification()
+            else:
+                return
+            
+            spec_part.append(facet)
+            item = QListWidgetItem(facet.to_string(used_for))
+            listview.addItem(item)
 
+        else:
+            # Update existing facet
+            facet = self.current_spec.facets[self.current_spec.facets.index(self.current_facet)]
+            item = listview.item(listview.row(self.current_facet))
+            item.setText(facet.to_string(used_for))
+
+        # Set data
+        facet.instructions = self.facet_instructions.text()
+
+        if not isinstance(facet, ifctester.ids.Entity):
+            facet.cardinality = self.facet_cardinality.currentText().lower()
+
+        if isinstance(facet, ifctester.ids.Entity):
+            facet.name = self.parameter1.text()
+            facet.predefinedType = self.parameter2.text()
+        elif isinstance(facet, ifctester.ids.Attribute):
+            facet.name = self.parameter1.text()
+            facet.value = self.parameter2.text()
+        elif isinstance(facet, ifctester.ids.Property):
+            facet.propertySet = self.parameter1.text()
+            facet.baseName = self.parameter2.text()
+            facet.value = self.parameter3.text()
+            facet.dataType = self.parameter4.text()
+            facet.uri = self.parameter5.text()
+        elif isinstance(facet, ifctester.ids.PartOf):
+            facet.name = self.parameter1.text()
+            facet.predefinedType = self.parameter2.text()
+            facet.relation = self.parameter3.text()
+        elif isinstance(facet, ifctester.ids.Material):
+            facet.value = self.parameter1.text()
+            facet.uri = self.parameter2.text()
+        elif isinstance(facet, ifctester.ids.Classification):
+            facet.value = self.parameter1.text()
+            facet.system = self.parameter2.text()
+            facet.uri = self.parameter3.text()
+        else:
+            return
+
+        self.show_spec_layout()
+
+class ChooseFacetDialog(QDialog):
+    def __init__(self, parent):
+        super().__init__(parent=parent)
+        self.mainwindow = parent
+
+        self.setWindowTitle(self.tr("Choose Facet"))
+
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+
+        layout.addWidget(QLabel(self.tr("Choose Facet")))
+
+        self.button_group = QButtonGroup(self)
+        self.radio_button1 = QRadioButton(self.tr("Entity"))
+        self.radio_button2 = QRadioButton(self.tr("Attribute"))
+        self.radio_button3 = QRadioButton(self.tr("Property"))
+        self.radio_button4 = QRadioButton(self.tr("PartOf"))
+        self.radio_button5 = QRadioButton(self.tr("Material"))
+        self.radio_button6 = QRadioButton(self.tr("Classification"))
+
+        self.button_group.addButton(self.radio_button1)
+        self.button_group.addButton(self.radio_button2)
+        self.button_group.addButton(self.radio_button3)
+        self.button_group.addButton(self.radio_button4)
+        self.button_group.addButton(self.radio_button5)
+        self.button_group.addButton(self.radio_button6)
+
+        layout.addWidget(self.radio_button1)
+        layout.addWidget(self.radio_button2)
+        layout.addWidget(self.radio_button3)
+        layout.addWidget(self.radio_button4)
+        layout.addWidget(self.radio_button5)
+        layout.addWidget(self.radio_button6)
+
+        self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.button_box.accepted.connect(self.accept)
+        self.button_box.rejected.connect(self.reject)
+        layout.addWidget(self.button_box)
+
+    def get_facet(self):
+        selected_button = self.button_group.checkedButton()
+        if selected_button:
+            return selected_button.text()
+        return None
+    
 
 
 if __name__ == "__main__":
