@@ -93,13 +93,13 @@ class IdsEditDialog(QDialog):
 
         buttonlayout = QHBoxLayout()
         layout.addLayout(buttonlayout, 3, 1)
-        self.addspecification = QPushButton(self.tr("New"))
+        self.addspecification = QPushButton(self.tr("New Specification"))
         self.addspecification.clicked.connect(self.add_specification)
         buttonlayout.addWidget(self.addspecification)
-        self.removespecification = QPushButton(self.tr("Remove"))
+        self.removespecification = QPushButton(self.tr("Remove Specification"))
         self.removespecification.clicked.connect(self.remove_specification)
         buttonlayout.addWidget(self.removespecification)
-        self.editspecification = QPushButton(self.tr("Edit"))
+        self.editspecification = QPushButton(self.tr("Edit Specification"))
         self.editspecification.clicked.connect(self.edit_specification)
         buttonlayout.addWidget(self.editspecification)
 
@@ -236,6 +236,15 @@ class IdsEditDialog(QDialog):
 
     def show_facet_layout(self, facet_type, facet=None):
         self.facet_type_label.setText(facet_type)
+        if facet:
+            self.facet_instructions.setText(facet.instructions)
+            try:
+                self.facet_cardinality.setCurrentIndex(self.cardinalities.index(facet.cardinality.capitalize()))
+            except AttributeError:
+                pass
+        else:
+            self.facet_instructions.clear()
+            self.facet_cardinality.setCurrentIndex(0)
         if facet_type == "Entity":
             self.label1.setText("Name")
             self.label2.setText("predefinedType")
@@ -260,6 +269,7 @@ class IdsEditDialog(QDialog):
             self.label4.hide()
             self.label5.hide()
             self.cardinality_label.show()
+            self.parameter3.hide()
             self.parameter4.hide()
             self.parameter5.hide()
             self.facet_cardinality.show()
@@ -279,6 +289,7 @@ class IdsEditDialog(QDialog):
             self.label4.show()
             self.label5.show()
             self.cardinality_label.show()
+            self.parameter3.show()
             self.parameter4.show()
             self.parameter5.show()
             self.facet_cardinality.show()
@@ -302,6 +313,7 @@ class IdsEditDialog(QDialog):
             self.label4.hide()
             self.label5.hide()
             self.cardinality_label.show()
+            self.parameter3.show()
             self.parameter4.hide()
             self.parameter5.hide()
             self.facet_cardinality.show()
@@ -338,6 +350,7 @@ class IdsEditDialog(QDialog):
             self.label4.hide()
             self.label5.hide()
             self.cardinality_label.show()
+            self.parameter3.show()
             self.parameter4.hide()
             self.parameter5.hide()
             self.facet_cardinality.show()
@@ -414,7 +427,7 @@ class IdsEditDialog(QDialog):
         if not selected_items:
             return
         for item in selected_items:
-            self.ids.specifications.remove(self.specifications.row(item))
+            self.ids.specifications.pop(self.specifications.row(item))
             self.specifications.takeItem(self.specifications.row(item))
 
     def add_applicability(self):
@@ -436,25 +449,56 @@ class IdsEditDialog(QDialog):
         self.show_facet_layout(facet.__class__.__name__, facet)
 
     def remove_applicability(self):
-        pass
+        selected_items = self.applicability.selectedItems()
+        if not selected_items:
+            return
+        for item in selected_items:
+            print("item", item)
+            print("row", self.applicability.row(item))
+            self.current_applicability.pop(self.applicability.row(item))
+            self.applicability.takeItem(self.applicability.row(item))
+
 
     def add_requirement(self):
-        pass
+        dialog = ChooseFacetDialog(self)
+        if dialog.exec():
+            facet_type = dialog.get_facet()
+            if facet_type:
+                self.current_facet = None
+                self.used_for_label.setText("Requirement")
+                self.show_facet_layout(facet_type)
 
     def edit_requirement(self):
-        pass
+        selected_items = self.requirements.selectedItems()
+        if not selected_items:
+            return
+        self.current_facet = selected_items[0]
+        facet = self.current_requirement[self.requirements.row(self.current_facet)]
+        self.used_for_label.setText("Requirement")
+        self.show_facet_layout(facet.__class__.__name__, facet)
 
     def remove_requirement(self):
-        pass
+        selected_items = self.requirements.selectedItems()
+        if not selected_items:
+            return
+        for item in selected_items:
+            print("item", item)
+            print("row", self.applicability.row(item))
+            self.current_requirement.pop(self.requirements.row(item))
+            self.requirements.takeItem(self.requirements.row(item))
 
     def save_facet(self):
         used_for = self.used_for_label.text().lower()
         if used_for == "applicability":
             listview = self.applicability
             spec_part = self.current_applicability
+            spec = None # not used
         else:
             listview = self.requirements
             spec_part = self.current_requirement
+            # Create a dummy spec, only the cardinality is required
+            spec = ifctester.ids.Specification()
+            spec.set_usage(self.spec_cardinality.currentText().lower())
 
         if self.current_facet is None:
             # New facet
@@ -474,15 +518,15 @@ class IdsEditDialog(QDialog):
             else:
                 return
             
+            
             spec_part.append(facet)
-            item = QListWidgetItem(facet.to_string(used_for))
+            item = QListWidgetItem()
             listview.addItem(item)
 
         else:
             # Update existing facet
             facet = self.current_spec.facets[self.current_spec.facets.index(self.current_facet)]
             item = listview.item(listview.row(self.current_facet))
-            item.setText(facet.to_string(used_for))
 
         # Set data
         facet.instructions = self.facet_instructions.text()
@@ -493,6 +537,7 @@ class IdsEditDialog(QDialog):
         if isinstance(facet, ifctester.ids.Entity):
             facet.name = self.parameter1.text()
             facet.predefinedType = self.parameter2.text()
+            facet.cardinality = None
         elif isinstance(facet, ifctester.ids.Attribute):
             facet.name = self.parameter1.text()
             facet.value = self.parameter2.text()
@@ -514,8 +559,8 @@ class IdsEditDialog(QDialog):
             facet.system = self.parameter2.text()
             facet.uri = self.parameter3.text()
         else:
-            return
-
+            raise NotImplementedError
+        item.setText(facet.to_string(used_for, spec, facet))
         self.show_spec_layout()
 
 class ChooseFacetDialog(QDialog):
@@ -544,6 +589,8 @@ class ChooseFacetDialog(QDialog):
         self.button_group.addButton(self.radio_button4)
         self.button_group.addButton(self.radio_button5)
         self.button_group.addButton(self.radio_button6)
+
+        self.radio_button1.setChecked(True)
 
         layout.addWidget(self.radio_button1)
         layout.addWidget(self.radio_button2)
