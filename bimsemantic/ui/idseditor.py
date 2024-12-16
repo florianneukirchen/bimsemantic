@@ -1,4 +1,4 @@
-from enum import Enum
+import re
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QDialog,
@@ -24,8 +24,17 @@ from PySide6.QtWidgets import (
     QRadioButton,
     QSpacerItem,
     QSizePolicy,
+    QMessageBox,
 )
 import ifctester
+
+
+def extract_bounds(expression):
+    pattern = re.compile(r'(?P<min_value>\d+)?\s*(?P<min_op><=|<)?\s*\b(?P<var_name>\w+)\b\s*(?P<max_op><=|<)?\s*(?P<max_value>\d+)?')
+    match = pattern.match(expression)
+    if match:
+        return match.groupdict()
+    return {}
 
 class IdsEditDialog(QDialog):
 
@@ -269,6 +278,9 @@ class IdsEditDialog(QDialog):
                 dummy_spec = ifctester.ids.Specification()
                 dummy_spec.set_usage(text.lower())
                 item = self.requirements.item(index)
+                # If requirement, to_string must be called with a spec (with cardinality set) 
+                # and the requirement itself (why? Why not using self?)
+                # See: https://github.com/IfcOpenShell/IfcOpenShell/blob/v0.8.0/src/ifctester/ifctester/reporter.py#L188
                 item.setText(requirement.to_string("requirement", dummy_spec, requirement))
 
     def show_main_layout(self):
@@ -318,8 +330,44 @@ class IdsEditDialog(QDialog):
             combo.setCurrentIndex(0)
             parameter.setText(value)
 
+    def get_parameter_or_restriction(self, parameter, combo):
+        combo_index = combo.currentIndex()
+        if combo_index == 0:
+            return parameter.text()
+        elif combo_index == 1:
+            enumeration = [s.strip() for s in parameter.text().split(",")]
+            return ifctester.facet.Restriction({"enumeration": enumeration})
+        elif combo_index == 2:
+            bounds = extract_bounds(parameter.text())
+            print("bounds", bounds)
+            if bounds:
+                options = {}
+                if bounds["min_op"] == "<=":
+                    options["minInclusive"] = bounds["min_value"]
+                elif bounds["min_op"] == "<":
+                    options["minExclusive"] = bounds["min_value"]
+                if bounds["max_op"] == "<=":
+                    options["maxInclusive"] = bounds["max_value"]
+                elif bounds["max_op"] == "<":
+                    options["maxExclusive"] = bounds["max_value"]
+                print(options)
+                restriction = ifctester.facet.Restriction(options)
+                restriction.base = 'double'
+                return restriction
+            else:
+                return parameter.text() # Fallback for invalid input
+        elif combo_index == 3:
+            return ifctester.facet.Restriction({"pattern": parameter.text()})
+        elif combo_index == 4:
+            return ifctester.facet.Restriction({"length": int(parameter.text())})
+        elif combo_index == 5:
+            return ifctester.facet.Restriction({"minLength": int(parameter.text())})
+        elif combo_index == 6:
+            return ifctester.facet.Restriction({"maxLength": int(parameter.text())})
+        else:
+            min_length, max_length = parameter.text().split(",")
+            return ifctester.facet.Restriction({"minLength": int(min_length), "maxLength": int(max_length)})
 
-                    
 
     def show_facet_layout(self, facet_type, facet=None):
         self.facet_type_label.setText(facet_type)
@@ -514,7 +562,7 @@ class IdsEditDialog(QDialog):
             self.applicability.addItem(item)
         self.current_requirement = spec.requirements
         for facet in spec.requirements:
-            item = QListWidgetItem(facet.to_string("requirement"))
+            item = QListWidgetItem(facet.to_string("requirement", spec, facet))
             self.requirements.addItem(item)
         self.spec_name.setText(spec.name)
         self.spec_description.setText(spec.description)
@@ -645,6 +693,7 @@ class IdsEditDialog(QDialog):
             else:
                 return
             
+            print(facet)
             
             spec_part.append(facet)
             item = QListWidgetItem()
@@ -662,29 +711,29 @@ class IdsEditDialog(QDialog):
             facet.cardinality = self.facet_cardinality.currentText().lower()
 
         if isinstance(facet, ifctester.ids.Entity):
-            facet.name = self.parameter1.text()
-            facet.predefinedType = self.parameter2.text()
+            facet.name = self.get_parameter_or_restriction(self.parameter1, self.restriction1)
+            facet.predefinedType = self.get_parameter_or_restriction(self.parameter2, self.restriction2)
             facet.cardinality = None
         elif isinstance(facet, ifctester.ids.Attribute):
-            facet.name = self.parameter1.text()
-            facet.value = self.parameter2.text()
+            facet.name = self.get_parameter_or_restriction(self.parameter1, self.restriction1)
+            facet.value = self.get_parameter_or_restriction(self.parameter2, self.restriction2)
         elif isinstance(facet, ifctester.ids.Property):
-            facet.propertySet = self.parameter1.text()
-            facet.baseName = self.parameter2.text()
-            facet.value = self.parameter3.text()
-            facet.dataType = self.parameter4.text()
-            facet.uri = self.parameter5.text()
+            facet.propertySet = self.get_parameter_or_restriction(self.parameter1, self.restriction1)
+            facet.baseName = self.get_parameter_or_restriction(self.parameter2, self.restriction2)
+            facet.value = self.get_parameter_or_restriction(self.parameter3, self.restriction3)
+            facet.dataType = self.get_parameter_or_restriction(self.parameter4, self.restriction4)
+            facet.uri = self.get_parameter_or_restriction(self.parameter5, self.restriction5)
         elif isinstance(facet, ifctester.ids.PartOf):
-            facet.name = self.parameter1.text()
-            facet.predefinedType = self.parameter2.text()
-            facet.relation = self.parameter3.text()
+            facet.name = self.get_parameter_or_restriction(self.parameter1, self.restriction1)
+            facet.predefinedType = self.get_parameter_or_restriction(self.parameter2, self.restriction2)
+            facet.relation = self.get_parameter_or_restriction(self.parameter3, self.restriction3)
         elif isinstance(facet, ifctester.ids.Material):
-            facet.value = self.parameter1.text()
-            facet.uri = self.parameter2.text()
+            facet.value = self.get_parameter_or_restriction(self.parameter1, self.restriction1)
+            facet.uri = self.get_parameter_or_restriction(self.parameter2, self.restriction2)
         elif isinstance(facet, ifctester.ids.Classification):
-            facet.value = self.parameter1.text()
-            facet.system = self.parameter2.text()
-            facet.uri = self.parameter3.text()
+            facet.value = self.get_parameter_or_restriction(self.parameter1, self.restriction1)
+            facet.system = self.get_parameter_or_restriction(self.parameter2, self.restriction2)
+            facet.uri = self.get_parameter_or_restriction(self.parameter3, self.restriction3)
         else:
             raise NotImplementedError
         item.setText(facet.to_string(used_for, spec, facet))
@@ -696,7 +745,17 @@ class IdsEditDialog(QDialog):
         self.ids.title = self.title.text()
         self.ids.description = self.description.text()
         print("info", self.ids.info)
-        print(self.ids.to_string())
+        try:
+            print(self.ids.to_string())
+        except Exception as e:
+            # Invalid IDS, file not found etc.
+            # Show error message and do not close the dialog
+            mb = QMessageBox()
+            msg = self.tr("<b>Could not save IDS file:</b>") + f"<br><br>{e}"
+            mb.setText(msg)
+            mb.setWindowTitle(self.tr("Could not save IDS file"))
+            mb.exec()
+            return     
 
         super().accept()
 
