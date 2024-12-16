@@ -3,17 +3,19 @@
 
 
 ### Todo
+- IFS laden
+- ifc version in ids
+- restriction
+- weitere Metadaten in ids
 - Spalten umsortieren in allen tabs
-- tabs: Material
-- Kontextmenü
+- Kontextmenü Validierung
 - Export als JSON
-- Filter
+
 
 
 
 ## Installation
-- Python 3.9 to 3.12 or lower
-
+- Python 3.9 to 3.12
 
 
 ## Coding

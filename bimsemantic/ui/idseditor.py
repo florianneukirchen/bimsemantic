@@ -58,6 +58,16 @@ class IdsEditDialog(QDialog):
         self.stacked_layout.addWidget(self.facet_layout)
 
         self.cardinalities = ["Required", "Optional", "Prohibited"]
+        self.restrictions = [
+            self.tr("Simple value"), 
+            self.tr("Enumeration (list)"), 
+            self.tr("Bounds (range)"), 
+            self.tr("Pattern (regex)"), 
+            self.tr("Length (of string)"),
+            self.tr("Min lenght"),
+            self.tr("Max length"),
+            self.tr("Min, max lenght"),
+            ]
 
         self.setup_main_layout()
         self.setup_spec_layout()
@@ -218,6 +228,23 @@ class IdsEditDialog(QDialog):
         layout.addWidget(self.facet_instructions, 6, 1)
         layout.addWidget(self.facet_cardinality, 7, 1)
 
+        self.restriction1 = QComboBox()
+        self.restriction1.addItems(self.restrictions)
+        self.restriction2 = QComboBox()
+        self.restriction2.addItems(self.restrictions)
+        self.restriction3 = QComboBox()
+        self.restriction3.addItems(self.restrictions)
+        self.restriction4 = QComboBox()
+        self.restriction4.addItems(self.restrictions)
+        self.restriction5 = QComboBox()
+        self.restriction5.addItems(self.restrictions)
+
+        layout.addWidget(self.restriction1, 1, 2)
+        layout.addWidget(self.restriction2, 2, 2)
+        layout.addWidget(self.restriction3, 3, 2)
+        layout.addWidget(self.restriction4, 4, 2)
+        layout.addWidget(self.restriction5, 5, 2)
+
         spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         layout.addItem(spacer, 8, 1)
 
@@ -250,6 +277,50 @@ class IdsEditDialog(QDialog):
     def show_spec_layout(self):
         self.stacked_layout.setCurrentWidget(self.spec_layout)
 
+
+    def set_parameter_and_restriction(self, value, parameter, combo):
+        if isinstance(value, ifctester.facet.Restriction):
+            keys = value.options.keys()
+            if "enumeration" in keys:
+                combo.setCurrentIndex(1)
+                parameter.setText(", ".join(value.options["enumeration"])) 
+            elif "pattern" in keys:
+                combo.setCurrentIndex(3)
+                parameter.setText(value.options["pattern"])
+            elif "minLength" in keys and "maxLength" in keys:
+                combo.setCurrentIndex(7)
+                parameter.setText(f"{value.options['minLength']}, {value.options['maxLength']}")
+            elif "minLength" in keys:
+                combo.setCurrentIndex(5)
+                parameter.setText(value.options["minLength"])
+            elif "maxLength" in keys:
+                combo.setCurrentIndex(6)
+                parameter.setText(value.options["maxLength"])
+            else:
+                combo.setCurrentIndex(2)
+                min_value, max_value = "", ""
+                for k, v in value.options.items():
+                    if k.startswith("min"):
+                        min_value = str(v)
+                        if k.endswith("Inclusive"):
+                            min_value += " <="
+                        else:
+                            min_value += " < "
+                    if k.startswith("max"):
+                        max_value = str(v)
+                        if k.endswith("Inclusive"):
+                            max_value = " <= " + max_value
+                        else:
+                            max_value = " < " + max_value
+            
+                parameter.setText(f"{min_value} value {max_value}")
+        else:
+            combo.setCurrentIndex(0)
+            parameter.setText(value)
+
+
+                    
+
     def show_facet_layout(self, facet_type, facet=None):
         self.facet_type_label.setText(facet_type)
         if facet:
@@ -271,13 +342,18 @@ class IdsEditDialog(QDialog):
             self.parameter3.hide()
             self.parameter4.hide()
             self.parameter5.hide()
+            self.restriction3.hide()
+            self.restriction4.hide()
+            self.restriction5.hide()
             self.facet_cardinality.hide()
             if facet:
-                self.parameter1.setText(facet.name)
-                self.parameter2.setText(facet.predefinedType)
+                self.set_parameter_and_restriction(facet.name, self.parameter1, self.restriction1)
+                self.set_parameter_and_restriction(facet.predefinedType, self.parameter2, self.restriction2)
             else:
                 self.parameter1.clear()
                 self.parameter2.clear()
+                self.restriction1.setCurrentIndex(0)
+                self.restriction2.setCurrentIndex(0)
         elif facet_type == "Attribute":
             self.label1.setText("Name")
             self.label2.setText("Value")
@@ -288,13 +364,18 @@ class IdsEditDialog(QDialog):
             self.parameter3.hide()
             self.parameter4.hide()
             self.parameter5.hide()
+            self.restriction3.hide()
+            self.restriction4.hide()
+            self.restriction5.hide()
             self.facet_cardinality.show()
             if facet:
-                self.parameter1.setText(facet.name)
-                self.parameter2.setText(facet.value)
+                self.set_parameter_and_restriction(facet.name, self.parameter1, self.restriction1)
+                self.set_parameter_and_restriction(facet.value, self.parameter2, self.restriction2)
             else:
                 self.parameter1.clear()
                 self.parameter2.clear()
+                self.restriction1.setCurrentIndex(0)
+                self.restriction2.setCurrentIndex(0)
         elif facet_type == "Property":
             self.label1.setText("Property Set")
             self.label2.setText("Property Name")
@@ -308,19 +389,27 @@ class IdsEditDialog(QDialog):
             self.parameter3.show()
             self.parameter4.show()
             self.parameter5.show()
+            self.restriction3.show()
+            self.restriction4.show()
+            self.restriction5.show()
             self.facet_cardinality.show()
             if facet:
-                self.parameter1.setText(facet.propertySet)
-                self.parameter2.setText(facet.baseName)
-                self.parameter3.setText(facet.value)
-                self.parameter4.setText(facet.dataType)
-                self.parameter5.setText(facet.uri)
+                self.set_parameter_and_restriction(facet.propertySet, self.parameter1, self.restriction1)
+                self.set_parameter_and_restriction(facet.baseName, self.parameter2, self.restriction2)
+                self.set_parameter_and_restriction(facet.value, self.parameter3, self.restriction3)
+                self.set_parameter_and_restriction(facet.dataType, self.parameter4, self.restriction4)
+                self.set_parameter_and_restriction(facet.uri, self.parameter5, self.restriction5)
             else:
                 self.parameter1.clear()
                 self.parameter2.clear()
                 self.parameter3.clear()
                 self.parameter4.clear()
                 self.parameter5.clear()
+                self.restriction1.setCurrentIndex(0)
+                self.restriction2.setCurrentIndex(0)
+                self.restriction3.setCurrentIndex(0)
+                self.restriction4.setCurrentIndex(0)
+                self.restriction5.setCurrentIndex(0)
         elif facet_type == "PartOf":
             self.label1.setText("Name")
             self.label2.setText("Predifined Type")
@@ -332,15 +421,21 @@ class IdsEditDialog(QDialog):
             self.parameter3.show()
             self.parameter4.hide()
             self.parameter5.hide()
+            self.restriction3.show()
+            self.restriction4.hide()
+            self.restriction5.hide()
             self.facet_cardinality.show()
             if facet:
-                self.parameter1.setText(facet.name)
-                self.parameter2.setText(facet.predefinedType)
-                self.parameter3.setText(facet.relation)
+                self.set_parameter_and_restriction(facet.name, self.parameter1, self.restriction1)
+                self.set_parameter_and_restriction(facet.predefinedType, self.parameter2, self.restriction2)
+                self.set_parameter_and_restriction(facet.relation, self.parameter3, self.restriction3)
             else:
                 self.parameter1.clear()
                 self.parameter2.clear()
                 self.parameter3.clear()
+                self.restriction1.setCurrentIndex(0)
+                self.restriction2.setCurrentIndex(0)
+                self.restriction3.setCurrentIndex(0)
         elif facet_type == "Material":
             self.label1.setText("Value")
             self.label2.setText("URI")
@@ -351,13 +446,18 @@ class IdsEditDialog(QDialog):
             self.parameter3.hide()
             self.parameter4.hide()
             self.parameter5.hide()
+            self.restriction3.hide()
+            self.restriction4.hide()
+            self.restriction5.hide()
             self.facet_cardinality.show()
             if facet:
-                self.parameter1.setText(facet.value)
-                self.parameter2.setText(facet.uri)
+                self.set_parameter_and_restriction(facet.value, self.parameter1, self.restriction1)
+                self.set_parameter_and_restriction(facet.uri, self.parameter2, self.restriction2)
             else:
                 self.parameter1.clear()
                 self.parameter2.clear()
+                self.restriction1.setCurrentIndex(0)
+                self.restriction2.setCurrentIndex(0)
         elif facet_type == "Classification":
             self.label1.setText("Value")
             self.label2.setText("System")
@@ -369,15 +469,21 @@ class IdsEditDialog(QDialog):
             self.parameter3.show()
             self.parameter4.hide()
             self.parameter5.hide()
+            self.restriction3.show()
+            self.restriction4.hide()
+            self.restriction5.hide()
             self.facet_cardinality.show()
             if facet:
-                self.parameter1.setText(facet.value)
-                self.parameter2.setText(facet.system)
-                self.parameter3.setText(facet.uri)
+                self.set_parameter_and_restriction(facet.value, self.parameter1, self.restriction1)
+                self.set_parameter_and_restriction(facet.system, self.parameter2, self.restriction2)
+                self.set_parameter_and_restriction(facet.uri, self.parameter3, self.restriction3)
             else:
                 self.parameter1.clear()
                 self.parameter2.clear()
                 self.parameter3.clear()
+                self.restriction1.setCurrentIndex(0)
+                self.restriction2.setCurrentIndex(0)
+                self.restriction3.setCurrentIndex(0)
         else:
             return
             
