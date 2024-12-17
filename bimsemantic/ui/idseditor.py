@@ -1,4 +1,5 @@
 import re
+from xmlschema.validators.exceptions import XMLSchemaValidationError
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QDialog,
@@ -43,11 +44,11 @@ class IdsEditDialog(QDialog):
         self.mainwindow = parent
         self.filename = filename
 
-        self.current_spec = None
-        self.current_facet = None
+        self.current_spec = None    # Will hold item of list view self.specifications
+        self.current_facet = None   # Will hold item of list view self.applicability or self.requirements
 
-        self.current_applicability = []
-        self.current_requirement = []
+        self.current_spec_applicability = [] # ifctester.ids.Facet instances
+        self.current_spec_requirement = []   # ifctester.ids.Facet instances
 
         self.setWindowTitle(self.tr("Edit IDS"))
 
@@ -270,10 +271,8 @@ class IdsEditDialog(QDialog):
         # In theory this influences the text of the requirements, see line 131 in 
         # https://github.com/IfcOpenShell/IfcOpenShell/blob/v0.8.0/src/ifctester/ifctester/facet.py
         # However it does not have an effect, seems to be a bug in ifctester
-        print(self.requirements.count())
-        print(self.current_requirement)
         for index in range(self.requirements.count()):
-            requirement = self.current_requirement[index]
+            requirement = self.current_spec_requirement[index]
             if not isinstance(requirement, ifctester.ids.Entity):
                 dummy_spec = ifctester.ids.Specification()
                 dummy_spec.set_usage(text.lower())
@@ -547,8 +546,8 @@ class IdsEditDialog(QDialog):
         self.spec_cardinality.setCurrentIndex(0)
         self.applicability.clear()
         self.requirements.clear()
-        self.current_applicability = []
-        self.current_requirement = []
+        self.current_spec_applicability = []
+        self.current_spec_requirement = []
 
     def edit_specification(self):
         selected_items = self.specifications.selectedItems()
@@ -556,12 +555,16 @@ class IdsEditDialog(QDialog):
             return
         self.current_spec = selected_items[0]  
         spec = self.ids.specifications[self.specifications.row(self.current_spec)]
-        self.current_applicability = spec.applicability
+        self.current_spec_applicability = spec.applicability
+        self.current_spec_requirement = spec.requirements
+        # Prepare the list views
+        self.applicability.clear()
+        self.requirements.clear()
         for facet in spec.applicability:
             title = f'{facet.__class__.__name__}: {facet.to_string("applicability")}'
             item = QListWidgetItem(title)
             self.applicability.addItem(item)
-        self.current_requirement = spec.requirements
+        self.current_spec_requirement = spec.requirements
         for facet in spec.requirements:
             title = f'{facet.__class__.__name__}: {facet.to_string("requirement", spec, facet)}'
             item = QListWidgetItem(title)
@@ -578,18 +581,20 @@ class IdsEditDialog(QDialog):
         if self.current_spec is None:
             spec = ifctester.ids.Specification()
             self.ids.specifications.append(spec)
-            item = QListWidgetItem(spec.name)
+            item = QListWidgetItem()
             self.specifications.addItem(item)
         else:
             self.current_spec.setText(self.spec_name.text())
             spec = self.ids.specifications[self.specifications.row(self.current_spec)]
+            item = self.current_spec # in list view
         spec.name = self.spec_name.text()
+        item.setText(spec.name) 
         spec.description = self.spec_description.text()
         spec.instructions = self.spec_instructions.text()
         spec.identifier = self.identifier.text()
         cardinality = self.spec_cardinality.currentText().lower()
-        spec.applicability = self.current_applicability
-        spec.requirements = self.current_requirement
+        spec.applicability = self.current_spec_applicability
+        spec.requirements = self.current_spec_requirement
         spec.set_usage(cardinality)
         # missing: ifcVersion
         self.show_main_layout()
@@ -621,7 +626,7 @@ class IdsEditDialog(QDialog):
         if not selected_items:
             return
         self.current_facet = selected_items[0]
-        facet = self.current_applicability[self.applicability.row(self.current_facet)]
+        facet = self.current_spec_applicability[self.applicability.row(self.current_facet)]
         self.used_for_label.setText("Applicability")
         self.show_facet_layout(facet.__class__.__name__, facet)
 
@@ -630,9 +635,7 @@ class IdsEditDialog(QDialog):
         if not selected_items:
             return
         for item in selected_items:
-            print("item", item)
-            print("row", self.applicability.row(item))
-            self.current_applicability.pop(self.applicability.row(item))
+            self.current_spec_applicability.pop(self.applicability.row(item))
             self.applicability.takeItem(self.applicability.row(item))
 
 
@@ -650,7 +653,7 @@ class IdsEditDialog(QDialog):
         if not selected_items:
             return
         self.current_facet = selected_items[0]
-        facet = self.current_requirement[self.requirements.row(self.current_facet)]
+        facet = self.current_spec_requirement[self.requirements.row(self.current_facet)]
         self.used_for_label.setText("Requirement")
         self.show_facet_layout(facet.__class__.__name__, facet)
 
@@ -659,20 +662,18 @@ class IdsEditDialog(QDialog):
         if not selected_items:
             return
         for item in selected_items:
-            print("item", item)
-            print("row", self.applicability.row(item))
-            self.current_requirement.pop(self.requirements.row(item))
+            self.current_spec_requirement.pop(self.requirements.row(item))
             self.requirements.takeItem(self.requirements.row(item))
 
     def save_facet(self):
         used_for = self.used_for_label.text().lower()
         if used_for == "applicability":
             listview = self.applicability
-            spec_part = self.current_applicability
+            spec_part = self.current_spec_applicability
             spec = None # not used
         else:
             listview = self.requirements
-            spec_part = self.current_requirement
+            spec_part = self.current_spec_requirement
             # Create a dummy spec, only the cardinality is required
             spec = ifctester.ids.Specification()
             spec.set_usage(self.spec_cardinality.currentText().lower())
@@ -695,7 +696,6 @@ class IdsEditDialog(QDialog):
             else:
                 return
             
-            print(facet)
             
             spec_part.append(facet)
             item = QListWidgetItem()
@@ -703,9 +703,10 @@ class IdsEditDialog(QDialog):
 
         else:
             # Update existing facet
-            facet = self.current_spec.facets[self.current_spec.facets.index(self.current_facet)]
-            item = listview.item(listview.row(self.current_facet))
-
+            index = listview.row(self.current_facet)
+            item = listview.item(index)
+            facet = spec_part[index]          
+            
         # Set data
         facet.instructions = self.facet_instructions.text()
 
@@ -750,7 +751,7 @@ class IdsEditDialog(QDialog):
         print("info", self.ids.info)
         try:
             print(self.ids.to_string())
-        except Exception as e:
+        except XMLSchemaValidationError as e:
             # Invalid IDS, file not found etc.
             # Show error message and do not close the dialog
             mb = QMessageBox()
