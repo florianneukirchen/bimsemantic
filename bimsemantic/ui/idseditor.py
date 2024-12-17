@@ -558,11 +558,13 @@ class IdsEditDialog(QDialog):
         spec = self.ids.specifications[self.specifications.row(self.current_spec)]
         self.current_applicability = spec.applicability
         for facet in spec.applicability:
-            item = QListWidgetItem(facet.to_string("applicability"))
+            title = f'{facet.__class__.__name__}: {facet.to_string("applicability")}'
+            item = QListWidgetItem(title)
             self.applicability.addItem(item)
         self.current_requirement = spec.requirements
         for facet in spec.requirements:
-            item = QListWidgetItem(facet.to_string("requirement", spec, facet))
+            title = f'{facet.__class__.__name__}: {facet.to_string("requirement", spec, facet)}'
+            item = QListWidgetItem(title)
             self.requirements.addItem(item)
         self.spec_name.setText(spec.name)
         self.spec_description.setText(spec.description)
@@ -736,7 +738,8 @@ class IdsEditDialog(QDialog):
             facet.uri = self.get_parameter_or_restriction(self.parameter3, self.restriction3)
         else:
             raise NotImplementedError
-        item.setText(facet.to_string(used_for, spec, facet))
+        title = f'{facet.__class__.__name__}: {facet.to_string(used_for, spec, facet)}'
+        item.setText(title)
         self.show_spec_layout()
 
 
