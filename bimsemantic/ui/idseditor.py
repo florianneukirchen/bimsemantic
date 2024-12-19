@@ -26,9 +26,12 @@ from PySide6.QtWidgets import (
     QSpacerItem,
     QSizePolicy,
     QMessageBox,
+    QCheckBox,
 )
 import ifctester
 
+# IFC Versions allowed in IDS Version 1.0
+ALLOWED_IFC_VERSIONS = ['IFC2X3', 'IFC4', 'IFC4X3_ADD2']
 
 def extract_bounds(expression):
     pattern = re.compile(r'(?P<min_value>\d+)?\s*(?P<min_op><=|<)?\s*\b(?P<var_name>\w+)\b\s*(?P<max_op><=|<)?\s*(?P<max_value>\d+)?')
@@ -148,15 +151,22 @@ class IdsEditDialog(QDialog):
         layout.addWidget(self.spec_cardinality, 4, 1)
         self.spec_cardinality.currentTextChanged.connect(self.cardinality_changed)
 
-        # missing: ifcVersion
+        layout.addWidget(QLabel(self.tr("IFC Versions")), 5, 0)
+        checklayout = QHBoxLayout()
+        layout.addLayout(checklayout, 5, 1)
+        self.ifc_versions = [QCheckBox(version) for version in ALLOWED_IFC_VERSIONS]
+        for cb in self.ifc_versions:
+            cb.setChecked(True)
+            checklayout.addWidget(cb)
+
 
         # Applicability
-        layout.addWidget(QLabel(self.tr("Applicability")), 5, 0)
+        layout.addWidget(QLabel(self.tr("Applicability")), 6, 0)
         self.applicability = QListWidget()
-        layout.addWidget(self.applicability, 5, 1)
+        layout.addWidget(self.applicability, 6, 1)
 
         buttonlayout1 = QHBoxLayout()
-        layout.addLayout(buttonlayout1, 6, 1)
+        layout.addLayout(buttonlayout1, 7, 1)
         self.addapplicability = QPushButton(self.tr("New"))
         self.addapplicability.clicked.connect(self.add_applicability)
         buttonlayout1.addWidget(self.addapplicability)
@@ -167,12 +177,12 @@ class IdsEditDialog(QDialog):
         self.editapplicability.clicked.connect(self.edit_applicability)
         buttonlayout1.addWidget(self.editapplicability)
 
-        layout.addWidget(QLabel(self.tr("Requirements")), 7, 0)
+        layout.addWidget(QLabel(self.tr("Requirements")), 8, 0)
         self.requirements = QListWidget()
-        layout.addWidget(self.requirements, 7, 1)
+        layout.addWidget(self.requirements, 8, 1)
 
         buttonlayout2 = QHBoxLayout()
-        layout.addLayout(buttonlayout2, 8, 1)
+        layout.addLayout(buttonlayout2, 9, 1)
         self.addrequirements = QPushButton(self.tr("New"))
         self.addrequirements.clicked.connect(self.add_requirement)
         buttonlayout2.addWidget(self.addrequirements)
@@ -184,7 +194,7 @@ class IdsEditDialog(QDialog):
         buttonlayout2.addWidget(self.editrequirements)
 
         buttonlayout3 = QHBoxLayout()
-        self.spec_layout.layout().addLayout(buttonlayout3, 9, 1)
+        self.spec_layout.layout().addLayout(buttonlayout3, 10, 1)
         self.back_to_main = QPushButton(self.tr("Cancel"))
         self.back_to_main.clicked.connect(self.show_main_layout)
         buttonlayout3.addWidget(self.back_to_main)
@@ -611,7 +621,10 @@ class IdsEditDialog(QDialog):
         spec.applicability = self.current_spec_applicability
         spec.requirements = self.current_spec_requirement
         spec.set_usage(cardinality)
-        # missing: ifcVersion
+        ifc_versions = [cb.text() for cb in self.ifc_versions if cb.isChecked()]
+        if not ifc_versions:
+            ifc_versions = ALLOWED_IFC_VERSIONS
+        spec.ifcVersion = ifc_versions
         self.show_main_layout()
         print("spec", spec.asdict())
         if self.specifications.count() > 0:
