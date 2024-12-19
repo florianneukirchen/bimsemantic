@@ -401,6 +401,14 @@ class IdsEditDialog(QDialog):
             except ValueError:
                 return text
 
+    def required_parameters(self, indexes):
+        parameters = [self.parameter1, self.parameter2, self.parameter3, self.parameter4, self.parameter5]
+        for i, parameter in enumerate(parameters):
+            if i + 1 in indexes:
+                parameter.setPlaceholderText(self.tr("Required"))
+            else:
+                parameter.setPlaceholderText("")
+            
 
     def show_facet_layout(self, facet_type, facet=None):
         self.facet_type_label.setText(facet_type)
@@ -414,6 +422,7 @@ class IdsEditDialog(QDialog):
             self.facet_instructions.clear()
             self.facet_cardinality.setCurrentIndex(0)
         if facet_type == "Entity":
+            self.required_parameters([1])
             self.label1.setText("Name")
             self.label2.setText("predefinedType")
             self.label3.hide()
@@ -436,6 +445,7 @@ class IdsEditDialog(QDialog):
                 self.restriction1.setCurrentIndex(0)
                 self.restriction2.setCurrentIndex(0)
         elif facet_type == "Attribute":
+            self.required_parameters([1])
             self.label1.setText("Name")
             self.label2.setText("Value")
             self.label3.hide()
@@ -458,6 +468,7 @@ class IdsEditDialog(QDialog):
                 self.restriction1.setCurrentIndex(0)
                 self.restriction2.setCurrentIndex(0)
         elif facet_type == "Property":
+            self.required_parameters([1, 2])
             self.label1.setText("Property Set")
             self.label2.setText("Property Name")
             self.label3.setText("Value")
@@ -492,7 +503,8 @@ class IdsEditDialog(QDialog):
                 self.restriction4.setCurrentIndex(0)
                 self.restriction5.setCurrentIndex(0)
         elif facet_type == "PartOf":
-            self.label1.setText("Name")
+            self.required_parameters([1])
+            self.label1.setText("Entity")
             self.label2.setText("Predifined Type")
             self.label3.setText("Relation")
             self.label3.show()
@@ -518,6 +530,7 @@ class IdsEditDialog(QDialog):
                 self.restriction2.setCurrentIndex(0)
                 self.restriction3.setCurrentIndex(0)
         elif facet_type == "Material":
+            self.required_parameters([])
             self.label1.setText("Value")
             self.label2.setText("URI")
             self.label3.hide()
@@ -540,8 +553,9 @@ class IdsEditDialog(QDialog):
                 self.restriction1.setCurrentIndex(0)
                 self.restriction2.setCurrentIndex(0)
         elif facet_type == "Classification":
-            self.label1.setText("Value")
-            self.label2.setText("System")
+            self.required_parameters([1])
+            self.label1.setText("System")
+            self.label2.setText("Value")
             self.label3.setText("URI")
             self.label3.show()
             self.label4.hide()
@@ -704,6 +718,16 @@ class IdsEditDialog(QDialog):
             self.requirements.takeItem(self.requirements.row(item))
 
     def save_facet(self):
+
+        # Check if all required parameters are set
+        for parameter in [self.parameter1, self.parameter2, self.parameter3, self.parameter4, self.parameter5]:
+            if parameter.placeholderText() == self.tr("Required") and not parameter.text():
+                mb = QMessageBox()
+                mb.setText(self.tr("All required parameters must be specified"))
+                mb.setWindowTitle(self.tr("Missing required parameter"))
+                mb.exec()
+                return
+            
         used_for = self.used_for_label.text().lower()
         if used_for == "applicability":
             listview = self.applicability
@@ -772,8 +796,8 @@ class IdsEditDialog(QDialog):
             facet.value = self.get_parameter_or_restriction(self.parameter1, self.restriction1)
             facet.uri = self.get_parameter_or_restriction(self.parameter2, self.restriction2)
         elif isinstance(facet, ifctester.ids.Classification):
-            facet.value = self.get_parameter_or_restriction(self.parameter1, self.restriction1)
-            facet.system = self.get_parameter_or_restriction(self.parameter2, self.restriction2)
+            facet.system = self.get_parameter_or_restriction(self.parameter1, self.restriction1)
+            facet.value = self.get_parameter_or_restriction(self.parameter2, self.restriction2)
             facet.uri = self.get_parameter_or_restriction(self.parameter3, self.restriction3)
         else:
             raise NotImplementedError
