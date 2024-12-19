@@ -127,6 +127,9 @@ class IdsEditDialog(QDialog):
         self.editspecification.clicked.connect(self.edit_specification)
         buttonlayout.addWidget(self.editspecification)
 
+        spacer = QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Minimum)
+        layout.addItem(spacer, 4, 1)
+
     def setup_spec_layout(self):
         layout = self.spec_layout.layout()
         layout.addWidget(QLabel(self.tr("Specification Name")), 0, 0)
@@ -177,12 +180,15 @@ class IdsEditDialog(QDialog):
         self.editapplicability.clicked.connect(self.edit_applicability)
         buttonlayout1.addWidget(self.editapplicability)
 
-        layout.addWidget(QLabel(self.tr("Requirements")), 8, 0)
+        spacer = QSpacerItem(5, 5, QSizePolicy.Minimum, QSizePolicy.Minimum)
+        layout.addItem(spacer, 8, 1)
+        
+        layout.addWidget(QLabel(self.tr("Requirements")), 9, 0)
         self.requirements = QListWidget()
-        layout.addWidget(self.requirements, 8, 1)
+        layout.addWidget(self.requirements, 9, 1)
 
         buttonlayout2 = QHBoxLayout()
-        layout.addLayout(buttonlayout2, 9, 1)
+        layout.addLayout(buttonlayout2, 10, 1)
         self.addrequirements = QPushButton(self.tr("New"))
         self.addrequirements.clicked.connect(self.add_requirement)
         buttonlayout2.addWidget(self.addrequirements)
@@ -193,8 +199,11 @@ class IdsEditDialog(QDialog):
         self.editrequirements.clicked.connect(self.edit_requirement)
         buttonlayout2.addWidget(self.editrequirements)
 
+        spacer = QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Minimum)
+        layout.addItem(spacer, 11, 1)
+
         buttonlayout3 = QHBoxLayout()
-        self.spec_layout.layout().addLayout(buttonlayout3, 10, 1)
+        self.spec_layout.layout().addLayout(buttonlayout3, 12, 1)
         self.back_to_main = QPushButton(self.tr("Cancel"))
         self.back_to_main.clicked.connect(self.show_main_layout)
         buttonlayout3.addWidget(self.back_to_main)
@@ -273,7 +282,7 @@ class IdsEditDialog(QDialog):
         self.back_to_spec = QPushButton(self.tr("Cancel"))
         self.back_to_spec.clicked.connect(self.show_spec_layout)
         buttonlayout.addWidget(self.back_to_spec)
-        self.save_fac_btn = QPushButton(self.tr("Save"))
+        self.save_fac_btn = QPushButton(self.tr("OK"))
         self.save_fac_btn.clicked.connect(self.save_facet)
         buttonlayout.addWidget(self.save_fac_btn)
 
