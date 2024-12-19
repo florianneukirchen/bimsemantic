@@ -332,12 +332,12 @@ class IdsEditDialog(QDialog):
     def get_parameter_or_restriction(self, parameter, combo):
         combo_index = combo.currentIndex()
         if combo_index == 0:
-            return parameter.text()
+            return parameter.text().strip()
         elif combo_index == 1:
             enumeration = [s.strip() for s in parameter.text().split(",")]
             return ifctester.facet.Restriction({"enumeration": enumeration})
         elif combo_index == 2:
-            bounds = extract_bounds(parameter.text())
+            bounds = extract_bounds(parameter.text().strip())
             print("bounds", bounds)
             if bounds:
                 options = {}
@@ -354,9 +354,9 @@ class IdsEditDialog(QDialog):
                 restriction.base = 'double'
                 return restriction
             else:
-                return parameter.text() # Fallback for invalid input
+                return parameter.text().strip() # Fallback for invalid input
         elif combo_index == 3:
-            return ifctester.facet.Restriction({"pattern": parameter.text()})
+            return ifctester.facet.Restriction({"pattern": parameter.text()}) # TODO try
         elif combo_index == 4:
             return ifctester.facet.Restriction({"length": int(parameter.text())})
         elif combo_index == 5:
@@ -584,14 +584,14 @@ class IdsEditDialog(QDialog):
             item = QListWidgetItem()
             self.specifications.addItem(item)
         else:
-            self.current_spec.setText(self.spec_name.text())
+            self.current_spec.setText(self.spec_name.text().strip())
             spec = self.ids.specifications[self.specifications.row(self.current_spec)]
             item = self.current_spec # in list view
-        spec.name = self.spec_name.text()
+        spec.name = self.spec_name.text().strip()
         item.setText(spec.name) 
-        spec.description = self.spec_description.text()
-        spec.instructions = self.spec_instructions.text()
-        spec.identifier = self.identifier.text()
+        spec.description = self.spec_description.text().strip()
+        spec.instructions = self.spec_instructions.text().strip()
+        spec.identifier = self.identifier.text().strip()
         cardinality = self.spec_cardinality.currentText().lower()
         spec.applicability = self.current_spec_applicability
         spec.requirements = self.current_spec_requirement
@@ -708,7 +708,7 @@ class IdsEditDialog(QDialog):
             facet = spec_part[index]          
             
         # Set data
-        facet.instructions = self.facet_instructions.text()
+        facet.instructions = self.facet_instructions.text().strip()
 
         if not isinstance(facet, ifctester.ids.Entity):
             facet.cardinality = self.facet_cardinality.currentText().lower()
@@ -746,8 +746,8 @@ class IdsEditDialog(QDialog):
 
     def accept(self):
         # This is run if the user clicks OK
-        self.ids.title = self.title.text()
-        self.ids.description = self.description.text()
+        self.ids.title = self.title.text().strip()
+        self.ids.description = self.description.text().strip()
         print("info", self.ids.info)
         try:
             print(self.ids.to_string())
