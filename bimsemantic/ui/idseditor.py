@@ -331,13 +331,16 @@ class IdsEditDialog(QDialog):
 
     def get_parameter_or_restriction(self, parameter, combo):
         combo_index = combo.currentIndex()
+        text = parameter.text().strip()
+        if not text:
+            return None
         if combo_index == 0:
-            return parameter.text().strip()
+            return text
         elif combo_index == 1:
-            enumeration = [s.strip() for s in parameter.text().split(",")]
+            enumeration = [s.strip() for s in text.split(",")]
             return ifctester.facet.Restriction({"enumeration": enumeration})
         elif combo_index == 2:
-            bounds = extract_bounds(parameter.text().strip())
+            bounds = extract_bounds(text)
             print("bounds", bounds)
             if bounds:
                 options = {}
@@ -354,30 +357,30 @@ class IdsEditDialog(QDialog):
                 restriction.base = 'double'
                 return restriction
             else:
-                return parameter.text().strip() # Fallback for invalid input
+                return text  # Fallback for invalid input
         elif combo_index == 3:
-            return ifctester.facet.Restriction({"pattern": parameter.text()}) 
+            return ifctester.facet.Restriction({"pattern": text}) 
         elif combo_index == 4:
             try:
-                return ifctester.facet.Restriction({"length": int(parameter.text())})
+                return ifctester.facet.Restriction({"length": int(text)})
             except ValueError:
-                return parameter.text().strip()
+                return text
         elif combo_index == 5:
             try:
-                return ifctester.facet.Restriction({"minLength": int(parameter.text())})
+                return ifctester.facet.Restriction({"minLength": int(text)})
             except ValueError:
-                return parameter.text().strip()
+                return text
         elif combo_index == 6:
             try:
-                return ifctester.facet.Restriction({"maxLength": int(parameter.text())})
+                return ifctester.facet.Restriction({"maxLength": int(text)})
             except ValueError:
-                return parameter.text().strip()
+                return text
         else:
-            min_length, max_length = parameter.text().split(",")
+            min_length, max_length = text.split(",")
             try:
                 return ifctester.facet.Restriction({"minLength": int(min_length), "maxLength": int(max_length)})
             except ValueError:
-                return parameter.text().strip()
+                return text
 
 
     def show_facet_layout(self, facet_type, facet=None):
@@ -590,26 +593,27 @@ class IdsEditDialog(QDialog):
         self.stacked_layout.setCurrentWidget(self.spec_layout)
 
     def save_specification(self):
+        spec_name = self.spec_name.text().strip() or "Unnamed" # Use a default if ""
         if self.current_spec is None:
             spec = ifctester.ids.Specification()
             self.ids.specifications.append(spec)
             item = QListWidgetItem()
             self.specifications.addItem(item)
         else:
-            self.current_spec.setText(self.spec_name.text().strip())
             spec = self.ids.specifications[self.specifications.row(self.current_spec)]
             item = self.current_spec # in list view
-        spec.name = self.spec_name.text().strip()
-        item.setText(spec.name) 
-        spec.description = self.spec_description.text().strip()
-        spec.instructions = self.spec_instructions.text().strip()
-        spec.identifier = self.identifier.text().strip()
+        spec.name = spec_name
+        item.setText(spec_name) 
+        spec.description = self.spec_description.text().strip() or None
+        spec.instructions = self.spec_instructions.text().strip() or None
+        spec.identifier = self.identifier.text().strip() or None
         cardinality = self.spec_cardinality.currentText().lower()
         spec.applicability = self.current_spec_applicability
         spec.requirements = self.current_spec_requirement
         spec.set_usage(cardinality)
         # missing: ifcVersion
         self.show_main_layout()
+        print("spec", spec.asdict())
         if self.specifications.count() > 0:
             self.buttonBox.button(QDialogButtonBox.Save).setEnabled(True)
 
