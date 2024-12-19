@@ -356,16 +356,28 @@ class IdsEditDialog(QDialog):
             else:
                 return parameter.text().strip() # Fallback for invalid input
         elif combo_index == 3:
-            return ifctester.facet.Restriction({"pattern": parameter.text()}) # TODO try
+            return ifctester.facet.Restriction({"pattern": parameter.text()}) 
         elif combo_index == 4:
-            return ifctester.facet.Restriction({"length": int(parameter.text())})
+            try:
+                return ifctester.facet.Restriction({"length": int(parameter.text())})
+            except ValueError:
+                return parameter.text().strip()
         elif combo_index == 5:
-            return ifctester.facet.Restriction({"minLength": int(parameter.text())})
+            try:
+                return ifctester.facet.Restriction({"minLength": int(parameter.text())})
+            except ValueError:
+                return parameter.text().strip()
         elif combo_index == 6:
-            return ifctester.facet.Restriction({"maxLength": int(parameter.text())})
+            try:
+                return ifctester.facet.Restriction({"maxLength": int(parameter.text())})
+            except ValueError:
+                return parameter.text().strip()
         else:
             min_length, max_length = parameter.text().split(",")
-            return ifctester.facet.Restriction({"minLength": int(min_length), "maxLength": int(max_length)})
+            try:
+                return ifctester.facet.Restriction({"minLength": int(min_length), "maxLength": int(max_length)})
+            except ValueError:
+                return parameter.text().strip()
 
 
     def show_facet_layout(self, facet_type, facet=None):
