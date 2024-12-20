@@ -30,7 +30,7 @@ import ifctester
 ALLOWED_IFC_VERSIONS = ['IFC2X3', 'IFC4', 'IFC4X3_ADD2']
 
 def extract_bounds(expression):
-    pattern = re.compile(r'(?P<min_value>\d+)?\s*(?P<min_op><=|<)?\s*\b(?P<var_name>\w+)\b\s*(?P<max_op><=|<)?\s*(?P<max_value>\d+)?')
+    pattern = re.compile(r'(?P<min_value>\d*\.?\d+)?\s*(?P<min_op><=|<)?\s*\b(?P<var_name>\w+)\b\s*(?P<max_op><=|<)?\s*(?P<max_value>\d*\.?\d+)?')
     match = pattern.match(expression)
     if match:
         return match.groupdict()
