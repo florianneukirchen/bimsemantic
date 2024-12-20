@@ -38,7 +38,7 @@ def extract_bounds(expression):
 
 class IdsEditDialog(QDialog):
 
-    def __init__(self, parent, filename=None):
+    def __init__(self, parent, filename=None, ascopy=False):
         super().__init__(parent=parent)
         self.mainwindow = parent
         self.filename = filename
@@ -88,6 +88,10 @@ class IdsEditDialog(QDialog):
             self.ids = ifctester.ids.Ids()
             self.setWindowTitle(self.tr("New IDS"))
             self.buttonBox.button(QDialogButtonBox.Save).setEnabled(False)
+
+        if ascopy:
+            self.filename = None
+            self.setWindowTitle(self.tr("Edit copy of %s") % filename)
 
     def prefill_main_layout(self):
         self.title.setText(self.ids.info.get("title", "Unnamed"))

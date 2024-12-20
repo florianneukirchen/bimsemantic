@@ -865,12 +865,26 @@ class MainWindow(QMainWindow):
 
         self.validation_menu.addSeparator()
 
+        self.new_ids_act = QAction(
+            self.tr("&New IDS file"),
+            self,
+            statusTip=self.tr("Create a new IDS file with validation rules"),
+        )
+        self.validation_menu.addAction(self.new_ids_act)
+
         self.edit_ids_act = QAction(
             self.tr("&Edit IDS file"),
             self,
             statusTip=self.tr("Edit the specifications of the selected IDS file"),
         )
         self.validation_menu.addAction(self.edit_ids_act)
+
+        self.edit_ids_copy_act = QAction(
+            self.tr("Edit copy of IDS file"),
+            self,
+            statusTip=self.tr("Edit a copy of the selected IDS file"),
+        )
+        self.validation_menu.addAction(self.edit_ids_copy_act)
 
 
         self.validation_menu.addSeparator()
@@ -945,6 +959,8 @@ class MainWindow(QMainWindow):
         self.close_ids_act.triggered.connect(self.validationdock.close_file)
         self.close_all_ids_act.triggered.connect(self.validationdock.close_all_files)
         self.edit_ids_act.triggered.connect(self.validationdock.edit_ids)
+        self.edit_ids_copy_act.triggered.connect(lambda: self.validationdock.edit_ids(ascopy=True))
+        self.new_ids_act.triggered.connect(lambda: self.validationdock.edit_ids(new=True))
 
         # Add actions to menu
         self.overview_act = QAction(

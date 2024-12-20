@@ -104,24 +104,43 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
         self.tree.expandAll()
         self.update_ifc_views()
 
-    def edit_ids(self):
-        """Open IDS editor for the selected IDS validator"""
-        validator_id = self.selected_validator_id()
-        if not validator_id:
-            return
+    def edit_ids(self, ascopy=False, new=False):
+        """Open IDS editor
         
-        if validator_id == "integrity":
-            self.mainwindow.statusbar.showMessage(self.tr("No IDS file selected"), 5000)
-            return
+        Either edit the selected IDS file or create a new one
+        (emtpy or as copy of existing IDS).
 
-        validator = self.validators.get_validator(validator_id)
+        :param ascopy: Create a copy of the selected IDS file
+        :type ascopy: bool
+        :param new: Create a new IDS file
+        :type new: bool
+        """
+        if new:
+            filename = None
+        else:
+            validator_id = self.selected_validator_id()
+            if not validator_id:
+                return
+            
+            if validator_id == "integrity":
+                self.mainwindow.statusbar.showMessage(self.tr("No IDS file selected"), 5000)
+                return
 
-        dialog = IdsEditDialog(self.mainwindow, validator.abspath)
+            validator = self.validators.get_validator(validator_id)
+            filename = validator.abspath
+
+        dialog = IdsEditDialog(self.mainwindow, filename, ascopy)
         if dialog.exec():
-            self.validators.remove_validator(validator_id)
-            self.treemodel.remove_file(validator_id)
-            self.add_file(validator.abspath)
+            if new:
+                self.show()
+            filename = dialog.filename
+            if not (new or ascopy):
+                # Remove the old version of the IDS file
+                self.validators.remove_validator(validator_id)
+                self.treemodel.remove_file(validator_id)
+            self.add_file(filename)
             self.update_ifc_views()
+
 
     def selected_validator_id(self):
         """Get the ID (filename) of the selected validator"""
