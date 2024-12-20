@@ -109,6 +109,17 @@ class ContextMixin:
         index = tree.indexAt(position)
 
         context_menu = QMenu(self)
+
+        if hasattr(self, "get_validator_id"):
+            # Only true for validation dock
+            context_menu.addAction(self.mainwindow.run_selected_validation_act)
+            if index.isValid():
+                original_index = self.proxymodel.mapToSource(index)
+                item = original_index.internalPointer()
+                if not self.get_validator_id(item) == 'integrity':
+                    context_menu.addAction(self.mainwindow.close_ids_act)
+
+
         context_menu.addAction(self.mainwindow.copy_rows_act)
         context_menu.addAction(self.mainwindow.copy_cell_act)
 

@@ -852,7 +852,7 @@ class MainWindow(QMainWindow):
         self.close_ids_act = QAction(
             self.tr("&Close IDS file"),
             self,
-            statusTip=self.tr("Close IDS file with validation rules"),
+            statusTip=self.tr("Close selected IDS file"),
         )
         self.validation_menu.addAction(self.close_ids_act)
 

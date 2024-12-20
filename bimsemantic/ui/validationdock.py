@@ -32,6 +32,10 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
         self.setWidget(self.tree)
         self.tree.selectionModel().selectionChanged.connect(self.on_selection_changed)
 
+        # Setup Context Menu
+        self.tree.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.tree.customContextMenuRequested.connect(self.show_context_menu)
+
     def on_selection_changed(self, selected, deselected):
         """Update the context menu when the selection changes"""
         active = self.tree.currentIndex()
