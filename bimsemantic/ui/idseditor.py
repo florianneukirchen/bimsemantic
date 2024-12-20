@@ -1,6 +1,6 @@
 import re
 from xmlschema.validators.exceptions import XMLSchemaValidationError
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QDate
 from PySide6.QtWidgets import (
     QDialog,
     QDialogButtonBox,
@@ -27,6 +27,7 @@ from PySide6.QtWidgets import (
     QSizePolicy,
     QMessageBox,
     QCheckBox,
+    QDateEdit,
 )
 import ifctester
 
@@ -86,12 +87,6 @@ class IdsEditDialog(QDialog):
         self.setup_spec_layout()
         self.setup_facet_layout()
 
-        QBtn = QDialogButtonBox.Save | QDialogButtonBox.Cancel
-        self.buttonBox = QDialogButtonBox(QBtn)
-        self.buttonBox.accepted.connect(self.accept)
-        self.buttonBox.rejected.connect(self.reject)
-        self.main_layout.layout().addWidget(self.buttonBox, 5, 1)
-
         if filename:
             self.ids = ifctester.ids.open(filename)
         else:
@@ -111,12 +106,40 @@ class IdsEditDialog(QDialog):
         self.description = QLineEdit()
         layout.addWidget(self.description, 1, 1)
 
-        layout.addWidget(QLabel(self.tr("Specifications")), 2, 0)
+        layout.addWidget(QLabel(self.tr("Purpose")), 2, 0)
+        self.purpose = QLineEdit()
+        layout.addWidget(self.purpose, 2, 1)
+
+        layout.addWidget(QLabel(self.tr("Author")), 3, 0)
+        self.author = QLineEdit()
+        self.author.setPlaceholderText(self.tr("Email"))
+        layout.addWidget(self.author, 3, 1)
+
+        layout.addWidget(QLabel(self.tr("Copyright")), 4, 0)
+        self.copyright = QLineEdit()
+        layout.addWidget(self.copyright, 4, 1)
+
+        sublayout = QHBoxLayout()
+        layout.addLayout(sublayout, 5, 1)
+        self.version = QLineEdit()
+        self.version.setPlaceholderText(self.tr("Version"))
+        sublayout.addWidget(self.version)
+        self.milestone = QLineEdit()
+        self.milestone.setPlaceholderText(self.tr("Milestone"))
+        sublayout.addWidget(self.milestone)
+        self.date = QDateEdit()
+        self.date.setDisplayFormat("yyyy-MM-dd")
+        self.date.setDate(QDate.currentDate())
+        self.date.setToolTip(self.tr("Date of publication of the IDS"))
+        self.date.setCalendarPopup(True)
+        sublayout.addWidget(self.date)
+
+        layout.addWidget(QLabel(self.tr("Specifications")), 6, 0)
         self.specifications = QListWidget()
-        layout.addWidget(self.specifications, 2, 1)
+        layout.addWidget(self.specifications, 6, 1)
 
         buttonlayout = QHBoxLayout()
-        layout.addLayout(buttonlayout, 3, 1)
+        layout.addLayout(buttonlayout, 7, 1)
         self.addspecification = QPushButton(self.tr("New Specification"))
         self.addspecification.clicked.connect(self.add_specification)
         buttonlayout.addWidget(self.addspecification)
@@ -128,7 +151,14 @@ class IdsEditDialog(QDialog):
         buttonlayout.addWidget(self.editspecification)
 
         spacer = QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Minimum)
-        layout.addItem(spacer, 4, 1)
+        layout.addItem(spacer, 8, 1)
+
+        QBtn = QDialogButtonBox.Save | QDialogButtonBox.Cancel
+        self.buttonBox = QDialogButtonBox(QBtn)
+        self.buttonBox.accepted.connect(self.accept)
+        self.buttonBox.rejected.connect(self.reject)
+        self.main_layout.layout().addWidget(self.buttonBox, 9, 1)
+
 
     def setup_spec_layout(self):
         layout = self.spec_layout.layout()
@@ -808,8 +838,43 @@ class IdsEditDialog(QDialog):
 
     def accept(self):
         # This is run if the user clicks OK
-        self.ids.title = self.title.text().strip()
-        self.ids.description = self.description.text().strip()
+
+        author = self.author.text().strip()
+        if author:
+            # This pattern is used to validate the email address in the IDS Spec
+            # If author does not comply, the IDS cannot be saved
+            pattern = r"[^@]+@[^\.]+\..+"
+            if not re.match(pattern, author):
+                mb = QMessageBox()
+                mb.setText(self.tr("Optional field <i>author</i> must be a valid email address"))
+                mb.setWindowTitle(self.tr("Invalid email address"))
+                mb.exec()
+                return
+            
+        self.ids.info = {}
+
+        if author:
+            self.ids.info['author'] = author
+        self.ids.info['title'] = self.title.text().strip() or "Unnamed"
+        description = self.description.text().strip()
+        if description:
+            self.ids.info['description'] = self.description.text().strip()
+        purpose = self.purpose.text().strip()
+        if purpose:
+            self.ids.info['purpose'] = purpose
+        copyright = self.copyright.text().strip()
+        if copyright:
+            self.ids.info['copyright'] = copyright
+        version = self.version.text().strip()
+        if version:
+            self.ids.info['version'] = version
+        milestone = self.milestone.text().strip()
+        if milestone:
+            self.ids.info['milestone'] = milestone
+
+        self.ids.info['date'] = self.date.date().toString("yyyy-MM-dd")
+
+        
         print("info", self.ids.info)
         try:
             print(self.ids.to_string())
