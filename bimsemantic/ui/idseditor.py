@@ -4,21 +4,15 @@ from PySide6.QtCore import Qt, QDate
 from PySide6.QtWidgets import (
     QDialog,
     QDialogButtonBox,
-    QMainWindow,
     QLabel,
     QVBoxLayout,
     QHBoxLayout,
     QGridLayout,
     QStackedLayout,
     QLineEdit,
-    QPlainTextEdit,
     QListWidget,
     QListWidgetItem,
-    QTreeWidget,
-    QTreeWidgetItem,
     QPushButton,
-    QStyle,
-    QCalendarWidget,
     QWidget,
     QComboBox,
     QButtonGroup,
@@ -390,7 +384,6 @@ class IdsEditDialog(QDialog):
             return ifctester.facet.Restriction({"enumeration": enumeration})
         elif combo_index == 2:
             bounds = extract_bounds(text)
-            print("bounds", bounds)
             if bounds:
                 options = {}
                 if bounds["min_op"] == "<=":
@@ -401,7 +394,6 @@ class IdsEditDialog(QDialog):
                     options["maxInclusive"] = bounds["max_value"]
                 elif bounds["max_op"] == "<":
                     options["maxExclusive"] = bounds["max_value"]
-                print(options)
                 restriction = ifctester.facet.Restriction(options)
                 restriction.base = 'double'
                 return restriction
@@ -679,7 +671,6 @@ class IdsEditDialog(QDialog):
             ifc_versions = ALLOWED_IFC_VERSIONS
         spec.ifcVersion = ifc_versions
         self.show_main_layout()
-        print("spec", spec.asdict())
         if self.specifications.count() > 0:
             self.buttonBox.button(QDialogButtonBox.Save).setEnabled(True)
 
