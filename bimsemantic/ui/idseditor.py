@@ -22,6 +22,7 @@ from PySide6.QtWidgets import (
     QMessageBox,
     QCheckBox,
     QDateEdit,
+    QFileDialog,
 )
 import ifctester
 
@@ -47,8 +48,6 @@ class IdsEditDialog(QDialog):
 
         self.current_spec_applicability = [] # ifctester.ids.Facet instances
         self.current_spec_requirement = []   # ifctester.ids.Facet instances
-
-        self.setWindowTitle(self.tr("Edit IDS"))
 
         self.stacked_layout = QStackedLayout()
         self.setLayout(self.stacked_layout)
@@ -83,11 +82,26 @@ class IdsEditDialog(QDialog):
 
         if filename:
             self.ids = ifctester.ids.open(filename)
+            self.setWindowTitle(self.tr("Edit IDS %s") % filename)
+            self.prefill_main_layout()
         else:
             self.ids = ifctester.ids.Ids()
+            self.setWindowTitle(self.tr("New IDS"))
             self.buttonBox.button(QDialogButtonBox.Save).setEnabled(False)
 
-
+    def prefill_main_layout(self):
+        self.title.setText(self.ids.info.get("title", "Unnamed"))
+        self.description.setText(self.ids.info.get("description", ""))
+        self.purpose.setText(self.ids.info.get("purpose", ""))
+        self.author.setText(self.ids.info.get("author", ""))
+        self.copyright.setText(self.ids.info.get("copyright", ""))
+        self.version.setText(self.ids.info.get("version", ""))
+        self.milestone.setText(self.ids.info.get("milestone", ""))
+        self.date.setDate(QDate.fromString(self.ids.info.get("date", ""), "yyyy-MM-dd"))
+        self.specifications.clear()
+        for spec in self.ids.specifications:
+            item = QListWidgetItem(spec.name)
+            self.specifications.addItem(item)
 
     def setup_main_layout(self):
         layout = self.main_layout.layout()
@@ -866,9 +880,20 @@ class IdsEditDialog(QDialog):
         self.ids.info['date'] = self.date.date().toString("yyyy-MM-dd")
 
         
-        print("info", self.ids.info)
+        if not self.filename:
+            # Ask for filename if not set
+            dialog = QFileDialog()
+            dialog.setAcceptMode(QFileDialog.AcceptSave)
+            dialog.setNameFilter("IDS files (*.ids)")
+            dialog.setDefaultSuffix("ids")
+            dialog.setFileMode(QFileDialog.AnyFile)
+            if dialog.exec():
+                self.filename = dialog.selectedFiles()[0]
+            else:
+                return
+   
         try:
-            print(self.ids.to_string())
+            self.ids.to_xml(self.filename)
         except XMLSchemaValidationError as e:
             # Invalid IDS, file not found etc.
             # Show error message and do not close the dialog

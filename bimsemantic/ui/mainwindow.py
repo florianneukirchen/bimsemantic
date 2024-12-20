@@ -865,6 +865,16 @@ class MainWindow(QMainWindow):
 
         self.validation_menu.addSeparator()
 
+        self.edit_ids_act = QAction(
+            self.tr("&Edit IDS file"),
+            self,
+            statusTip=self.tr("Edit the specifications of the selected IDS file"),
+        )
+        self.validation_menu.addAction(self.edit_ids_act)
+
+
+        self.validation_menu.addSeparator()
+
         self.run_all_validations_act = QAction(
             self.tr("&Run all validations"),
             self,
@@ -934,6 +944,7 @@ class MainWindow(QMainWindow):
         self.run_selected_validation_act.triggered.connect(self.validationdock.run_selected_validation)
         self.close_ids_act.triggered.connect(self.validationdock.close_file)
         self.close_all_ids_act.triggered.connect(self.validationdock.close_all_files)
+        self.edit_ids_act.triggered.connect(self.validationdock.edit_ids)
 
         # Add actions to menu
         self.overview_act = QAction(

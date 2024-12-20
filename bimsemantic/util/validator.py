@@ -68,9 +68,9 @@ class Validators:
         self.results_by_guid = {}
 
     def get_validator(self, validator_id):
-        """Get a validator by its ID
+        """Get a validator by its ID (filename in case of IDS)
         
-        :param validator_id: The ID of the validator
+        :param validator_id: The ID (filename) of the validator
         :type validator_id: str
         """
         for validator in self.validators:

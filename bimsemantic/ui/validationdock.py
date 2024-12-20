@@ -2,7 +2,7 @@ from PySide6.QtCore import Qt, QSortFilterProxyModel, QModelIndex
 from bimsemantic.ui import TreeItem, TreeModelBaseclass
 import ifcopenshell.util.element
 from PySide6.QtWidgets import QDockWidget, QTreeView
-from bimsemantic.ui import CopyMixin, ContextMixin
+from bimsemantic.ui import CopyMixin, ContextMixin, IdsEditDialog
 from bimsemantic.util import IdsValidator, IntegrityValidator, Validators
 
 
@@ -103,6 +103,34 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
 
         self.tree.expandAll()
         self.update_ifc_views()
+
+    def edit_ids(self):
+        """Open IDS editor for the selected IDS validator"""
+        validator_id = self.selected_validator_id()
+        if not validator_id:
+            return
+        
+        if validator_id == "integrity":
+            self.mainwindow.statusbar.showMessage(self.tr("No IDS file selected"), 5000)
+            return
+
+        validator = self.validators.get_validator(validator_id)
+
+        dialog = IdsEditDialog(self.mainwindow, validator.abspath)
+        if dialog.exec():
+            self.validators.remove_validator(validator_id)
+            self.treemodel.remove_file(validator_id)
+            self.add_file(validator.abspath)
+            self.update_ifc_views()
+
+    def selected_validator_id(self):
+        """Get the ID (filename) of the selected validator"""
+        active = self.tree.currentIndex()
+        if not active.isValid():
+            self.mainwindow.statusbar.showMessage(self.tr("No IDS file selected"), 5000)
+            return None
+        item = self.proxymodel.mapToSource(active).internalPointer()
+        return self.get_validator_id(item)
 
     def get_validator_id(self, item):
         """Get the ID of the validator for tree item
