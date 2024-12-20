@@ -880,7 +880,7 @@ class MainWindow(QMainWindow):
         self.validation_menu.addAction(self.edit_ids_act)
 
         self.edit_ids_copy_act = QAction(
-            self.tr("Edit copy of IDS file"),
+            self.tr("E&dit copy of IDS file"),
             self,
             statusTip=self.tr("Edit a copy of the selected IDS file"),
         )
