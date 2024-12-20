@@ -418,30 +418,19 @@ class IdsEditDialog(QDialog):
                 restriction.base = 'double'
                 return restriction
             else:
-                return text  # Fallback for invalid input
+                return None  # Fallback for invalid input
         elif combo_index == 3:
             return ifctester.facet.Restriction({"pattern": text}) 
         elif combo_index == 4:
-            try:
-                return ifctester.facet.Restriction({"length": int(text)})
-            except ValueError:
-                return text
+            return ifctester.facet.Restriction({"length": int(text)})
         elif combo_index == 5:
-            try:
-                return ifctester.facet.Restriction({"minLength": int(text)})
-            except ValueError:
-                return text
+            return ifctester.facet.Restriction({"minLength": int(text)})
         elif combo_index == 6:
-            try:
-                return ifctester.facet.Restriction({"maxLength": int(text)})
-            except ValueError:
-                return text
+            return ifctester.facet.Restriction({"maxLength": int(text)})
         else:
             min_length, max_length = text.split(",")
-            try:
-                return ifctester.facet.Restriction({"minLength": int(min_length), "maxLength": int(max_length)})
-            except ValueError:
-                return text
+            return ifctester.facet.Restriction({"minLength": int(min_length), "maxLength": int(max_length)})
+
 
     def required_parameters(self, indexes):
         parameters = [self.parameter1, self.parameter2, self.parameter3, self.parameter4, self.parameter5]
@@ -770,10 +759,30 @@ class IdsEditDialog(QDialog):
                 mb.exec()
                 return
             
-        # Validate regex patterns
+        # Validate parameters
         combo_list = [self.restriction1, self.restriction2, self.restriction3, self.restriction4, self.restriction5]
         for combo, parameter in zip(combo_list, parameter_list):
-            if combo.currentIndex() == 3:
+            if combo.currentIndex() == 2:
+                bounds = extract_bounds(parameter.text().strip())
+                if bounds:
+                    min_value = bounds.get("min_value", "0")
+                    max_value = bounds.get("max_value", "0")
+                    if min_value is None and max_value is None:
+                        min_value = "invalid" # Trigger the exception
+                    try:
+                        if min_value is not None:
+                            min_value = float(min_value)
+                        if max_value is not None:
+                            max_value = float(max_value)
+                        if min_value >= max_value:
+                            raise ValueError
+                    except ValueError:
+                        mb = QMessageBox()
+                        mb.setText(self.tr("Invalid bounds:\nShould be in the form of\n2 < value <= 10"))
+                        mb.setWindowTitle(self.tr("Invalid bounds"))
+                        mb.exec()
+                        return
+            elif combo.currentIndex() == 3:
                 pattern = parameter.text().strip()
                 try:
                     # This is how the pattern is used in ifctester
@@ -785,7 +794,27 @@ class IdsEditDialog(QDialog):
                     mb.setWindowTitle(self.tr("Invalid regex pattern"))
                     mb.exec()
                     return
-            
+            elif combo.currentIndex() in [4,5,6]:
+                try:
+                    _ = int(parameter.text().strip())
+                except ValueError:
+                    mb = QMessageBox()
+                    mb.setText(self.tr("Invalid length:\nShould be an integer"))
+                    mb.setWindowTitle(self.tr("Invalid length"))
+                    mb.exec()
+                    return
+            elif combo.currentIndex() == 7:
+                try:
+                    min_length, max_length = parameter.text().split(",")
+                    _ = int(min_length)
+                    _ = int(max_length)
+                except ValueError:
+                    mb = QMessageBox()
+                    mb.setText(self.tr("Invalid length:\nShould be two integers separated by a comma"))
+                    mb.setWindowTitle(self.tr("Invalid length"))
+                    mb.exec()
+        
+        # Save the Facet as Aplicability or Requirement
         used_for = self.used_for_label.text().lower()
         if used_for == "applicability":
             listview = self.applicability
