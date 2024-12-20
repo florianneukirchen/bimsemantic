@@ -375,6 +375,7 @@ class MainWindow(QMainWindow):
         dialog = QFileDialog(self, self.tr("Export to CSV"))
         dialog.setAcceptMode(QFileDialog.AcceptSave)
         dialog.setNameFilter(self.tr("CSV Files (*.csv)"))
+        dialog.setDefaultSuffix("csv")
 
         # Add widgets for options
         dialog.setOption(QFileDialog.DontUseNativeDialog, True)
@@ -411,8 +412,6 @@ class MainWindow(QMainWindow):
 
         if dialog.exec():
             csv_file = dialog.selectedFiles()[0]
-            if not csv_file.lower().endswith(".csv"):
-                csv_file += ".csv"
             sep = separator_combo.currentText()
             if sep == "TAB":
                 sep = "\t"
@@ -434,8 +433,11 @@ class MainWindow(QMainWindow):
             self.progressbar.setRange(0, 100)
             self.statusbar.showMessage(self.tr("Exported to %s") % csv_file, 5000)
 
+
+
     def save_validation_dlg(self):
         """Save validation results to a zipped BCF file or as JSON"""
+
         dialog = QFileDialog(self, self.tr("Save validation results"))
         dialog.setAcceptMode(QFileDialog.AcceptSave)
         dialog.setNameFilters([self.tr("BCF (*.bcfzip)"), self.tr("JSON (*.json)")])
@@ -459,6 +461,17 @@ class MainWindow(QMainWindow):
             ifc_combo.addItems([ifc.filename for ifc in self.ifcfiles])
             dialog_layout.addWidget(ifc_combo, 6, 1)
 
+
+        def update_default_suffix():
+            current_filter = dialog.selectedNameFilter()
+            if "BCF" in current_filter:
+                dialog.setDefaultSuffix("bcfzip")
+            elif "JSON" in current_filter:
+                dialog.setDefaultSuffix("json")
+
+        dialog.filterSelected.connect(update_default_suffix)
+        update_default_suffix()
+
         if dialog.exec():
             filename = dialog.selectedFiles()[0]
             validator_id = validator_combo.currentText()
@@ -467,10 +480,10 @@ class MainWindow(QMainWindow):
             else:
                 ifc_filename = ifc_combo.currentText()
             as_bcf = dialog.selectedNameFilter() == self.tr("BCF (*.bcfzip)")
-            if as_bcf and not filename.lower().endswith(".bcfzip"):
-                filename += ".bcfzip"
-            elif not as_bcf and not filename.lower().endswith(".json"):
-                filename += ".json"
+            # if as_bcf and not filename.lower().endswith(".bcfzip"):
+            #     filename += ".bcfzip"
+            # elif not as_bcf and not filename.lower().endswith(".json"):
+            #     filename += ".json"
             self.validators.save_results(validator_id, ifc_filename, filename, as_bcf)
             self.statusbar.showMessage(self.tr("Saved to %s") % filename, 5000)
 
