@@ -1,5 +1,7 @@
 import re
 from xmlschema.validators.exceptions import XMLSchemaValidationError
+from xmlschema.validators import identities
+from elementpath.regex.codepoints import RegexError
 from PySide6.QtCore import Qt, QDate
 from PySide6.QtWidgets import (
     QDialog,
@@ -759,13 +761,30 @@ class IdsEditDialog(QDialog):
     def save_facet(self):
 
         # Check if all required parameters are set
-        for parameter in [self.parameter1, self.parameter2, self.parameter3, self.parameter4, self.parameter5]:
+        parameter_list = [self.parameter1, self.parameter2, self.parameter3, self.parameter4, self.parameter5]
+        for parameter in parameter_list:
             if parameter.placeholderText() == self.tr("Required") and not parameter.text():
                 mb = QMessageBox()
                 mb.setText(self.tr("All required parameters must be specified"))
                 mb.setWindowTitle(self.tr("Missing required parameter"))
                 mb.exec()
                 return
+            
+        # Validate regex patterns
+        combo_list = [self.restriction1, self.restriction2, self.restriction3, self.restriction4, self.restriction5]
+        for combo, parameter in zip(combo_list, parameter_list):
+            if combo.currentIndex() == 3:
+                pattern = parameter.text().strip()
+                try:
+                    # This is how the pattern is used in ifctester
+                    # Make sure it will not throw an exception when validating
+                    identities.translate_pattern(pattern)
+                except RegexError:
+                    mb = QMessageBox()
+                    mb.setText(self.tr("Invalid regex pattern:\n%s") % pattern)  
+                    mb.setWindowTitle(self.tr("Invalid regex pattern"))
+                    mb.exec()
+                    return
             
         used_for = self.used_for_label.text().lower()
         if used_for == "applicability":
