@@ -29,6 +29,7 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
         self.tree.setSortingEnabled(True)
         self.tree.setAlternatingRowColors(True)
         self.tree.setColumnWidth(0, 250)
+        self.tree.setColumnWidth(3, 250)
         self.setWidget(self.tree)
         self.tree.selectionModel().selectionChanged.connect(self.on_selection_changed)
 
@@ -190,6 +191,7 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
 
     def update_results_column(self):
         """Update the results column in the validators dock"""
+        column = 4
         root = self.treemodel._rootItem
         self.treemodel.beginResetModel()
         for validator_item in root.children:
@@ -201,9 +203,9 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
                 # or reporter if it is the integrity validator
                 valreporters = self.validators.reporters.get(validator_item.id, None)
                 if valreporters is None:
-                    spec_item.set_data(3, "")
+                    spec_item.set_data(column, "")
                     for req_item in spec_item.children:
-                        req_item.set_data(3, "")
+                        req_item.set_data(column, "")
                     continue
 
                 # Integrity validator (only one for all IFC files)
@@ -212,14 +214,14 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
                     spec = reporter.results['specifications'][spec_item.row()]
                     passed_checks += spec['total_checks_pass']
                     failed_checks += spec['total_checks_fail']
-                    spec_item.set_data(3, f"{failed_checks} failed, {passed_checks} passed")
+                    spec_item.set_data(column, f"{failed_checks} failed, {passed_checks} passed")
                     for i, req_item in enumerate(spec_item.children):
                         passed_checks = 0
                         failed_checks = 0
                         req = spec['requirements'][i]
                         passed_checks += len(req['passed_entities'])
                         failed_checks += len(req['failed_entities'])
-                        req_item.set_data(3, f"{failed_checks} failed, {passed_checks} passed")
+                        req_item.set_data(column, f"{failed_checks} failed, {passed_checks} passed")
                     continue
 
                 # All other validators    
@@ -231,7 +233,7 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
                         passed_checks += spec['total_checks_pass']
                         failed_checks += spec['total_checks_fail']
 
-                spec_item.set_data(3, f"{failed_checks} failed, {passed_checks} passed")
+                spec_item.set_data(column, f"{failed_checks} failed, {passed_checks} passed")
 
                 # Update the requirement items
                 for i, req_item in enumerate(spec_item.children):
@@ -245,7 +247,7 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
                             passed_checks += len(req['passed_entities'])
                             failed_checks += len(req['failed_entities'])
 
-                    req_item.set_data(3, f"{failed_checks} failed, {passed_checks} passed")
+                    req_item.set_data(column, f"{failed_checks} failed, {passed_checks} passed")
                     
         self.treemodel.endResetModel()
 
@@ -268,11 +270,11 @@ class ValidationTreeModel(TreeModelBaseclass):
     """
     def __init__(self, data, parent):
         super(ValidationTreeModel, self).__init__(data, parent)
-        self.column_count = 4
+        self.column_count = 5
 
     def setup_root_item(self):
         self._rootItem = TreeItem(
-            ["Rules", "Description", "If/then", "Results"],
+            ["Rules", "Description", "Instructions", "If/then", "Results"],
             showchildcount=False,
         )
 
@@ -290,7 +292,9 @@ class ValidationTreeModel(TreeModelBaseclass):
         validator_item = TreeItem(
             [
                 f"{validator.title} | {validator.filename}", 
-                validator.rules.info.get('description', None)
+                validator.rules.info.get('description', None),
+                # Only specs and facets have instructions, show purpose instead
+                validator.rules.info.get("purpose", None), 
             ],
             parent=self._rootItem,
             id=validator.id,
@@ -309,6 +313,7 @@ class ValidationTreeModel(TreeModelBaseclass):
                 [
                     spec.name, 
                     spec.description, 
+                    spec.instructions,
                     applicability,
                     ""
                 ],
@@ -321,6 +326,7 @@ class ValidationTreeModel(TreeModelBaseclass):
                 req_item = TreeItem(
                     [
                         namestring, 
+                        None,
                         req.instructions, 
                         f"⇒ {req.to_string('requirement', spec, req)}",
                         "",

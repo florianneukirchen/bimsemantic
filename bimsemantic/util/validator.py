@@ -446,6 +446,7 @@ class IntegrityValidator:
             self.requirements = [self.Requirement(req) for req in spec['requirements']]
             self.name = spec['name']
             self.description = spec['description']
+            self.instructions = ""
 
         class Applicability:
             def to_string(self, *args):
