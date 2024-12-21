@@ -81,12 +81,9 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
 
     def close_file(self):
         """Close the selected IDS validator"""
-        active = self.tree.currentIndex()
-        if not active.isValid():
-            self.mainwindow.statusbar.showMessage(self.tr("No file selected"), 5000)
+        validator_id = self.selected_validator_id()
+        if not validator_id:
             return
-        item = self.proxymodel.mapToSource(active).internalPointer()
-        validator_id = self.get_validator_id(item)
         if validator_id == "integrity":
             return
         self.validators.remove_validator(validator_id)
@@ -147,7 +144,7 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
         """Get the ID (filename) of the selected validator"""
         active = self.tree.currentIndex()
         if not active.isValid():
-            self.mainwindow.statusbar.showMessage(self.tr("No IDS file selected"), 5000)
+            self.mainwindow.statusbar.showMessage(self.tr("No validator selected"), 5000)
             return None
         item = self.proxymodel.mapToSource(active).internalPointer()
         return self.get_validator_id(item)
@@ -177,12 +174,9 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
 
     def run_selected_validation(self):
         """Run only the selected validator and update the views"""
-        active = self.tree.currentIndex()
-        if not active.isValid():
-            self.mainwindow.statusbar.showMessage(self.tr("No validator selected"), 5000)
+        validator_id = self.selected_validator_id()
+        if not validator_id:
             return
-        item = self.proxymodel.mapToSource(active).internalPointer()
-        validator_id = self.get_validator_id(item)
         self.validators.validate(validator_id)
         self.update_results_column()
         self.update_ifc_views()
