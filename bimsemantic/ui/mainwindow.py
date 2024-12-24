@@ -463,6 +463,7 @@ class MainWindow(QMainWindow):
 
 
         def update_default_suffix():
+            """Callback to change suffix when combo is toggled"""
             current_filter = dialog.selectedNameFilter()
             if "BCF" in current_filter:
                 dialog.setDefaultSuffix("bcfzip")
@@ -480,10 +481,6 @@ class MainWindow(QMainWindow):
             else:
                 ifc_filename = ifc_combo.currentText()
             as_bcf = dialog.selectedNameFilter() == self.tr("BCF (*.bcfzip)")
-            # if as_bcf and not filename.lower().endswith(".bcfzip"):
-            #     filename += ".bcfzip"
-            # elif not as_bcf and not filename.lower().endswith(".json"):
-            #     filename += ".json"
             self.validators.save_results(validator_id, ifc_filename, filename, as_bcf)
             self.statusbar.showMessage(self.tr("Saved to %s") % filename, 5000)
 
