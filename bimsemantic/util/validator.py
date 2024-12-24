@@ -227,9 +227,20 @@ class Validators:
             for spec in results['specifications']:
                 for requirement in spec['requirements']:
                     for entity in requirement['failed_entities']:
-                        entity['element'] = entity['element'].to_string()
+                        entity['element'] = " " #entity['element'].to_string()
+                        try:
+                            entity['element_type'] = " "#entity['element_type'].to_string()
+                        except KeyError:
+                            pass
                     for entity in requirement['passed_entities']:
-                        entity['element'] = entity['element'].to_string()
+                        entity['element'] = " "#entity['element'].to_string()
+                        try:
+                            entity['element_type'] = " "#entity['element_type'].to_string()
+                        except KeyError:
+                            pass
+                    for k, v in requirement.items():
+                        if isinstance(v, ifctester.facet.Restriction):
+                            requirement[k] = str(v)
 
             with open(output_filename, 'w') as f:
                 json.dump(results, f, indent=4)
