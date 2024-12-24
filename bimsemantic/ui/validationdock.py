@@ -167,7 +167,6 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
         """Run all validators and update the views"""
         self.validators.validate()
         self.update_results_column()
-        self.tree.expandAll()
         self.update_ifc_views()
         self.mainwindow.save_validation_act.setEnabled(True)
         self.show() # Show the dock in case it was hidden
@@ -180,7 +179,6 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
         self.validators.validate(validator_id)
         self.update_results_column()
         self.update_ifc_views()
-        self.tree.expandAll()
         self.mainwindow.save_validation_act.setEnabled(True)
 
     def update_results_column(self):
@@ -244,6 +242,7 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
                     req_item.set_data(column, f"{failed_checks} failed, {passed_checks} passed")
                     
         self.treemodel.endResetModel()
+        self.tree.expandAll()
 
 
     def update_ifc_views(self):

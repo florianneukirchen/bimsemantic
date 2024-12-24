@@ -359,6 +359,7 @@ class MainWindow(QMainWindow):
         validators = Validators()
         validators.results_by_guid = {}
         validators.reporters = {}
+        self.validationdock.update_results_column()
         self.ifcfiles = IfcFiles()
         self.column_treemodel = ColumnsTreeModel(parent=self)
         self.psetdock.reset()
