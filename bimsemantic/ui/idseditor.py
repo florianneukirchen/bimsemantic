@@ -32,6 +32,21 @@ import ifctester
 ALLOWED_IFC_VERSIONS = ['IFC2X3', 'IFC4', 'IFC4X3_ADD2']
 
 def extract_bounds(expression):
+    """Extracts min and max values and operators from a string expression
+    
+    From a string expression like '1 < value <= 10' it extracts the values and 
+    operators and returns them as a dictionary with the keys 'min_value',
+    'min_op', 'var_name', 'max_op' and 'max_value'.
+    
+    If the expression is not valid it returns an empty dictionary. String must 
+    always start with lower value. It is also allowed to give only min or 
+    max value, e.g. 'value <= 10' or '5 < value'.
+
+    :param expression: A string expression with min and max values and operators
+    :type expression: str
+    :return: A dictionary with min and max values and operators
+    :rtype: dict
+    """
     pattern = re.compile(r'(?P<min_value>\d*\.?\d+)?\s*(?P<min_op><=|<)?\s*\b(?P<var_name>\w+)\b\s*(?P<max_op><=|<)?\s*(?P<max_value>\d*\.?\d+)?')
     match = pattern.match(expression)
     if match:
@@ -39,6 +54,20 @@ def extract_bounds(expression):
     return {}
 
 class IdsEditDialog(QDialog):
+    """Dialog for editing an IDS
+    
+    The layout changes depending on the current state of the dialog: The data 
+    of the IDS itself and its specifications; the data of a specification including
+    its applicability and requirements; the data of a applicability or requirement
+    (i.e. a facet).
+
+    :param parent: The parent widget (main window)
+    :type parent: QWidget
+    :param filename: The filename (path) of the IDS to edit (None if it is a new file)
+    :type filename: str
+    :param ascopy: If True, the IDS is edited as a copy (a new filename must be given when saving)
+    :type ascopy: bool
+    """
 
     def __init__(self, parent, filename=None, ascopy=False):
         super().__init__(parent=parent)
@@ -96,6 +125,7 @@ class IdsEditDialog(QDialog):
             self.setWindowTitle(self.tr("Edit copy of %s") % filename)
 
     def prefill_main_layout(self):
+        """Fill the fields of the main layout form with data of the IDS file"""
         self.title.setText(self.ids.info.get("title", "Unnamed"))
         self.description.setText(self.ids.info.get("description", ""))
         self.purpose.setText(self.ids.info.get("purpose", ""))
@@ -110,6 +140,7 @@ class IdsEditDialog(QDialog):
             self.specifications.addItem(item)
 
     def setup_main_layout(self):
+        """Generate the main layout form (data of the IDS itself)"""
         layout = self.main_layout.layout()
         layout.addWidget(QLabel(self.tr("Title")), 0, 0)
         self.title = QLineEdit()
@@ -175,6 +206,7 @@ class IdsEditDialog(QDialog):
 
 
     def setup_spec_layout(self):
+        """Setup the specification form"""
         layout = self.spec_layout.layout()
         layout.addWidget(QLabel(self.tr("Specification Name")), 0, 0)
         self.spec_name = QLineEdit()
@@ -256,6 +288,7 @@ class IdsEditDialog(QDialog):
         buttonlayout3.addWidget(self.save_spec_btn)
 
     def setup_facet_layout(self):
+        """Setup the facet form (used for a requirement or applicability)"""
         layout = self.facet_layout.layout()
         layout.setContentsMargins(10, 10, 10, 10)
         self.used_for_label = QLabel()
@@ -331,6 +364,7 @@ class IdsEditDialog(QDialog):
         buttonlayout.addWidget(self.save_fac_btn)
 
     def cardinality_changed(self, text):
+        """Callback for toggeling the cardinality"""
         # In theory this influences the text of the requirements, see line 131 in 
         # https://github.com/IfcOpenShell/IfcOpenShell/blob/v0.8.0/src/ifctester/ifctester/facet.py
         # However it does not have an effect, seems to be a bug in ifctester
@@ -340,19 +374,29 @@ class IdsEditDialog(QDialog):
                 dummy_spec = ifctester.ids.Specification()
                 dummy_spec.set_usage(text.lower())
                 item = self.requirements.item(index)
-                # If requirement, to_string must be called with a spec (with cardinality set) 
+                # If requirement, to_string() must be called with a spec (with cardinality set) 
                 # and the requirement itself (why? Why not using self?)
                 # See: https://github.com/IfcOpenShell/IfcOpenShell/blob/v0.8.0/src/ifctester/ifctester/reporter.py#L188
                 item.setText(requirement.to_string("requirement", dummy_spec, requirement))
 
     def show_main_layout(self):
+        """Show the main form in the dialog"""
         self.stacked_layout.setCurrentWidget(self.main_layout)
 
     def show_spec_layout(self):
+        """Show the specification form in the dialog"""
         self.stacked_layout.setCurrentWidget(self.spec_layout)
 
 
     def set_parameter_and_restriction(self, value, parameter, combo):
+        """Set parameter and restriction-combo box in the facet layout
+        
+        Used when editing an existing applicability or requirement. The value
+        can be a simple value or a restriction.
+
+        :param value: The value of the parameter (numeric, string or restriction)
+        :type value: str or ifctester.facet.Restriction
+        """
         if isinstance(value, ifctester.facet.Restriction):
             keys = value.options.keys()
             if "enumeration" in keys:
@@ -390,9 +434,22 @@ class IdsEditDialog(QDialog):
                 parameter.setText(f"{min_value} value {max_value}")
         else:
             combo.setCurrentIndex(0)
-            parameter.setText(value)
+            parameter.setText(str(value))
 
     def get_parameter_or_restriction(self, parameter, combo):
+        """Get parameter as simple value or as restriction
+        
+        The parameter can be a simple value (string) or a restriction (if the
+        combo box is not at index 0). The restriction is returned as an instance
+        of ifctester.facet.Restriction.
+
+        :param parameter: The QLineEdit widget with the parameter value
+        :type parameter: QLineEdit
+        :param combo: The QComboBox widget with the restriction type
+        :type combo: QComboBox
+        :return: The parameter value as simple value or restriction
+        :rtype: str or ifctester.facet.Restriction
+        """
         combo_index = combo.currentIndex()
         text = parameter.text().strip()
         if not text:
@@ -433,6 +490,7 @@ class IdsEditDialog(QDialog):
 
 
     def required_parameters(self, indexes):
+        """Set placeholder text for required parameters"""
         parameters = [self.parameter1, self.parameter2, self.parameter3, self.parameter4, self.parameter5]
         for i, parameter in enumerate(parameters):
             if i + 1 in indexes:
@@ -442,6 +500,7 @@ class IdsEditDialog(QDialog):
             
 
     def show_facet_layout(self, facet_type, facet=None):
+        """Show the facet layout for a given facet type"""
         self.facet_type_label.setText(facet_type)
         if facet:
             self.facet_instructions.setText(facet.instructions)
@@ -616,6 +675,7 @@ class IdsEditDialog(QDialog):
         self.stacked_layout.setCurrentWidget(self.facet_layout)
 
     def add_specification(self):
+        """Add a new specification to the IDS and edit it"""
         self.current_spec = None
         self.spec_name.setText(self.tr("New Specification"))
         self.stacked_layout.setCurrentWidget(self.spec_layout)
@@ -629,6 +689,7 @@ class IdsEditDialog(QDialog):
         self.current_spec_requirement = []
 
     def edit_specification(self):
+        """Edit the selected specification"""
         selected_items = self.specifications.selectedItems()
         if not selected_items:
             return
@@ -657,6 +718,7 @@ class IdsEditDialog(QDialog):
         self.stacked_layout.setCurrentWidget(self.spec_layout)
 
     def save_specification(self):
+        """Save the specification data"""
         spec_name = self.spec_name.text().strip() or "Unnamed" # Use a default if ""
         if self.current_spec is None:
             spec = ifctester.ids.Specification()
@@ -684,6 +746,7 @@ class IdsEditDialog(QDialog):
             self.buttonBox.button(QDialogButtonBox.Save).setEnabled(True)
 
     def remove_specification(self):
+        """Remove the selected specification"""
         selected_items = self.specifications.selectedItems()
         if not selected_items:
             return
@@ -695,6 +758,7 @@ class IdsEditDialog(QDialog):
             self.buttonBox.button(QDialogButtonBox.Save).setEnabled(False)
 
     def add_applicability(self):
+        """Add a new applicability to the current specification and edit it"""
         dialog = ChooseFacetDialog(self)
         if dialog.exec():
             facet_type = dialog.get_facet()
@@ -704,6 +768,7 @@ class IdsEditDialog(QDialog):
                 self.show_facet_layout(facet_type)
 
     def edit_applicability(self):
+        """Edit the selected applicability"""
         selected_items = self.applicability.selectedItems()
         if not selected_items:
             return
@@ -713,6 +778,7 @@ class IdsEditDialog(QDialog):
         self.show_facet_layout(facet.__class__.__name__, facet)
 
     def remove_applicability(self):
+        """Remove the selected applicability"""
         selected_items = self.applicability.selectedItems()
         if not selected_items:
             return
@@ -722,6 +788,7 @@ class IdsEditDialog(QDialog):
 
 
     def add_requirement(self):
+        """Add a new requirement to the current specification and edit it"""
         dialog = ChooseFacetDialog(self)
         if dialog.exec():
             facet_type = dialog.get_facet()
@@ -731,6 +798,7 @@ class IdsEditDialog(QDialog):
                 self.show_facet_layout(facet_type)
 
     def edit_requirement(self):
+        """Edit the selected requirement"""
         selected_items = self.requirements.selectedItems()
         if not selected_items:
             return
@@ -740,6 +808,7 @@ class IdsEditDialog(QDialog):
         self.show_facet_layout(facet.__class__.__name__, facet)
 
     def remove_requirement(self):
+        """Remove the selected requirement"""
         selected_items = self.requirements.selectedItems()
         if not selected_items:
             return
@@ -748,7 +817,10 @@ class IdsEditDialog(QDialog):
             self.requirements.takeItem(self.requirements.row(item))
 
     def save_facet(self):
-
+        """Save the facet data as applicability or requirement
+        
+        Also validates the input according to the IDS spec.
+        """
         # Check if all required parameters are set
         parameter_list = [self.parameter1, self.parameter2, self.parameter3, self.parameter4, self.parameter5]
         for parameter in parameter_list:
@@ -894,7 +966,12 @@ class IdsEditDialog(QDialog):
 
 
     def accept(self):
-        # This is run if the user clicks OK
+        """Save the IDS.
+        
+        This method is run if the user clicks OK (overwriting the default method).
+        Final validation of the data (and return with a message if not valid), 
+        eventually ask for a filename, and save the file.
+        """
 
         author = self.author.text().strip()
         if author:
@@ -960,6 +1037,15 @@ class IdsEditDialog(QDialog):
 
 
 class ChooseFacetDialog(QDialog):
+    """Dialog to choose the facet type
+    
+    Needed when user adds a new applicability or requirement. There are six types
+    of facets in the IDS spec: Entity, Attribute, Property, PartOf, Material, 
+    Classification.
+
+    :param parent: The parent widget
+    :type parent: QWidget
+    """
     def __init__(self, parent):
         super().__init__(parent=parent)
         self.mainwindow = parent
@@ -1001,6 +1087,7 @@ class ChooseFacetDialog(QDialog):
         layout.addWidget(self.button_box)
 
     def get_facet(self):
+        """Get the selected facet type"""
         selected_button = self.button_group.checkedButton()
         if selected_button:
             return selected_button.text()
