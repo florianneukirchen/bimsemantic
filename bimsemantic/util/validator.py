@@ -19,6 +19,8 @@ class Validators:
 
     self.reporters is a nested dict with the keys "validator_id" and "ifc filename" 
     and contains the reporter object of the validation (ifctester.reporter.Bcf).
+    Only exception is the integrity check, which is stored directly under the key 
+    "integrity".
 
     :param ifc_files: The IfcFiles object of the main window
     :type ifc_files: IfcFiles
@@ -213,7 +215,10 @@ class Validators:
         :param as_bcf: Save as BCF if True, otherwise as JSON
         :type as_bcf: bool
         """
-        reporter = self.reporters[validator_id][ifc_filename]
+        if validator_id == "integrity":
+            reporter = self.reporters[validator_id]
+        else:
+            reporter = self.reporters[validator_id][ifc_filename]
         if as_bcf:
             reporter.to_file(output_filename)
         else:
