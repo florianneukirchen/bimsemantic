@@ -972,12 +972,12 @@ class ChooseFacetDialog(QDialog):
         layout.addWidget(QLabel(self.tr("Choose Facet")))
 
         self.button_group = QButtonGroup(self)
-        self.radio_button1 = QRadioButton(self.tr("Entity"))
-        self.radio_button2 = QRadioButton(self.tr("Attribute"))
-        self.radio_button3 = QRadioButton(self.tr("Property"))
-        self.radio_button4 = QRadioButton(self.tr("PartOf"))
-        self.radio_button5 = QRadioButton(self.tr("Material"))
-        self.radio_button6 = QRadioButton(self.tr("Classification"))
+        self.radio_button1 = QRadioButton("Entity")
+        self.radio_button2 = QRadioButton("Attribute")
+        self.radio_button3 = QRadioButton("Property")
+        self.radio_button4 = QRadioButton("PartOf")
+        self.radio_button5 = QRadioButton("Material")
+        self.radio_button6 = QRadioButton("Classification")
 
         self.button_group.addButton(self.radio_button1)
         self.button_group.addButton(self.radio_button2)
