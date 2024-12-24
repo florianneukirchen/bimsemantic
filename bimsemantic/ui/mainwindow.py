@@ -854,21 +854,26 @@ class MainWindow(QMainWindow):
 
         # Validation menu
         self.validation_menu = self.menuBar().addMenu(self.tr("&Validation"))
+        self.toolbar.addSeparator()
 
         self.load_ids_act = QAction(
+            QIcon(":/icons/open-ids.png"),
             self.tr("&Load IDS file"),
             self,
             statusTip=self.tr("Load IDS file with validation rules"),
             triggered=self.load_ids_dlg,
         )
         self.validation_menu.addAction(self.load_ids_act)
+        self.toolbar.addAction(self.load_ids_act)
 
         self.close_ids_act = QAction(
+            QIcon(":/icons/close-ids.png"),
             self.tr("&Close IDS file"),
             self,
             statusTip=self.tr("Close selected IDS file"),
         )
         self.validation_menu.addAction(self.close_ids_act)
+        self.toolbar.addAction(self.close_ids_act)
 
         self.close_all_ids_act = QAction(
             self.tr("Close all IDS files"),
@@ -880,46 +885,57 @@ class MainWindow(QMainWindow):
         self.validation_menu.addSeparator()
 
         self.new_ids_act = QAction(
+            QIcon(":/icons/new-ids.png"),
             self.tr("&New IDS file"),
             self,
             statusTip=self.tr("Create a new IDS file with validation rules"),
         )
         self.validation_menu.addAction(self.new_ids_act)
+        self.toolbar.addAction(self.new_ids_act)
 
         self.edit_ids_act = QAction(
+            QIcon(":/icons/edit-ids.png"),
             self.tr("&Edit IDS file"),
             self,
             statusTip=self.tr("Edit the specifications of the selected IDS file"),
         )
         self.validation_menu.addAction(self.edit_ids_act)
+        self.toolbar.addAction(self.edit_ids_act)
 
         self.edit_ids_copy_act = QAction(
+            QIcon(":/icons/edit-ids-copy.png"),
             self.tr("E&dit copy of IDS file"),
             self,
             statusTip=self.tr("Edit a copy of the selected IDS file"),
         )
         self.validation_menu.addAction(self.edit_ids_copy_act)
+        self.toolbar.addAction(self.edit_ids_copy_act)
 
 
         self.validation_menu.addSeparator()
 
         self.run_all_validations_act = QAction(
+            QIcon(":/icons/run-all.png"),
             self.tr("&Run all validations"),
             self,
             statusTip=self.tr("Run validation using all validation rules"),
         )
         self.validation_menu.addAction(self.run_all_validations_act)
+        self.toolbar.addAction(self.run_all_validations_act)
 
         self.run_selected_validation_act = QAction(
+            QIcon(":/icons/run-selected.png"),
             self.tr("Run &selected validation"),
             self,
             statusTip=self.tr("Run validation with the selected validator"),
         )
         self.validation_menu.addAction(self.run_selected_validation_act)
+        self.toolbar.addAction(self.run_selected_validation_act)
 
         self.validation_menu.addSeparator()
 
         self.save_validation_act = QAction(
+            QIcon(":/icons/save-ids.png"),
             self.tr("&Save validation result"),
             self,
             statusTip=self.tr("Save the validation result of the selected validator as BCF or JSON"),
@@ -927,6 +943,7 @@ class MainWindow(QMainWindow):
             enabled = False,
         )
         self.validation_menu.addAction(self.save_validation_act)
+        self.toolbar.addAction(self.save_validation_act)
 
         # Help menu
         self.help_menu = self.menuBar().addMenu(self.tr("&Help"))
