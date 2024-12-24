@@ -925,7 +925,7 @@ class MainWindow(QMainWindow):
 
         self.run_selected_validation_act = QAction(
             QIcon(":/icons/run-selected.png"),
-            self.tr("Run &selected validation"),
+            self.tr("Run selected &validation"),
             self,
             statusTip=self.tr("Run validation with the selected validator"),
         )
