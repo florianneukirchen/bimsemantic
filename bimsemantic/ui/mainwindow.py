@@ -453,8 +453,11 @@ class MainWindow(QMainWindow):
         validator_combo.addItems(self.validators.reporters.keys())
         dialog_layout.addWidget(validator_combo, 5, 1)
 
-        if len(self.ifcfiles) > 1:
+        selected_validator = self.validationdock.selected_validator_id()
+        if selected_validator and selected_validator in self.validators.reporters.keys():
+            validator_combo.setCurrentText(selected_validator)
 
+        if len(self.ifcfiles) > 1:
             label = QLabel(self.tr("Select IFC file:"))
             dialog_layout.addWidget(label, 6, 0)
             ifc_combo = QComboBox()
