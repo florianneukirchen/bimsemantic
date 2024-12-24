@@ -64,7 +64,7 @@ class DetailsDock(CopyMixin, ContextMixin, QDockWidget):
         if isinstance(data, entity_instance):
             detail_model = IfcDetailsTreeModel(data, self, filenames)
         elif isinstance(data, dict):
-            detail_model = ValidationTreeModel(data, self)
+            detail_model = ValidationResultTreeModel(data, self)
         else:
             self.setWidget(self.overviewtree)
             return
@@ -588,7 +588,7 @@ class OverviewTreeModel(DetailsBaseclass):
             self.new_item(self.tr("Pset count"), ifcfile.pset_count(), ifcfile_item)
             self.new_item(self.tr("Qset count"), ifcfile.qset_count(), ifcfile_item)
 
-class ValidationTreeModel(DetailsBaseclass):
+class ValidationResultTreeModel(DetailsBaseclass):
     """Tree model for the validation results
     
     Simply show json-like data in a tree view
@@ -603,7 +603,7 @@ class ValidationTreeModel(DetailsBaseclass):
         self.rows_spanned = []
 
         for k, v in data.items():
-            label = self.tr("Validation: %s") % k
+            label = self.tr("Validation of %s") % k
             self.item_with_subitems(v, root_item, label)
 
         for i in range(0, root_item.child_count()):
