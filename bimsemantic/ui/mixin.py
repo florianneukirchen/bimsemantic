@@ -113,6 +113,7 @@ class ContextMixin:
         if hasattr(self, "get_validator_id"):
             # Only true for validation dock
             context_menu.addAction(self.mainwindow.run_selected_validation_act)
+            context_menu.addAction(self.mainwindow.save_validation_act)
             context_menu.addSeparator()
             if index.isValid():
                 original_index = self.proxymodel.mapToSource(index)
