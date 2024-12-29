@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QTreeView, QApplication, QMenu
 from PySide6.QtGui import QAction
-
+from PySide6.QtCore import QCoreApplication
 
 class CopyMixin:
     """Mixin class for dock widgets to copy data
@@ -135,7 +135,10 @@ class ContextMixin:
                 pset_tuple = self.get_pset_tuple(index)
                 if pset_tuple:
                     autosearch_action = QAction(
-                        self.tr("SOM autosearch %s" % pset_tuple[1]),
+                        QCoreApplication.translate(
+                            "MainWindow",
+                            "SOM autosearch" 
+                        ) + f" {pset_tuple[0]}",
                         self,
                         triggered=lambda: self.mainwindow.somdock.set_autosearch_attribute(
                             pset_tuple
