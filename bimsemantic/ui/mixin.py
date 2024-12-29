@@ -138,7 +138,7 @@ class ContextMixin:
                         QCoreApplication.translate(
                             "MainWindow",
                             "SOM autosearch" 
-                        ) + f" {pset_tuple[0]}",
+                        ) + f" {pset_tuple[1]}",
                         self,
                         triggered=lambda: self.mainwindow.somdock.set_autosearch_attribute(
                             pset_tuple
