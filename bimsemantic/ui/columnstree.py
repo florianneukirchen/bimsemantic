@@ -53,7 +53,7 @@ class ColumnsTreeModel(QTreeWidget):
         self.setup_model_data(data)
         self.expandAll()
         self.itemChanged.connect(self.item_changed)
-        self.timer.timeout.connect(self.emit_columns_changed)
+        self.timer.timeout.connect(self.update_psetcolumns)
 
     def setup_model_data(self, data):
         """Setup the model data, at least the Info Columns and all top level items"""
@@ -221,8 +221,8 @@ class ColumnsTreeModel(QTreeWidget):
         For the Info Columns, the signal hideInfoColumn is emitted
         to toggle the visibility of these colums.
 
-        For the Property Sets, the signal update_psetcolumns is emitted
-        telling the IFC treeviews to update their layout. If the checkbox
+        For the Property Sets, the signal columnsChanged is emitted
+        telling the IFC treeviews to update their layout. Note: If the checkbox
         of a root item with several children is toggled, itemChanged is
         fired for each checkbox. A timer is used to collect these signals
         into one.
@@ -242,11 +242,6 @@ class ColumnsTreeModel(QTreeWidget):
                 self.hideInfoColumn.emit(col_index, ishidden)
             else:
                 self.timer.start(10)
-
-    def emit_columns_changed(self):
-        """Callback of the timer that is used in item_changed"""
-        self.update_psetcolumns()
-        self.columnsChanged.emit()
 
     def update_psetcolumns(self):
         """For checked items, create a list of tuples with the psets and their properties"""
@@ -270,6 +265,9 @@ class ColumnsTreeModel(QTreeWidget):
                 qto_item = qset_item.child(j)
                 if qto_item.checkState(0) == Qt.CheckState.Checked:
                     self._psetcolumns.append((qset_name, qto_item.text(0)))
+
+        # Emit signal to update the columns of the IFC tree views
+        self.columnsChanged.emit()
 
     def hidden_info_columns(self):
         """Returns a list of column indexes that are hidden"""
