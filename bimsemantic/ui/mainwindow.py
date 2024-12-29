@@ -154,6 +154,7 @@ class MainWindow(QMainWindow):
             index = widget.currentIndex()
             if index.isValid():
                 data = str(index.data())
+                self.somdock.searchbar.show()
                 self.somdock.searchbar.search_text.setText(data)
                 self.somdock.searchbar.search()
 
