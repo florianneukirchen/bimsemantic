@@ -198,7 +198,7 @@
     <message>
         <location filename="../ui/searchbar.py" line="288"/>
         <source>Case Sensitive</source>
-        <translation>Groß- Kleinschreibung beachten</translation>
+        <translation>Groß-/Kleinschreibung beachten</translation>
     </message>
 </context>
 <context>
@@ -1203,7 +1203,7 @@ Should be two integers separated by a comma</source>
     <message>
         <location filename="../ui/mixin.py" line="141"/>
         <source>SOM autosearch</source>
-        <translation type="unfinished">SOM-Autosuche</translation>
+        <translation>SOM-Autosuche</translation>
     </message>
 </context>
 <context>
