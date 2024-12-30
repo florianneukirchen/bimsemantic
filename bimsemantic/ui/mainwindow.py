@@ -159,21 +159,26 @@ class MainWindow(QMainWindow):
                 self.somdock.searchbar.search()
 
     def search_active(self, filtermode=False):
-        """Search in the active view or show filterbar"""
+        """Search or show filterbar
+        
+        Shof the searchbar or the filterbar. If the SOM dock is the active 
+        widget, the searchbar or filterbar of the SOM dock is shown, 
+        otherwise the searchbar or filterbar of the main view.
+
+        :param filtermode: If True, the filterbar is shown, otherwise the searchbar
+        """
         dock = self.get_active_dock()
-        searchbar = None
-        if isinstance(dock, IfcTreeTab):
-            dock = dock.tabswidget
+
+        if not (hasattr(dock, "autosearch")):
+            # The SOM dock is not the active widget
+            # Always use the searchbar of the main view in this case
+            dock = self.tabs
+
+ 
         if filtermode:
-            try:
-                searchbar = dock.filterbar
-            except AttributeError:
-                return
+            searchbar = dock.filterbar
         else:
-            try:
-                searchbar = dock.searchbar
-            except AttributeError:
-                return
+           searchbar = dock.searchbar
 
         searchbar.show()
         searchbar.search_text.setFocus()
