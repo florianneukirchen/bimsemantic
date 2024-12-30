@@ -99,7 +99,7 @@ class SearchBar(QWidget):
         
 
         if filtermode:
-            self.reset_filter_button = QPushButton("Reset Filter")
+            self.reset_filter_button = QPushButton(self.tr("Reset Filter"))
             self.layout.addWidget(self.reset_filter_button)
             self.reset_filter_button.clicked.connect(self.remove_filter)
         else:

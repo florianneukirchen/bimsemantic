@@ -225,7 +225,8 @@ class ColumnsTreeModel(QTreeWidget):
         telling the IFC treeviews to update their layout. Note: If the checkbox
         of a root item with several children is toggled, itemChanged is
         fired for each checkbox. A timer is used to collect these signals
-        into one.
+        into one. On timeout, update_psetcolumns is called.
+        
         :param item: The item containg the checkbox that was toggled
         :type item: QTreeWidgetItem
         :param column: The column of the checkbox
