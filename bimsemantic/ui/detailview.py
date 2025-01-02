@@ -538,7 +538,7 @@ class OverviewTreeModel(DetailsBaseclass):
                 world_coordinates = None
             if world_coordinates:
                 self.new_item(
-                    self.tr("Project coordinates"), str(world_coordinates), ifcfile_item
+                    self.tr("Project base point"), str(world_coordinates), ifcfile_item
                 )
 
             self.new_item(

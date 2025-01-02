@@ -82,7 +82,7 @@
         <translation>Quantity Sets</translation>
     </message>
     <message>
-        <location filename="../ui/columnstree.py" line="248"/>
+        <location filename="../ui/columnstree.py" line="249"/>
         <source>Update columns...</source>
         <translation>Spalten werden aktualisiert...</translation>
     </message>
@@ -1234,9 +1234,13 @@ Should be two integers separated by a comma</source>
         <translation>Projektphase</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="541"/>
         <source>Project coordinates</source>
-        <translation>Projektkoordinaten</translation>
+        <translation type="vanished">Projektkoordinaten</translation>
+    </message>
+    <message>
+        <location filename="../ui/detailview.py" line="541"/>
+        <source>Project base point</source>
+        <translation>Projektbasispunkt</translation>
     </message>
     <message>
         <location filename="../ui/detailview.py" line="545"/>
