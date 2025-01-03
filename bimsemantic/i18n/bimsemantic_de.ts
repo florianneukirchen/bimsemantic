@@ -93,6 +93,11 @@
         <source>SOM autosearch %s</source>
         <translation type="vanished">SOM-Autosuche %s</translation>
     </message>
+    <message>
+        <location filename="../ui/mixin.py" line="156"/>
+        <source>Expand/Collapse</source>
+        <translation>Ausklappen/Einklappen</translation>
+    </message>
 </context>
 <context>
     <name>CustomTreeDialog</name>
@@ -1126,16 +1131,19 @@ Should be two integers separated by a comma</source>
     </message>
     <message>
         <location filename="../ui/mainwindow.py" line="781"/>
+        <location filename="../ui/mixin.py" line="160"/>
         <source>&amp;Collapse</source>
         <translation>&amp;Einklappen</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.py" line="789"/>
+        <location filename="../ui/mixin.py" line="166"/>
         <source>Expand to level &amp;1</source>
         <translation>Bis Ebene &amp;1 ausklappen</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.py" line="796"/>
+        <location filename="../ui/mixin.py" line="172"/>
         <source>Expand to level &amp;2</source>
         <translation>Bis Ebene &amp;2 ausklappen</translation>
     </message>
@@ -1151,6 +1159,7 @@ Should be two integers separated by a comma</source>
     </message>
     <message>
         <location filename="../ui/mainwindow.py" line="817"/>
+        <location filename="../ui/mixin.py" line="178"/>
         <source>Expand &amp;all</source>
         <translation>&amp;Alle ausklappen</translation>
     </message>
@@ -1201,7 +1210,7 @@ Should be two integers separated by a comma</source>
         <translation>Keine offene Datei</translation>
     </message>
     <message>
-        <location filename="../ui/mixin.py" line="141"/>
+        <location filename="../ui/mixin.py" line="143"/>
         <source>SOM autosearch</source>
         <translation>SOM-Autosuche</translation>
     </message>
