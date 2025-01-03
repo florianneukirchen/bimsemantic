@@ -120,7 +120,7 @@ class SearchBar(QWidget):
         self.hide()
 
     def search(self):
-        """Search the text in the tree view"""
+        """Search the text/pattern in the tree view"""
         self.searchresults = []
         pattern = self.search_text.text()
         pattern = pattern.strip()
@@ -185,6 +185,8 @@ class SearchBar(QWidget):
             self._parent.proxymodel.setFilterRegularExpression(regular_expression)
             self.mainwindow.filterindicator.show()
             self.indicator_act.setEnabled(True)
+            # Trigger a search to make sure we only have valid search results
+            self._parent.searchbar.search()
             return
 
         items = self._parent.treemodel.root_item.search(

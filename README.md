@@ -3,14 +3,7 @@
 
 
 ### Todo
-- IFS laden
-- ifc version in ids
-- restriction
-- weitere Metadaten in ids
-- Spalten umsortieren in allen tabs
-- Kontextmenü Validierung
-- Export als JSON
-
+- Bug: In Pset dock fehlen Psets von IfcSpatialElement
 
 
 
