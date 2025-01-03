@@ -163,7 +163,7 @@
 <context>
     <name>FilterIndicator</name>
     <message>
-        <location filename="../ui/searchbar.py" line="322"/>
+        <location filename="../ui/searchbar.py" line="324"/>
         <source>Filter active</source>
         <translation>Aktiver Filter</translation>
     </message>
@@ -171,32 +171,32 @@
 <context>
     <name>HowButton</name>
     <message>
-        <location filename="../ui/searchbar.py" line="276"/>
+        <location filename="../ui/searchbar.py" line="278"/>
         <source>Text</source>
         <translation>Text</translation>
     </message>
     <message>
-        <location filename="../ui/searchbar.py" line="277"/>
+        <location filename="../ui/searchbar.py" line="279"/>
         <source>Exact</source>
         <translation>Exakt</translation>
     </message>
     <message>
-        <location filename="../ui/searchbar.py" line="278"/>
+        <location filename="../ui/searchbar.py" line="280"/>
         <source>Wildcard</source>
         <translation>Platzhalter</translation>
     </message>
     <message>
-        <location filename="../ui/searchbar.py" line="279"/>
+        <location filename="../ui/searchbar.py" line="281"/>
         <source>Regex</source>
         <translation>Regex</translation>
     </message>
     <message>
-        <location filename="../ui/searchbar.py" line="280"/>
+        <location filename="../ui/searchbar.py" line="282"/>
         <source>List Contains</source>
         <translation>Liste enthält</translation>
     </message>
     <message>
-        <location filename="../ui/searchbar.py" line="290"/>
+        <location filename="../ui/searchbar.py" line="292"/>
         <source>Case Sensitive</source>
         <translation>Groß-/Kleinschreibung beachten</translation>
     </message>
@@ -1303,36 +1303,46 @@ Should be two integers separated by a comma</source>
         <source>Types</source>
         <translation>Typen</translation>
     </message>
+    <message>
+        <location filename="../ui/psetdock.py" line="111"/>
+        <source>Spatial Elements</source>
+        <translation>Raumelemente</translation>
+    </message>
 </context>
 <context>
     <name>QsetTreeModel</name>
     <message>
-        <location filename="../ui/psetdock.py" line="193"/>
+        <location filename="../ui/psetdock.py" line="195"/>
         <source>Elements</source>
         <translation>Elemente</translation>
     </message>
     <message>
-        <location filename="../ui/psetdock.py" line="194"/>
+        <location filename="../ui/psetdock.py" line="196"/>
+        <source>Spatial Elements</source>
+        <translation>Raumelemente</translation>
+    </message>
+    <message>
+        <location filename="../ui/psetdock.py" line="197"/>
         <source>Std</source>
         <translation>Std</translation>
     </message>
     <message>
-        <location filename="../ui/psetdock.py" line="195"/>
+        <location filename="../ui/psetdock.py" line="198"/>
         <source>Min</source>
         <translation>Min</translation>
     </message>
     <message>
-        <location filename="../ui/psetdock.py" line="196"/>
+        <location filename="../ui/psetdock.py" line="199"/>
         <source>Mean</source>
         <translation>Durchschnitt</translation>
     </message>
     <message>
-        <location filename="../ui/psetdock.py" line="197"/>
+        <location filename="../ui/psetdock.py" line="200"/>
         <source>Median</source>
         <translation>Median</translation>
     </message>
     <message>
-        <location filename="../ui/psetdock.py" line="198"/>
+        <location filename="../ui/psetdock.py" line="201"/>
         <source>Max</source>
         <translation>Max</translation>
     </message>

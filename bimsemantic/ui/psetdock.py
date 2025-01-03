@@ -104,11 +104,11 @@ class PsetTreeModel(TreeModelBaseclass):
     def __init__(self, data, parent):
         self.psetdock = parent
         super(PsetTreeModel, self).__init__(data, parent)
-        self.column_count = 3
+        self.column_count = 4
 
     def setup_root_item(self):
         self._rootItem = TreeItem(
-            ["Property Set", self.tr("Elements"), self.tr("Types")],
+            ["Property Set", self.tr("Elements"), self.tr("Spatial Elements"), self.tr("Types")],
             showchildcount=False,
         )
 
@@ -129,8 +129,10 @@ class PsetTreeModel(TreeModelBaseclass):
         self.beginResetModel()
         elements = ifc_file.model.by_type("IfcElement")
         self.add_elements(elements)
+        spatial_elements = ifc_file.model.by_type("IfcSpatialElement")
+        self.add_elements(spatial_elements, count_col=2)
         elementtypes = ifc_file.model.by_type("IfcElementType")
-        self.add_elements(elementtypes, count_col=2)
+        self.add_elements(elementtypes, count_col=3)
         self.endResetModel()
 
     def add_elements(self, elements, count_col=1):
@@ -161,7 +163,7 @@ class PsetTreeModel(TreeModelBaseclass):
                         pset_item.appendChild(prop_item)
                     value_item = self.get_child_by_label(prop_item, prop_value)
                     if not value_item:
-                        value_item = TreeItem([prop_value, 0, 0], prop_item)
+                        value_item = TreeItem([prop_value, 0, 0, 0], prop_item)
                         value_item.set_data(count_col, 1)
                         prop_item.appendChild(value_item)
                     else:
@@ -183,7 +185,7 @@ class QsetTreeModel(TreeModelBaseclass):
     def __init__(self, data, parent):
         self.qsetdock = parent
         super(QsetTreeModel, self).__init__(data, parent)
-        self.column_count = 7
+        self.column_count = 8
 
     def setup_root_item(self):
         """Set up the root item"""
@@ -191,6 +193,7 @@ class QsetTreeModel(TreeModelBaseclass):
             [
                 "Quantity Set",
                 self.tr("Elements"),
+                self.tr("Spatial Elements"),
                 self.tr("Std"),
                 self.tr("Min"),
                 self.tr("Mean"),
@@ -219,6 +222,8 @@ class QsetTreeModel(TreeModelBaseclass):
         self.beginResetModel()
         elements = ifc_file.model.by_type("IfcElement")
         self.add_elements(elements)
+        spatial_elements = ifc_file.model.by_type("IfcSpatialElement")
+        self.add_elements(spatial_elements, count_col=2)
         self.endResetModel()
 
     def add_elements(self, elements, count_col=1):
@@ -254,24 +259,25 @@ class QsetTreeModel(TreeModelBaseclass):
                         continue
                     qto_item = self.get_child_by_label(qset_item, qto_name)
                     if not qto_item:
-                        # [name, count, min, mean, median, max, values]
+                        # [name, element count, spatial element count,  min, mean, median, max, values]
                         # values will be invisible in the tree, but is needed to
                         # calculate mean, median, etc.
                         qto_item = TreeItem(
-                            [qto_name, 1, 0, 0, 0, 0, 0, [qto_value]], qset_item
+                            [qto_name, 0, 0, 0, 0, 0, 0, 0, [qto_value]], qset_item
                         )
+                        qto_item.set_data(count_col, 1) 
                         qset_item.appendChild(qto_item)
                     else:
-                        qto_item.set_data(1, qto_item.data(1) + 1)
-                        values = qto_item.data(7)
+                        qto_item.set_data(count_col, qto_item.data(count_col) + 1)
+                        values = qto_item.data(8)
                         values.append(qto_value)
-                        qto_item.set_data(7, values)
+                        qto_item.set_data(8, values)
 
     def calculate_statistics(self):
         """Calculate basic statistics and add them to the TreeItems"""
         for qset_item in self._rootItem.children:
             for qto_item in qset_item.children:
-                values = qto_item.data(7)
+                values = qto_item.data(8)
                 if not values:
                     continue
                 min_val = min(values)
@@ -282,8 +288,8 @@ class QsetTreeModel(TreeModelBaseclass):
                     std_val = statistics.stdev(values)
                 else:
                     std_val = None
-                qto_item.set_data(2, std_val)
-                qto_item.set_data(3, min_val)
-                qto_item.set_data(4, mean_val)
-                qto_item.set_data(5, median_val)
-                qto_item.set_data(6, max_val)
+                qto_item.set_data(3, std_val)
+                qto_item.set_data(4, min_val)
+                qto_item.set_data(5, mean_val)
+                qto_item.set_data(6, median_val)
+                qto_item.set_data(7, max_val)

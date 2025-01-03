@@ -2,11 +2,6 @@
 
 
 
-### Todo
-- Bug: In Pset dock fehlen Psets von IfcSpatialElement
-
-
-
 ## Installation
 - Python 3.9 to 3.12
 
