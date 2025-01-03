@@ -129,7 +129,9 @@ class ContextMixin:
         context_menu.addAction(self.mainwindow.copy_cell_act)
 
         if self.mainwindow.somdock and self.mainwindow.somdock.isVisible():
-            context_menu.addAction(self.mainwindow.search_som_act)
+            if not hasattr(self, "get_validator_id"):
+                # All docks except validation dock
+                context_menu.addAction(self.mainwindow.search_som_act)
 
             if hasattr(self, "get_pset_tuple") and index.isValid():
                 pset_tuple = self.get_pset_tuple(index)
