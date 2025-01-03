@@ -152,4 +152,32 @@ class ContextMixin:
         if hasattr(self, "overviewtree") and self.overviewtree != self.widget():
             context_menu.addAction(self.mainwindow.overview_act)
 
+        # Expand/collapse menu
+        expand_menu = QMenu(self.tr("Expand/Collapse"), self)
+        context_menu.addMenu(expand_menu)
+
+        expand_menu.addAction(QAction(
+            QCoreApplication.translate("MainWindow", "&Collapse"),
+            self,
+            triggered=lambda: tree.collapseAll(),
+        ))
+
+        expand_menu.addAction(QAction(
+            QCoreApplication.translate("MainWindow", "Expand to level &1"),
+            self,
+            triggered=lambda: tree.expandToDepth(0),
+        ))
+
+        expand_menu.addAction(QAction(
+            QCoreApplication.translate("MainWindow", "Expand to level &2"),
+            self,
+            triggered=lambda: tree.expandToDepth(1),
+        ))
+
+        expand_menu.addAction(QAction(
+            QCoreApplication.translate("MainWindow", "Expand &all"),
+            self,
+            triggered=lambda: tree.expandAll(),
+        ))
+
         context_menu.exec(tree.viewport().mapToGlobal(position))
