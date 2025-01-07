@@ -530,17 +530,29 @@ class OverviewTreeModel(DetailsBaseclass):
             if phase:
                 self.new_item(self.tr("Project phase"), phase, ifcfile_item)
 
+            # Project base point can be linked to IfcProject or IfcSite (or even both)
             try:
-                world_coordinates = ifcfile.project.RepresentationContexts[
+                coordinates = ifcfile.project.RepresentationContexts[
                     0
                 ].WorldCoordinateSystem.Location.Coordinates
             except (AttributeError, IndexError):
-                world_coordinates = None
-            if world_coordinates:
+                coordinates = None
+            if coordinates and coordinates[0] and coordinates[1]:
+                # Only show if not 0,0,0
                 self.new_item(
-                    self.tr("Project base point"), str(world_coordinates), ifcfile_item
+                    self.tr("Project base point"), str(coordinates), ifcfile_item
                 )
 
+            try:
+                coordinates = ifcfile.model.by_type("IfcSite")[0].ObjectPlacement.RelativePlacement.Location.Coordinates
+            except (AttributeError, IndexError):
+                coordinates = None
+            if coordinates and coordinates[0] and coordinates[1]:
+                # Only show if not 0,0,0
+                self.new_item(
+                    self.tr("IfcSite base point"), str(coordinates), ifcfile_item
+                )
+                
             self.new_item(
                 self.tr("Project owner"),
                 ifcfile.project.OwnerHistory.OwningUser.ThePerson.GivenName,

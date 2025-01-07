@@ -1247,42 +1247,47 @@ Should be two integers separated by a comma</source>
         <translation type="vanished">Projektkoordinaten</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="541"/>
+        <location filename="../ui/detailview.py" line="543"/>
         <source>Project base point</source>
         <translation>Projektbasispunkt</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="545"/>
+        <location filename="../ui/detailview.py" line="553"/>
+        <source>IfcSite base point</source>
+        <translation>IfcSite Basispunkt</translation>
+    </message>
+    <message>
+        <location filename="../ui/detailview.py" line="557"/>
         <source>Project owner</source>
         <translation>Projektbesitzer</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="550"/>
+        <location filename="../ui/detailview.py" line="562"/>
         <source>Application</source>
         <translation>Anwendung</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="555"/>
+        <location filename="../ui/detailview.py" line="567"/>
         <source>Addresses</source>
         <translation>Adressen</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="583"/>
+        <location filename="../ui/detailview.py" line="595"/>
         <source>CRS</source>
         <translation>CRS</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="586"/>
+        <location filename="../ui/detailview.py" line="598"/>
         <source>IFC Elements</source>
         <translation>IFC-Elemente</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="588"/>
+        <location filename="../ui/detailview.py" line="600"/>
         <source>Pset count</source>
         <translation>Pset-Anzahl</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="589"/>
+        <location filename="../ui/detailview.py" line="601"/>
         <source>Qset count</source>
         <translation>Qset-Anzahl</translation>
     </message>
@@ -1516,7 +1521,7 @@ Should be two integers separated by a comma</source>
 <context>
     <name>ValidationResultTreeModel</name>
     <message>
-        <location filename="../ui/detailview.py" line="606"/>
+        <location filename="../ui/detailview.py" line="618"/>
         <source>Validation of %s</source>
         <translation>Validierung von %s</translation>
     </message>
