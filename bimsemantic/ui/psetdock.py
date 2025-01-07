@@ -129,7 +129,10 @@ class PsetTreeModel(TreeModelBaseclass):
         self.beginResetModel()
         elements = ifc_file.model.by_type("IfcElement")
         self.add_elements(elements)
-        spatial_elements = ifc_file.model.by_type("IfcSpatialElement")
+        if ifc_file.model.schema_version[0] == 2:
+            spatial_elements = ifc_file.model.by_type("IfcSpatialStructureElement")
+        else:
+            spatial_elements = ifc_file.model.by_type("IfcSpatialElement")
         self.add_elements(spatial_elements, count_col=2)
         elementtypes = ifc_file.model.by_type("IfcElementType")
         self.add_elements(elementtypes, count_col=3)
