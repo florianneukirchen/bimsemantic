@@ -34,7 +34,6 @@ class ColumnsTreeModel(QTreeWidget):
             self.tr("Validation"),
         ]
         self._hidden = [
-            "ID",
             "GUID",
             "Tag",
             self.tr("ObjectType Attribute"),
