@@ -342,44 +342,136 @@ class IfcDetailsTreeModel(DetailsBaseclass):
                     TreeItem([f"Filename ({i})", filename], parent=info_item)
                 )
 
-        # Spatial relations
-        if ifc_object.is_a("IfcElement"):
-            try:
-                self.new_item(
-                    "Contained in",
-                    ifc_object.ContainedInStructure[0].RelatingStructure,
-                    info_item,
+        # Relations
+        relation_item = TreeItem([self.tr("Relations")], parent=info_item)
+        info_item.appendChild(relation_item)
+
+        contained_in = []
+
+        try:
+            for rel in ifc_object.ContainedInStructure:
+                contained_in.append(rel.RelatingStructure)
+        except AttributeError:
+            pass
+
+        try:
+            for rel in ifc_object.Decomposes:
+                contained_in.append(rel.RelatingObject)
+        except AttributeError:
+            pass
+
+        if len(contained_in) == 1:
+            self.new_item(self.tr("Contained in"), contained_in[0], relation_item)
+        elif len(contained_in) > 1:
+            contained_in_item = TreeItem([self.tr("Contained in")], parent=relation_item)
+            relation_item.appendChild(contained_in_item)
+            for element in contained_in:
+                contained_in_item.appendChild(
+                    TreeItem(
+                        [f"{element.is_a()} <{element.id()}>", element.Name],
+                        parent=contained_in_item,
+                    )
                 )
-            except IndexError:
-                pass
 
-        elif ifc_object.is_a("IfcSpatialStructureElement"):
-            decomposes = ifc_object.Decomposes
-            if decomposes:
-                self.new_item("Contained in", decomposes[0].RelatingObject, info_item)
+        contains = []
 
-            contains_item = TreeItem(["Contains"], parent=info_item)
-            info_item.appendChild(contains_item)
-            try:
-                elements = ifc_object.ContainsElements[0].RelatedElements
-            except IndexError:
-                elements = []
-            for element in elements:
+        try:
+            for rel in ifc_object.ContainsElements:
+                contains.extend(rel.RelatedElements)
+        except AttributeError:
+            pass
+
+        try:
+            for rel in ifc_object.IsDecomposedBy:
+                contains.extend(rel.RelatedObjects)
+        except AttributeError:
+            pass
+
+        if contains:
+            contains_item = TreeItem(["Contains"], parent=relation_item)
+            relation_item.appendChild(contains_item)
+            for element in contains:
                 contains_item.appendChild(
                     TreeItem(
                         [f"{element.is_a()} <{element.id()}>", element.Name],
                         parent=contains_item,
                     )
                 )
-            iscomposedby = ifc_object.IsDecomposedBy
-            if iscomposedby:
-                for obj in list(iscomposedby[0].RelatedObjects):
-                    contains_item.appendChild(
-                        TreeItem(
-                            [f"{obj.is_a()} <{obj.id()}>", obj.Name],
-                            parent=contains_item,
-                        )
+
+        # Openings and fillings (only show voids with filling)
+        openings = []
+        fillings = []
+
+        try:
+            has_openings = ifc_object.HasOpenings
+        except AttributeError:
+            has_openings = []
+
+        for rel in has_openings:
+            openings.append(rel.RelatedOpeningElement)
+
+        for opening in openings:
+            try:
+                has_fillings = opening.HasFillings
+            except AttributeError:
+                continue
+            for rel in has_fillings:
+                fillings.append(rel.RelatedBuildingElement)
+        if fillings:
+            openings_item = TreeItem([self.tr("Filled openings")], parent=relation_item)
+            relation_item.appendChild(openings_item)
+            for opening in fillings:
+                openings_item.appendChild(
+                    TreeItem(
+                        [f"{opening.is_a()} <{opening.id()}>", opening.Name],
+                        parent=openings_item,
                     )
+                )
+
+
+        # The other element with a void filled by this element
+        try:
+            voids = ifc_object.FillsVoids
+        except AttributeError:
+            voids = []
+        
+        voids = [rel.RelatingOpeningElement.VoidsElements for rel in voids]
+        voided_elements = [] 
+        for void in voids:
+            for rel in void:
+                voided_elements.append(rel.RelatingBuildingElement)
+
+        if len(voided_elements) == 1:
+            self.new_item(self.tr("Fills void in"), voided_elements[0], relation_item)
+        elif len(voided_elements) > 1:
+            voided_item = TreeItem([self.tr("Fills void in")], parent=relation_item)
+            relation_item.appendChild(voided_item)
+            for element in voided_elements:
+                voided_item.appendChild(
+                    TreeItem(
+                        [f"{element.is_a()} <{element.id()}>", element.Name],
+                        parent=voided_item,
+                    )
+                )
+
+        # Connected to
+        connected_to = []
+        try:
+            for rel in ifc_object.ConnectedTo:
+                connected_to.extend(rel.RelatedElements)
+        except AttributeError:
+            pass
+
+        if connected_to:
+            connected_item = TreeItem([self.tr("Connected to")], parent=relation_item)
+            relation_item.appendChild(connected_item)
+            for element in connected_to:
+                connected_item.appendChild(
+                    TreeItem(
+                        [f"{element.is_a()} <{element.id()}>", element.Name],
+                        parent=connected_item,
+                    )
+                )
 
         # Property Sets
         psets = ifcopenshell.util.element.get_psets(ifc_object, psets_only=True)
