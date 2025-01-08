@@ -315,6 +315,25 @@ class IfcDetailsTreeModel(DetailsBaseclass):
         info_item = TreeItem([self.tr("Main Attributes")], parent=object_item)
         object_item.appendChild(info_item)
 
+        # Object Placement
+
+        if ifc_object.is_a("IfcProduct"):
+            try:
+                placement = ifc_object.ObjectPlacement.RelativePlacement.Location.Coordinates
+            except AttributeError:
+                placement = None
+            if placement:
+                self.new_item(self.tr("Object Placement"), str(placement), info_item)
+        elif ifc_object.is_a("IfcProject"):
+            try:
+                placement = ifc_object.RepresentationContexts[0].WorldCoordinateSystem.Location.Coordinates
+            except (AttributeError, IndexError):
+                placement = None
+            if placement and placement[0] and placement[1]: # Only show if not 0,0,0
+                self.new_item(self.tr("Coordinates"), str(placement), info_item)
+
+        # Other attributes from info
+        
         for k, v in info.items():
             if k not in [
                 "Name",
@@ -323,6 +342,7 @@ class IfcDetailsTreeModel(DetailsBaseclass):
                 "type",
                 "ObjectType",
                 "OwnerHistory",
+                "ObjectPlacement",
             ]:
                 self.new_item(k, v, info_item)
 
