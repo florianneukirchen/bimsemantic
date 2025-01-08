@@ -28,42 +28,42 @@
     </message>
     <message>
         <location filename="../ui/columnstree.py" line="29"/>
-        <location filename="../ui/columnstree.py" line="40"/>
+        <location filename="../ui/columnstree.py" line="39"/>
         <source>ObjectType Attribute</source>
         <translation>ObjectType Attribut</translation>
     </message>
     <message>
         <location filename="../ui/columnstree.py" line="30"/>
-        <location filename="../ui/columnstree.py" line="41"/>
+        <location filename="../ui/columnstree.py" line="40"/>
         <source>Linked Object Type</source>
         <translation>Verlinkter Objekttyp</translation>
     </message>
     <message>
         <location filename="../ui/columnstree.py" line="31"/>
-        <location filename="../ui/columnstree.py" line="42"/>
+        <location filename="../ui/columnstree.py" line="41"/>
         <source>Description</source>
         <translation>Beschreibung</translation>
     </message>
     <message>
         <location filename="../ui/columnstree.py" line="32"/>
-        <location filename="../ui/columnstree.py" line="43"/>
+        <location filename="../ui/columnstree.py" line="42"/>
         <source>Filename</source>
         <translation>Dateiname</translation>
     </message>
     <message>
         <location filename="../ui/columnstree.py" line="33"/>
-        <location filename="../ui/columnstree.py" line="44"/>
+        <location filename="../ui/columnstree.py" line="43"/>
         <source>Contained In</source>
         <translation>Enthalten in</translation>
     </message>
     <message>
         <location filename="../ui/columnstree.py" line="34"/>
-        <location filename="../ui/columnstree.py" line="45"/>
+        <location filename="../ui/columnstree.py" line="44"/>
         <source>Validation</source>
         <translation>Validierung</translation>
     </message>
     <message>
-        <location filename="../ui/columnstree.py" line="63"/>
+        <location filename="../ui/columnstree.py" line="62"/>
         <source>Main Attributes</source>
         <translation>Hauptattribute</translation>
     </message>
@@ -72,17 +72,17 @@
         <translation type="vanished">Info-Spalten</translation>
     </message>
     <message>
-        <location filename="../ui/columnstree.py" line="81"/>
+        <location filename="../ui/columnstree.py" line="80"/>
         <source>Property Sets</source>
         <translation>Property Sets</translation>
     </message>
     <message>
-        <location filename="../ui/columnstree.py" line="89"/>
+        <location filename="../ui/columnstree.py" line="88"/>
         <source>Quantity Sets</source>
         <translation>Quantity Sets</translation>
     </message>
     <message>
-        <location filename="../ui/columnstree.py" line="249"/>
+        <location filename="../ui/columnstree.py" line="248"/>
         <source>Update columns...</source>
         <translation>Spalten werden aktualisiert...</translation>
     </message>
@@ -504,7 +504,7 @@ Should be two integers separated by a comma</source>
     </message>
     <message>
         <location filename="../ui/detailview.py" line="289"/>
-        <location filename="../ui/detailview.py" line="443"/>
+        <location filename="../ui/detailview.py" line="555"/>
         <source>Linked Object Type</source>
         <translation>Verlinkter Objekttyp</translation>
     </message>
@@ -514,23 +514,60 @@ Should be two integers separated by a comma</source>
         <translation>Hauptattribute</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="387"/>
-        <location filename="../ui/detailview.py" line="447"/>
+        <location filename="../ui/detailview.py" line="326"/>
+        <source>Object Placement</source>
+        <translation>Objektplatzierung</translation>
+    </message>
+    <message>
+        <location filename="../ui/detailview.py" line="333"/>
+        <source>Coordinates</source>
+        <translation>Koordinaten</translation>
+    </message>
+    <message>
+        <location filename="../ui/detailview.py" line="366"/>
+        <source>Relations</source>
+        <translation>Relationen</translation>
+    </message>
+    <message>
+        <location filename="../ui/detailview.py" line="384"/>
+        <location filename="../ui/detailview.py" line="386"/>
+        <source>Contained in</source>
+        <translation>Enthalten in</translation>
+    </message>
+    <message>
+        <location filename="../ui/detailview.py" line="441"/>
+        <source>Filled openings</source>
+        <translation>Gefüllte Öffnungen</translation>
+    </message>
+    <message>
+        <location filename="../ui/detailview.py" line="465"/>
+        <location filename="../ui/detailview.py" line="467"/>
+        <source>Fills void in</source>
+        <translation>Füllt Öffnung in</translation>
+    </message>
+    <message>
+        <location filename="../ui/detailview.py" line="486"/>
+        <source>Connected to</source>
+        <translation>Verbunden mit</translation>
+    </message>
+    <message>
+        <location filename="../ui/detailview.py" line="499"/>
+        <location filename="../ui/detailview.py" line="559"/>
         <source>Property Sets</source>
         <translation>Property Sets</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="402"/>
+        <location filename="../ui/detailview.py" line="514"/>
         <source>Quantity Sets</source>
         <translation>Quantity Sets</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="471"/>
+        <location filename="../ui/detailview.py" line="583"/>
         <source>Failed</source>
         <translation>Fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="483"/>
+        <location filename="../ui/detailview.py" line="595"/>
         <source>Passed</source>
         <translation>Bestanden</translation>
     </message>
@@ -1218,27 +1255,27 @@ Should be two integers separated by a comma</source>
 <context>
     <name>OverviewTreeModel</name>
     <message>
-        <location filename="../ui/detailview.py" line="521"/>
+        <location filename="../ui/detailview.py" line="633"/>
         <source>IFC Version</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="522"/>
+        <location filename="../ui/detailview.py" line="634"/>
         <source>File size</source>
         <translation>Dateigröße</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="523"/>
+        <location filename="../ui/detailview.py" line="635"/>
         <source>Project name</source>
         <translation>Projektname</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="527"/>
+        <location filename="../ui/detailview.py" line="639"/>
         <source>Long name</source>
         <translation>Langer Name</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="531"/>
+        <location filename="../ui/detailview.py" line="643"/>
         <source>Project phase</source>
         <translation>Projektphase</translation>
     </message>
@@ -1247,47 +1284,47 @@ Should be two integers separated by a comma</source>
         <translation type="vanished">Projektkoordinaten</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="543"/>
+        <location filename="../ui/detailview.py" line="655"/>
         <source>Project base point</source>
         <translation>Projektbasispunkt</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="553"/>
+        <location filename="../ui/detailview.py" line="665"/>
         <source>IfcSite base point</source>
         <translation>IfcSite Basispunkt</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="557"/>
+        <location filename="../ui/detailview.py" line="669"/>
         <source>Project owner</source>
         <translation>Projektbesitzer</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="562"/>
+        <location filename="../ui/detailview.py" line="674"/>
         <source>Application</source>
         <translation>Anwendung</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="567"/>
+        <location filename="../ui/detailview.py" line="679"/>
         <source>Addresses</source>
         <translation>Adressen</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="595"/>
+        <location filename="../ui/detailview.py" line="707"/>
         <source>CRS</source>
         <translation>CRS</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="598"/>
+        <location filename="../ui/detailview.py" line="710"/>
         <source>IFC Elements</source>
         <translation>IFC-Elemente</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="600"/>
+        <location filename="../ui/detailview.py" line="712"/>
         <source>Pset count</source>
         <translation>Pset-Anzahl</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="601"/>
+        <location filename="../ui/detailview.py" line="713"/>
         <source>Qset count</source>
         <translation>Qset-Anzahl</translation>
     </message>
@@ -1326,37 +1363,37 @@ Should be two integers separated by a comma</source>
 <context>
     <name>QsetTreeModel</name>
     <message>
-        <location filename="../ui/psetdock.py" line="195"/>
+        <location filename="../ui/psetdock.py" line="198"/>
         <source>Elements</source>
         <translation>Elemente</translation>
     </message>
     <message>
-        <location filename="../ui/psetdock.py" line="196"/>
+        <location filename="../ui/psetdock.py" line="199"/>
         <source>Spatial Elements</source>
         <translation>Raumelemente</translation>
     </message>
     <message>
-        <location filename="../ui/psetdock.py" line="197"/>
+        <location filename="../ui/psetdock.py" line="200"/>
         <source>Std</source>
         <translation>Std</translation>
     </message>
     <message>
-        <location filename="../ui/psetdock.py" line="198"/>
+        <location filename="../ui/psetdock.py" line="201"/>
         <source>Min</source>
         <translation>Min</translation>
     </message>
     <message>
-        <location filename="../ui/psetdock.py" line="199"/>
+        <location filename="../ui/psetdock.py" line="202"/>
         <source>Mean</source>
         <translation>Durchschnitt</translation>
     </message>
     <message>
-        <location filename="../ui/psetdock.py" line="200"/>
+        <location filename="../ui/psetdock.py" line="203"/>
         <source>Median</source>
         <translation>Median</translation>
     </message>
     <message>
-        <location filename="../ui/psetdock.py" line="201"/>
+        <location filename="../ui/psetdock.py" line="204"/>
         <source>Max</source>
         <translation>Max</translation>
     </message>
@@ -1521,7 +1558,7 @@ Should be two integers separated by a comma</source>
 <context>
     <name>ValidationResultTreeModel</name>
     <message>
-        <location filename="../ui/detailview.py" line="618"/>
+        <location filename="../ui/detailview.py" line="730"/>
         <source>Validation of %s</source>
         <translation>Validierung von %s</translation>
     </message>
