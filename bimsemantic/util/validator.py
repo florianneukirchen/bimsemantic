@@ -46,6 +46,14 @@ class Validators:
         self._initialized = True
 
 
+    def reset(self, ifc_files):
+        """Reset the validation results"""
+        self.reporters = {}
+        self.results_by_guid = {}
+        # Otherwise it still uses the old files after reset
+        self.ifc_files = ifc_files 
+
+
     def add_validator(self, validator):
         """Add a validator to the collection
         
@@ -154,7 +162,7 @@ class Validators:
         :return: The failed and passed validations
         :rtype: tuple of list of dicts
         """
-        
+
         failed_specs = []
         passed_specs = []
 

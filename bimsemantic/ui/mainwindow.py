@@ -362,11 +362,10 @@ class MainWindow(QMainWindow):
                 custom_tab.deleteLater()
 
         self.detailsdock.reset()
-        validators = Validators()
-        validators.results_by_guid = {}
-        validators.reporters = {}
-        self.validationdock.update_results_column()
         self.ifcfiles = IfcFiles()
+        Validators().reset(self.ifcfiles)
+        self.validationdock.update_results_column()
+        
         self.column_treemodel = ColumnsTreeModel(parent=self)
         self.psetdock.reset()
         if self.qsetdock is not None:
