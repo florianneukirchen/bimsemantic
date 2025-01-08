@@ -143,7 +143,6 @@ class IfcTreeItem(TreeItem):
                 return f"{failed} failed, {passed} passed"
             else:
                 return None
-            
 
         psets = ifcopenshell.util.element.get_psets(self._ifc_item)
         pset_name, attribute = self._columntree.col(column)
@@ -374,9 +373,9 @@ class LocationTreeModel(IfcTreeModelBaseClass):
         children = []
         elements = []
 
-        # There are many kinds of relationships in IFC 
+        # There are many kinds of relationships in IFC
         try:
-            contains = ifc_object.ContainsElements # Returns a tuple (set in IFC)
+            contains = ifc_object.ContainsElements  # Returns a tuple (set in IFC)
             for c in contains:
                 elements.extend(c.RelatedElements)
         except AttributeError:
@@ -410,7 +409,6 @@ class LocationTreeModel(IfcTreeModelBaseClass):
         except AttributeError:
             pass
 
-
         for element in elements:
             element_item = self.get_child_by_guid(item, element.GlobalId)
             if element_item:
@@ -435,10 +433,8 @@ class LocationTreeModel(IfcTreeModelBaseClass):
                     rel_item = IfcTreeItem(rel, element_item, self.columntree, filename)
                     element_item.appendChild(rel_item)
 
-
         for child in children:
             self.add_items(child, item, filename)
-
 
     def expand_default(self):
         """Called when the tree view is updated to expand the tree
@@ -446,7 +442,6 @@ class LocationTreeModel(IfcTreeModelBaseClass):
         If not overwritten in derived classes, expand all levels
         """
         self.tab.tree.expandAll()
-
 
     def __repr__(self):
         return "LocationTreeModel"

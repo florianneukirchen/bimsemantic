@@ -90,13 +90,10 @@ class SearchBar(QWidget):
         )
         self.close_button.setFlat(True)
 
-
         self.layout.addWidget(self.how_button)
         self.layout.addWidget(self.search_text)
         self.layout.addWidget(self.column_combo)
         self.layout.addWidget(self.stop_auto_button)
-
-        
 
         if filtermode:
             self.reset_filter_button = QPushButton(self.tr("Reset Filter"))
@@ -109,7 +106,6 @@ class SearchBar(QWidget):
 
         self.layout.addStretch()
         self.layout.addWidget(self.close_button)
-        
 
         self.search_text.returnPressed.connect(self.search)
         self.column_combo.currentIndexChanged.connect(self.search)
@@ -147,7 +143,7 @@ class SearchBar(QWidget):
         if how == "Text":
             pattern = QRegularExpression.escape(pattern)
         elif how == "Exact":
-            pattern = QRegularExpression.anchoredPattern(pattern) 
+            pattern = QRegularExpression.anchoredPattern(pattern)
         elif how == "Wildcard":
             pattern = QRegularExpression.wildcardToRegularExpression(pattern)
         elif how == "List Contains":
@@ -158,22 +154,22 @@ class SearchBar(QWidget):
                 pattern = f"({pattern})"
 
         else:
-            # Regex     
+            # Regex
             pass
-        
 
         if self.how_button.is_case_sensitive():
             options = QRegularExpression.NoPatternOption
         else:
             options = QRegularExpression.CaseInsensitiveOption
 
-
         regular_expression = QRegularExpression(pattern, options)
 
         if not regular_expression.isValid():
             self.search_text.setStyleSheet("color: red; background-color: yellow")
             self.search_text.setToolTip(regular_expression.errorString())
-            self.mainwindow.statusbar.showMessage(f"Regex: {regular_expression.errorString()}", 5000)
+            self.mainwindow.statusbar.showMessage(
+                f"Regex: {regular_expression.errorString()}", 5000
+            )
             self.counterlabel.setText("-/-")
             return
 
@@ -189,9 +185,7 @@ class SearchBar(QWidget):
             self._parent.searchbar.search()
             return
 
-        items = self._parent.treemodel.root_item.search(
-            regular_expression, column
-        )
+        items = self._parent.treemodel.root_item.search(regular_expression, column)
 
         for item in items:
             source_index = self._parent.treemodel.createIndex(item.row(), 0, item)
@@ -240,13 +234,11 @@ class SearchBar(QWidget):
         current = self.column_combo.currentText()
         self.column_combo.clear()
         columns = [
-                self._parent.treemodel.headerData(i)
-                for i in range(self._parent.treemodel.columnCount())
-                if not self._parent.tree.isColumnHidden(i)
-            ]
-        self.column_combo.addItems(
-            columns
-        )
+            self._parent.treemodel.headerData(i)
+            for i in range(self._parent.treemodel.columnCount())
+            if not self._parent.tree.isColumnHidden(i)
+        ]
+        self.column_combo.addItems(columns)
         if current in columns:
             self.column_combo.setCurrentIndex(columns.index(current))
         else:
@@ -297,7 +289,9 @@ class HowButton(QPushButton):
         self.action_exact.triggered.connect(lambda: self.set_search_mode("Exact"))
         self.action_wildcard.triggered.connect(lambda: self.set_search_mode("Wildcard"))
         self.action_regex.triggered.connect(lambda: self.set_search_mode("Regex"))
-        self.action_listcontains.triggered.connect(lambda: self.set_search_mode("List Contains"))
+        self.action_listcontains.triggered.connect(
+            lambda: self.set_search_mode("List Contains")
+        )
         self.case_sensitive_action.toggled.connect(self._parent.search)
 
         self.set_search_mode("Text")
@@ -316,6 +310,7 @@ class HowButton(QPushButton):
 
 class FilterIndicator(QPushButton):
     """Indicator for the status bar"""
+
     def __init__(self, mainwindow):
         super().__init__()
         self.mainwindow = mainwindow
@@ -326,7 +321,6 @@ class FilterIndicator(QPushButton):
         self.setMenu(self.menu)
         self.hide()
 
-
     def check(self):
         """Hide if no filter is active"""
         about_to_hide = True
@@ -336,5 +330,3 @@ class FilterIndicator(QPushButton):
                 break
         if about_to_hide:
             self.hide()
-
-

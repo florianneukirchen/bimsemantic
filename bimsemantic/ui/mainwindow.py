@@ -115,7 +115,9 @@ class MainWindow(QMainWindow):
                     try:
                         self.validationdock.add_file(filename)
                     except ValueError:
-                        self.statusbar.showMessage(self.tr("File is not a valid IDS file"), 5000)
+                        self.statusbar.showMessage(
+                            self.tr("File is not a valid IDS file"), 5000
+                        )
                 self.validationdock.show()
 
     def get_active_dock(self):
@@ -130,19 +132,17 @@ class MainWindow(QMainWindow):
             parent = parent.parent()
         return None
 
-
     def copy_to_clipboard(self, only_cell=False):
         """Call the copy method of the active widget"""
-        
+
         dock = self.get_active_dock()
         try:
             if only_cell:
                 dock.copy_active_cell_to_clipboard()
             else:
                 dock.copy_selection_to_clipboard()
-        except AttributeError: 
+        except AttributeError:
             pass
-
 
     def somsearch(self):
         """Search the content of the active cell in the SOM"""
@@ -160,9 +160,9 @@ class MainWindow(QMainWindow):
 
     def search_active(self, filtermode=False):
         """Search or show filterbar
-        
-        Shof the searchbar or the filterbar. If the SOM dock is the active 
-        widget, the searchbar or filterbar of the SOM dock is shown, 
+
+        Shof the searchbar or the filterbar. If the SOM dock is the active
+        widget, the searchbar or filterbar of the SOM dock is shown,
         otherwise the searchbar or filterbar of the main view.
 
         :param filtermode: If True, the filterbar is shown, otherwise the searchbar
@@ -174,16 +174,13 @@ class MainWindow(QMainWindow):
             # Always use the searchbar of the main view in this case
             dock = self.tabs
 
- 
         if filtermode:
             searchbar = dock.filterbar
         else:
-           searchbar = dock.searchbar
+            searchbar = dock.searchbar
 
         searchbar.show()
         searchbar.search_text.setFocus()
-    
-
 
     def open_som_dlg(self):
         """Open SOM file dialog to load a SOM list from a JSON file"""
@@ -221,7 +218,6 @@ class MainWindow(QMainWindow):
         self.progressbar.setRange(0, 100)
         self.statusbar.showMessage(self.tr("SOM loaded"), 5000)
 
-
     def close_som(self):
         """Delete the SOM dockwidget"""
         if self.somdock:
@@ -246,9 +242,10 @@ class MainWindow(QMainWindow):
             except FileNotFoundError:
                 self.statusbar.showMessage(self.tr("File not found"), 5000)
             except ValueError:
-                self.statusbar.showMessage(self.tr("File is not a valid IDS file"), 5000)
+                self.statusbar.showMessage(
+                    self.tr("File is not a valid IDS file"), 5000
+                )
             self.validationdock.show()
-
 
     def open_file_dlg(self):
         """Open file dialog for IFC files"""
@@ -365,7 +362,7 @@ class MainWindow(QMainWindow):
         self.ifcfiles = IfcFiles()
         Validators().reset(self.ifcfiles)
         self.validationdock.update_results_column()
-        
+
         self.column_treemodel = ColumnsTreeModel(parent=self)
         self.psetdock.reset()
         if self.qsetdock is not None:
@@ -439,8 +436,6 @@ class MainWindow(QMainWindow):
             self.progressbar.setRange(0, 100)
             self.statusbar.showMessage(self.tr("Exported to %s") % csv_file, 5000)
 
-
-
     def save_validation_dlg(self):
         """Save validation results to a zipped BCF file or as JSON"""
 
@@ -460,7 +455,10 @@ class MainWindow(QMainWindow):
         dialog_layout.addWidget(validator_combo, 5, 1)
 
         selected_validator = self.validationdock.selected_validator_id()
-        if selected_validator and selected_validator in self.validators.reporters.keys():
+        if (
+            selected_validator
+            and selected_validator in self.validators.reporters.keys()
+        ):
             validator_combo.setCurrentText(selected_validator)
 
         if len(self.ifcfiles) > 1:
@@ -469,7 +467,6 @@ class MainWindow(QMainWindow):
             ifc_combo = QComboBox()
             ifc_combo.addItems([ifc.filename for ifc in self.ifcfiles])
             dialog_layout.addWidget(ifc_combo, 6, 1)
-
 
         def update_default_suffix():
             """Callback to change suffix when combo is toggled"""
@@ -579,7 +576,7 @@ class MainWindow(QMainWindow):
         """Setup the menu and toolbars and actions of the main window"""
 
         self.toolbar = self.addToolBar(self.tr("Toolbar"))
-        self.toolbar.setIconSize(QSize(16,16))
+        self.toolbar.setIconSize(QSize(16, 16))
 
         # File menu
         self.file_menu = self.menuBar().addMenu(self.tr("&File"))
@@ -670,7 +667,7 @@ class MainWindow(QMainWindow):
         self.chk_copy_with_level.setChecked(False)
         self.copyoptions_menu.addAction(self.chk_copy_with_level)
 
-        # Toolbar 
+        # Toolbar
         copybutton = QToolButton()
         copybutton.setIcon(QIcon(":/icons/edit-copy.png"))
         copybutton.setPopupMode(QToolButton.MenuButtonPopup)
@@ -695,7 +692,6 @@ class MainWindow(QMainWindow):
         self.edit_menu.addAction(self.search_act)
         self.toolbar.addAction(self.search_act)
 
-
         self.filter_act = QAction(
             QIcon(":/icons/funnel.png"),
             self.tr("&Filter"),
@@ -707,7 +703,6 @@ class MainWindow(QMainWindow):
         self.edit_menu.addAction(self.filter_act)
         self.toolbar.addAction(self.filter_act)
 
-
         self.search_som_act = QAction(
             QIcon(":/icons/binocular--arrow.png"),
             self.tr("Search content in SOM"),
@@ -718,7 +713,6 @@ class MainWindow(QMainWindow):
         )
         self.edit_menu.addAction(self.search_som_act)
         self.toolbar.addAction(self.search_som_act)
-
 
         self.edit_menu.addSeparator()
 
@@ -757,7 +751,6 @@ class MainWindow(QMainWindow):
             triggered=self.tabs.clear_selection,
         )
         self.edit_selection_menu.addAction(self.clearselection_act)
-
 
         # View menu
         self.view_menu = self.menuBar().addMenu(self.tr("&View"))
@@ -916,7 +909,6 @@ class MainWindow(QMainWindow):
         self.validation_menu.addAction(self.edit_ids_copy_act)
         self.toolbar.addAction(self.edit_ids_copy_act)
 
-
         self.validation_menu.addSeparator()
 
         self.run_all_validations_act = QAction(
@@ -943,9 +935,11 @@ class MainWindow(QMainWindow):
             QIcon(":/icons/save-ids.png"),
             self.tr("&Save validation result"),
             self,
-            statusTip=self.tr("Save the validation result of the selected validator as BCF or JSON"),
+            statusTip=self.tr(
+                "Save the validation result of the selected validator as BCF or JSON"
+            ),
             triggered=self.save_validation_dlg,
-            enabled = False,
+            enabled=False,
         )
         self.validation_menu.addAction(self.save_validation_act)
         self.toolbar.addAction(self.save_validation_act)
@@ -990,13 +984,21 @@ class MainWindow(QMainWindow):
         self.validationdock = ValidationDockWidget(self)
         self.addDockWidget(Qt.BottomDockWidgetArea, self.validationdock)
         self.validationdock.hide()
-        self.run_all_validations_act.triggered.connect(self.validationdock.run_all_validations)
-        self.run_selected_validation_act.triggered.connect(self.validationdock.run_selected_validation)
+        self.run_all_validations_act.triggered.connect(
+            self.validationdock.run_all_validations
+        )
+        self.run_selected_validation_act.triggered.connect(
+            self.validationdock.run_selected_validation
+        )
         self.close_ids_act.triggered.connect(self.validationdock.close_file)
         self.close_all_ids_act.triggered.connect(self.validationdock.close_all_files)
         self.edit_ids_act.triggered.connect(self.validationdock.edit_ids)
-        self.edit_ids_copy_act.triggered.connect(lambda: self.validationdock.edit_ids(ascopy=True))
-        self.new_ids_act.triggered.connect(lambda: self.validationdock.edit_ids(new=True))
+        self.edit_ids_copy_act.triggered.connect(
+            lambda: self.validationdock.edit_ids(ascopy=True)
+        )
+        self.new_ids_act.triggered.connect(
+            lambda: self.validationdock.edit_ids(new=True)
+        )
 
         # Add actions to menu
         self.overview_act = QAction(
@@ -1107,5 +1109,3 @@ class SelectByDialog(QDialog):
         if self.label != "ID":
             return None
         return self.combo.currentText()
-
-

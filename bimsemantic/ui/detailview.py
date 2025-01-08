@@ -6,6 +6,7 @@ from ifcopenshell import entity_instance
 from bimsemantic.ui import CopyMixin, ContextMixin
 from bimsemantic.util import Validators
 
+
 class DetailsDock(CopyMixin, ContextMixin, QDockWidget):
     """Dock widget for showing details of IFC elements or overview of files
 
@@ -217,7 +218,7 @@ class DetailsBaseclass(TreeModelBaseclass):
 
             entity_info = entity.get_info()
 
-        for k, v in  entity_info.items():
+        for k, v in entity_info.items():
             if v and not k in ["id", "type", "HasPropertySets"]:
                 if isinstance(v, (tuple, list)):
                     for i, v in enumerate(v):
@@ -319,21 +320,25 @@ class IfcDetailsTreeModel(DetailsBaseclass):
 
         if ifc_object.is_a("IfcProduct"):
             try:
-                placement = ifc_object.ObjectPlacement.RelativePlacement.Location.Coordinates
+                placement = (
+                    ifc_object.ObjectPlacement.RelativePlacement.Location.Coordinates
+                )
             except AttributeError:
                 placement = None
             if placement:
                 self.new_item(self.tr("Object Placement"), str(placement), info_item)
         elif ifc_object.is_a("IfcProject"):
             try:
-                placement = ifc_object.RepresentationContexts[0].WorldCoordinateSystem.Location.Coordinates
+                placement = ifc_object.RepresentationContexts[
+                    0
+                ].WorldCoordinateSystem.Location.Coordinates
             except (AttributeError, IndexError):
                 placement = None
-            if placement and placement[0] and placement[1]: # Only show if not 0,0,0
+            if placement and placement[0] and placement[1]:  # Only show if not 0,0,0
                 self.new_item(self.tr("Coordinates"), str(placement), info_item)
 
         # Other attributes from info
-        
+
         for k, v in info.items():
             if k not in [
                 "Name",
@@ -383,7 +388,9 @@ class IfcDetailsTreeModel(DetailsBaseclass):
         if len(contained_in) == 1:
             self.new_item(self.tr("Contained in"), contained_in[0], relation_item)
         elif len(contained_in) > 1:
-            contained_in_item = TreeItem([self.tr("Contained in")], parent=relation_item)
+            contained_in_item = TreeItem(
+                [self.tr("Contained in")], parent=relation_item
+            )
             relation_item.appendChild(contained_in_item)
             for element in contained_in:
                 contained_in_item.appendChild(
@@ -448,15 +455,14 @@ class IfcDetailsTreeModel(DetailsBaseclass):
                     )
                 )
 
-
         # The other element with a void filled by this element
         try:
             voids = ifc_object.FillsVoids
         except AttributeError:
             voids = []
-        
+
         voids = [rel.RelatingOpeningElement.VoidsElements for rel in voids]
-        voided_elements = [] 
+        voided_elements = []
         for void in voids:
             for rel in void:
                 voided_elements.append(rel.RelatingBuildingElement)
@@ -579,9 +585,7 @@ class IfcDetailsTreeModel(DetailsBaseclass):
             object_item.appendChild(validation_item)
 
             if failed_specs:
-                failed_item = TreeItem(
-                    [self.tr("Failed"), ""], parent=validation_item
-                )
+                failed_item = TreeItem([self.tr("Failed"), ""], parent=validation_item)
                 validation_item.appendChild(failed_item)
                 for spec in failed_specs:
                     spec_item = TreeItem([spec["spec"]], parent=failed_item)
@@ -591,9 +595,7 @@ class IfcDetailsTreeModel(DetailsBaseclass):
                             spec_item.appendChild(TreeItem([k, v], parent=spec_item))
 
             if passed_specs:
-                passed_item = TreeItem(
-                    [self.tr("Passed"), ""], parent=validation_item
-                )
+                passed_item = TreeItem([self.tr("Passed"), ""], parent=validation_item)
                 validation_item.appendChild(passed_item)
                 for spec in passed_specs:
                     spec_item = TreeItem([spec["spec"]], parent=passed_item)
@@ -656,7 +658,9 @@ class OverviewTreeModel(DetailsBaseclass):
                 )
 
             try:
-                coordinates = ifcfile.model.by_type("IfcSite")[0].ObjectPlacement.RelativePlacement.Location.Coordinates
+                coordinates = ifcfile.model.by_type("IfcSite")[
+                    0
+                ].ObjectPlacement.RelativePlacement.Location.Coordinates
             except (AttributeError, IndexError):
                 coordinates = None
             if coordinates and coordinates[0] and coordinates[1]:
@@ -664,7 +668,7 @@ class OverviewTreeModel(DetailsBaseclass):
                 self.new_item(
                     self.tr("IfcSite base point"), str(coordinates), ifcfile_item
                 )
-                
+
             self.new_item(
                 self.tr("Project owner"),
                 ifcfile.project.OwnerHistory.OwningUser.ThePerson.GivenName,
@@ -712,15 +716,15 @@ class OverviewTreeModel(DetailsBaseclass):
             self.new_item(self.tr("Pset count"), ifcfile.pset_count(), ifcfile_item)
             self.new_item(self.tr("Qset count"), ifcfile.qset_count(), ifcfile_item)
 
+
 class ValidationResultTreeModel(DetailsBaseclass):
     """Tree model for the validation results
-    
+
     Simply show json-like data in a tree view
 
     :param data: The validation data as json-like dict
     :type data: dict
     """
-
 
     def setup_model_data(self, data, parent):
         root_item = parent
@@ -732,5 +736,3 @@ class ValidationResultTreeModel(DetailsBaseclass):
 
         for i in range(0, root_item.child_count()):
             self.rows_spanned.append((i, QModelIndex()))
-
-

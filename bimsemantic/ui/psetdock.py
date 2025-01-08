@@ -108,7 +108,12 @@ class PsetTreeModel(TreeModelBaseclass):
 
     def setup_root_item(self):
         self._rootItem = TreeItem(
-            ["Property Set", self.tr("Elements"), self.tr("Spatial Elements"), self.tr("Types")],
+            [
+                "Property Set",
+                self.tr("Elements"),
+                self.tr("Spatial Elements"),
+                self.tr("Types"),
+            ],
             showchildcount=False,
         )
 
@@ -268,7 +273,7 @@ class QsetTreeModel(TreeModelBaseclass):
                         qto_item = TreeItem(
                             [qto_name, 0, 0, 0, 0, 0, 0, 0, [qto_value]], qset_item
                         )
-                        qto_item.set_data(count_col, 1) 
+                        qto_item.set_data(count_col, 1)
                         qset_item.appendChild(qto_item)
                     else:
                         qto_item.set_data(count_col, qto_item.data(count_col) + 1)

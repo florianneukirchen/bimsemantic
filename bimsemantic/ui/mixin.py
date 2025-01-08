@@ -2,6 +2,7 @@ from PySide6.QtWidgets import QTreeView, QApplication, QMenu
 from PySide6.QtGui import QAction
 from PySide6.QtCore import QCoreApplication
 
+
 class CopyMixin:
     """Mixin class for dock widgets to copy data
 
@@ -30,7 +31,7 @@ class CopyMixin:
     def copy_selection_to_clipboard(self):
         """Copy the active row to the clipboard"""
         if hasattr(self, "overviewtree"):
-            # This is the detail dock, it does not have a proxy model and 
+            # This is the detail dock, it does not have a proxy model and
             # the tree can change (overviewtree or not)
             tree = self.widget()
             model = tree.model()
@@ -67,12 +68,14 @@ class CopyMixin:
                     index = proxymodel.mapToSource(index)
                 item = index.internalPointer()
                 level = item.level()
-                data.insert(0, str(level))     
+                data.insert(0, str(level))
 
             data = "\t".join(data)
 
-
-            if self.mainwindow.chk_copy_with_headers.isChecked() and proxymodel is not None:
+            if (
+                self.mainwindow.chk_copy_with_headers.isChecked()
+                and proxymodel is not None
+            ):
                 # the detail view does not have a header and does not have a proxy model
                 header = []
                 if add_level:
@@ -83,7 +86,6 @@ class CopyMixin:
                     header.append(str(model.headerData(col)))
                 header = "\t".join(header)
                 data = header + "\n" + data
-
 
             clipboard = QApplication.clipboard()
             clipboard.setText(data)
@@ -118,12 +120,11 @@ class ContextMixin:
             if index.isValid():
                 original_index = self.proxymodel.mapToSource(index)
                 item = original_index.internalPointer()
-                if not self.get_validator_id(item) == 'integrity':
+                if not self.get_validator_id(item) == "integrity":
                     context_menu.addAction(self.mainwindow.edit_ids_act)
                     context_menu.addAction(self.mainwindow.edit_ids_copy_act)
                     context_menu.addAction(self.mainwindow.close_ids_act)
                     context_menu.addSeparator()
-
 
         context_menu.addAction(self.mainwindow.copy_rows_act)
         context_menu.addAction(self.mainwindow.copy_cell_act)
@@ -137,10 +138,8 @@ class ContextMixin:
                 pset_tuple = self.get_pset_tuple(index)
                 if pset_tuple:
                     autosearch_action = QAction(
-                        QCoreApplication.translate(
-                            "MainWindow",
-                            "SOM autosearch" 
-                        ) + f" {pset_tuple[1]}",
+                        QCoreApplication.translate("MainWindow", "SOM autosearch")
+                        + f" {pset_tuple[1]}",
                         self,
                         triggered=lambda: self.mainwindow.somdock.set_autosearch_attribute(
                             pset_tuple
@@ -156,28 +155,36 @@ class ContextMixin:
         expand_menu = QMenu(self.tr("Expand/Collapse"), self)
         context_menu.addMenu(expand_menu)
 
-        expand_menu.addAction(QAction(
-            QCoreApplication.translate("MainWindow", "&Collapse"),
-            self,
-            triggered=lambda: tree.collapseAll(),
-        ))
+        expand_menu.addAction(
+            QAction(
+                QCoreApplication.translate("MainWindow", "&Collapse"),
+                self,
+                triggered=lambda: tree.collapseAll(),
+            )
+        )
 
-        expand_menu.addAction(QAction(
-            QCoreApplication.translate("MainWindow", "Expand to level &1"),
-            self,
-            triggered=lambda: tree.expandToDepth(0),
-        ))
+        expand_menu.addAction(
+            QAction(
+                QCoreApplication.translate("MainWindow", "Expand to level &1"),
+                self,
+                triggered=lambda: tree.expandToDepth(0),
+            )
+        )
 
-        expand_menu.addAction(QAction(
-            QCoreApplication.translate("MainWindow", "Expand to level &2"),
-            self,
-            triggered=lambda: tree.expandToDepth(1),
-        ))
+        expand_menu.addAction(
+            QAction(
+                QCoreApplication.translate("MainWindow", "Expand to level &2"),
+                self,
+                triggered=lambda: tree.expandToDepth(1),
+            )
+        )
 
-        expand_menu.addAction(QAction(
-            QCoreApplication.translate("MainWindow", "Expand &all"),
-            self,
-            triggered=lambda: tree.expandAll(),
-        ))
+        expand_menu.addAction(
+            QAction(
+                QCoreApplication.translate("MainWindow", "Expand &all"),
+                self,
+                triggered=lambda: tree.expandAll(),
+            )
+        )
 
         context_menu.exec(tree.viewport().mapToGlobal(position))

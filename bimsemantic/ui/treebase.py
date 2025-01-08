@@ -7,7 +7,6 @@ from PySide6.QtCore import (
 )
 
 
-
 class TreeItem(QObject):
     """Basic item for a tree model.
 
@@ -135,7 +134,7 @@ class TreeItem(QObject):
         :type text: QRegularExpression
         :param column: The column to search in
         :type column: int
-       
+
         :return: List of IfcTreeItem instances
         """
         items = []
@@ -143,7 +142,6 @@ class TreeItem(QObject):
             column_data = self.label
         else:
             column_data = self.data(column)
-        
 
         if column_data is None:
             column_data = ""

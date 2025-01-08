@@ -11,6 +11,7 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
 
     :param parent: The parent widget (main window)
     """
+
     def __init__(self, parent):
         super().__init__(self.tr("&Validation"), parent)
         self.mainwindow = parent
@@ -20,7 +21,7 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
             self.mainwindow.tabs,
         )
         self.validators.add_validator(integ_validator)
-      
+
         self.treemodel = ValidationTreeModel([integ_validator], self)
         self.proxymodel = QSortFilterProxyModel()
         self.proxymodel.setSourceModel(self.treemodel)
@@ -57,20 +58,23 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
             if level == 0:
                 data[self.tr("Integrity")] = reporter.results
             elif level == 1:
-                data[self.tr("Integrity")] = reporter.results['specifications'][row] 
+                data[self.tr("Integrity")] = reporter.results["specifications"][row]
             elif level == 2:
-                data[self.tr("Integrity")] = reporter.results['specifications'][item.parent().row()]['requirements'][row]
+                data[self.tr("Integrity")] = reporter.results["specifications"][
+                    item.parent().row()
+                ]["requirements"][row]
         else:
             for filename, reporter in reporters.items():
                 if level == 0:
                     data[filename] = reporter.results
                 elif level == 1:
-                    data[filename] = reporter.results['specifications'][row] 
+                    data[filename] = reporter.results["specifications"][row]
                 elif level == 2:
-                    data[filename] = reporter.results['specifications'][item.parent().row()]['requirements'][row]
+                    data[filename] = reporter.results["specifications"][
+                        item.parent().row()
+                    ]["requirements"][row]
 
         self.mainwindow.detailsdock.show_details(data)
-        
 
     def add_file(self, filename):
         """Add IDS validator"""
@@ -104,7 +108,7 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
 
     def edit_ids(self, ascopy=False, new=False):
         """Open IDS editor
-        
+
         Either edit the selected IDS file or create a new one
         (emtpy or as copy of existing IDS).
 
@@ -119,9 +123,11 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
             validator_id = self.selected_validator_id()
             if not validator_id:
                 return
-            
+
             if validator_id == "integrity":
-                self.mainwindow.statusbar.showMessage(self.tr("No IDS file selected"), 5000)
+                self.mainwindow.statusbar.showMessage(
+                    self.tr("No IDS file selected"), 5000
+                )
                 return
 
             validator = self.validators.get_validator(validator_id)
@@ -139,19 +145,20 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
             self.add_file(filename)
             self.update_ifc_views()
 
-
     def selected_validator_id(self):
         """Get the ID (filename) of the selected validator"""
         active = self.tree.currentIndex()
         if not active.isValid():
-            self.mainwindow.statusbar.showMessage(self.tr("No validator selected"), 5000)
+            self.mainwindow.statusbar.showMessage(
+                self.tr("No validator selected"), 5000
+            )
             return None
         item = self.proxymodel.mapToSource(active).internalPointer()
         return self.get_validator_id(item)
 
     def get_validator_id(self, item):
         """Get the ID of the validator for tree item
-        
+
         Also works for child items (specifications and requirements)
 
         :param item: The tree item
@@ -169,7 +176,7 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
         self.update_results_column()
         self.update_ifc_views()
         self.mainwindow.save_validation_act.setEnabled(True)
-        self.show() # Show the dock in case it was hidden
+        self.show()  # Show the dock in case it was hidden
 
     def run_selected_validation(self):
         """Run only the selected validator and update the views"""
@@ -203,29 +210,35 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
                 # Integrity validator (only one for all IFC files)
                 if validator_item.id == "integrity":
                     reporter = valreporters
-                    spec = reporter.results['specifications'][spec_item.row()]
-                    passed_checks += spec['total_checks_pass']
-                    failed_checks += spec['total_checks_fail']
-                    spec_item.set_data(column, f"{failed_checks} failed, {passed_checks} passed")
+                    spec = reporter.results["specifications"][spec_item.row()]
+                    passed_checks += spec["total_checks_pass"]
+                    failed_checks += spec["total_checks_fail"]
+                    spec_item.set_data(
+                        column, f"{failed_checks} failed, {passed_checks} passed"
+                    )
                     for i, req_item in enumerate(spec_item.children):
                         passed_checks = 0
                         failed_checks = 0
-                        req = spec['requirements'][i]
-                        passed_checks += len(req['passed_entities'])
-                        failed_checks += len(req['failed_entities'])
-                        req_item.set_data(column, f"{failed_checks} failed, {passed_checks} passed")
+                        req = spec["requirements"][i]
+                        passed_checks += len(req["passed_entities"])
+                        failed_checks += len(req["failed_entities"])
+                        req_item.set_data(
+                            column, f"{failed_checks} failed, {passed_checks} passed"
+                        )
                     continue
 
-                # All other validators    
+                # All other validators
                 for ifc_file in self.mainwindow.ifcfiles:
                     # Not all files must be in the keys of the dict
                     reporter = valreporters.get(ifc_file.filename, None)
                     if reporter:
-                        spec = reporter.results['specifications'][spec_item.row()]
-                        passed_checks += spec['total_checks_pass']
-                        failed_checks += spec['total_checks_fail']
+                        spec = reporter.results["specifications"][spec_item.row()]
+                        passed_checks += spec["total_checks_pass"]
+                        failed_checks += spec["total_checks_fail"]
 
-                spec_item.set_data(column, f"{failed_checks} failed, {passed_checks} passed")
+                spec_item.set_data(
+                    column, f"{failed_checks} failed, {passed_checks} passed"
+                )
 
                 # Update the requirement items
                 for i, req_item in enumerate(spec_item.children):
@@ -234,16 +247,17 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
                     for ifc_file in self.mainwindow.ifcfiles:
                         reporter = valreporters.get(ifc_file.filename, None)
                         if reporter:
-                            spec = reporter.results['specifications'][spec_item.row()]
-                            req = spec['requirements'][i]
-                            passed_checks += len(req['passed_entities'])
-                            failed_checks += len(req['failed_entities'])
+                            spec = reporter.results["specifications"][spec_item.row()]
+                            req = spec["requirements"][i]
+                            passed_checks += len(req["passed_entities"])
+                            failed_checks += len(req["failed_entities"])
 
-                    req_item.set_data(column, f"{failed_checks} failed, {passed_checks} passed")
-                    
+                    req_item.set_data(
+                        column, f"{failed_checks} failed, {passed_checks} passed"
+                    )
+
         self.treemodel.endResetModel()
         self.tree.expandAll()
-
 
     def update_ifc_views(self):
         """Tell all views in the ifc tabs that the column data changed"""
@@ -255,12 +269,14 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
             proxymodel.dataChanged.emit(top_left, bottom_right, [Qt.DisplayRole])
             tree = self.mainwindow.tabs.tabs.widget(i).tree
             tree.setColumnHidden(10, False)
-        
+
+
 class ValidationTreeModel(TreeModelBaseclass):
     """Model for the validators and their results
-    
+
     :param data: List of build in validators
     """
+
     def __init__(self, data, parent):
         super(ValidationTreeModel, self).__init__(data, parent)
         self.column_count = 5
@@ -277,17 +293,17 @@ class ValidationTreeModel(TreeModelBaseclass):
 
     def add_file(self, validator):
         """Add a IDS validator to the tree
-        
+
         :param validator: The IDS validator
         :type validator: IdsValidator
         """
         self.beginResetModel()
         validator_item = TreeItem(
             [
-                f"{validator.title} | {validator.filename}", 
-                validator.rules.info.get('description', None),
+                f"{validator.title} | {validator.filename}",
+                validator.rules.info.get("description", None),
                 # Only specs and facets have instructions, show purpose instead
-                validator.rules.info.get("purpose", None), 
+                validator.rules.info.get("purpose", None),
             ],
             parent=self._rootItem,
             id=validator.id,
@@ -303,13 +319,7 @@ class ValidationTreeModel(TreeModelBaseclass):
             applicability = [a.to_string("applicability") for a in spec.applicability]
             applicability = " / ".join(applicability)
             spec_item = TreeItem(
-                [
-                    spec.name, 
-                    spec.description, 
-                    spec.instructions,
-                    applicability,
-                    ""
-                ],
+                [spec.name, spec.description, spec.instructions, applicability, ""],
                 parent=validator_item,
             )
             validator_item.appendChild(spec_item)
@@ -318,9 +328,9 @@ class ValidationTreeModel(TreeModelBaseclass):
                 namestring = self.tr("Requirement (%s)") % req.__class__.__name__
                 req_item = TreeItem(
                     [
-                        namestring, 
+                        namestring,
                         None,
-                        req.instructions, 
+                        req.instructions,
                         f"⇒ {req.to_string('requirement', spec, req)}",
                         "",
                     ],
@@ -331,7 +341,7 @@ class ValidationTreeModel(TreeModelBaseclass):
 
     def remove_file(self, filename):
         """Remove a IDS validator from the tree
-        
+
         :param filename: The filename of the IDS validator
         :type filename: str
         """
