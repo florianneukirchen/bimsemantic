@@ -451,6 +451,9 @@ class TypeTreeModel(IfcTreeModelBaseClass):
     """Model for the Type tree view
 
     The tree view is organized by the IFC-class and object type of elements.
+    Object type is the ObjectType attribute of the IFC entity (not the actual 
+    type of the entity).
+    
     The data of several IFC files can be added to the tree with add_file().
 
     :param data: Instance if IfcFiles
