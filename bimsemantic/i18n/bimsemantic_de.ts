@@ -420,7 +420,8 @@
         <source>Invalid bounds:
 Should be in the form of
 2 &lt; value &lt;= 10</source>
-        <translation>Ungültiger Wertebereich: Sollte in der Form 2 &lt; value &lt;= 10 sein</translation>
+        <translation>Ungültiger Wertebereich: 
+Sollte in der Form 2 &lt; value &lt;= 10 sein</translation>
     </message>
     <message>
         <location filename="../ui/idseditor.py" line="854"/>
@@ -454,12 +455,13 @@ Should be an integer</source>
         <location filename="../ui/idseditor.py" line="885"/>
         <source>Invalid length:
 Should be two integers separated by a comma</source>
-        <translation>Ungültige Länge\nBitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
+        <translation>Ungültige Länge
+Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
     </message>
     <message>
         <location filename="../ui/idseditor.py" line="983"/>
         <source>Optional field &lt;i&gt;author&lt;/i&gt; must be a valid email address</source>
-        <translation>Optionales Feld &lt;i&gt;Autor&lt;/iY muss gültige Email-Adresse sein</translation>
+        <translation>Optionales Feld &lt;i&gt;Autor&lt;/i&gt; muss gültige Email-Adresse sein</translation>
     </message>
     <message>
         <location filename="../ui/idseditor.py" line="984"/>
