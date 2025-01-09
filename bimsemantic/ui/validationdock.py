@@ -283,7 +283,13 @@ class ValidationTreeModel(TreeModelBaseclass):
 
     def setup_root_item(self):
         self._rootItem = TreeItem(
-            ["Rules", "Description", "Instructions", "If/then", "Results"],
+            [
+                self.tr("Rules"), 
+                self.tr("Description"), 
+                self.tr("Instructions"), 
+                self.tr("If/then"), 
+                self.tr("Results")
+            ],
             showchildcount=False,
         )
 

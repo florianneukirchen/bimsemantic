@@ -4,8 +4,8 @@
 <context>
     <name>ChooseFacetDialog</name>
     <message>
-        <location filename="../ui/idseditor.py" line="1053"/>
-        <location filename="../ui/idseditor.py" line="1058"/>
+        <location filename="../ui/idseditor.py" line="1162"/>
+        <location filename="../ui/idseditor.py" line="1167"/>
         <source>Choose Facet</source>
         <translation>Facette wählen</translation>
     </message>
@@ -94,7 +94,7 @@
         <translation type="vanished">SOM-Autosuche %s</translation>
     </message>
     <message>
-        <location filename="../ui/mixin.py" line="156"/>
+        <location filename="../ui/mixin.py" line="155"/>
         <source>Expand/Collapse</source>
         <translation>Ausklappen/Einklappen</translation>
     </message>
@@ -150,17 +150,17 @@
 <context>
     <name>DetailsDock</name>
     <message>
-        <location filename="../ui/detailview.py" line="19"/>
+        <location filename="../ui/detailview.py" line="20"/>
         <source>&amp;Details</source>
         <translation>&amp;Details</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="21"/>
+        <location filename="../ui/detailview.py" line="22"/>
         <source>No open file</source>
         <translation>Keine offene Datei</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="96"/>
+        <location filename="../ui/detailview.py" line="97"/>
         <source>Property Sets</source>
         <translation>Property Sets</translation>
     </message>
@@ -168,7 +168,7 @@
 <context>
     <name>FilterIndicator</name>
     <message>
-        <location filename="../ui/searchbar.py" line="324"/>
+        <location filename="../ui/searchbar.py" line="319"/>
         <source>Filter active</source>
         <translation>Aktiver Filter</translation>
     </message>
@@ -176,32 +176,32 @@
 <context>
     <name>HowButton</name>
     <message>
-        <location filename="../ui/searchbar.py" line="278"/>
+        <location filename="../ui/searchbar.py" line="270"/>
         <source>Text</source>
         <translation>Text</translation>
     </message>
     <message>
-        <location filename="../ui/searchbar.py" line="279"/>
+        <location filename="../ui/searchbar.py" line="271"/>
         <source>Exact</source>
         <translation>Exakt</translation>
     </message>
     <message>
-        <location filename="../ui/searchbar.py" line="280"/>
+        <location filename="../ui/searchbar.py" line="272"/>
         <source>Wildcard</source>
         <translation>Platzhalter</translation>
     </message>
     <message>
-        <location filename="../ui/searchbar.py" line="281"/>
+        <location filename="../ui/searchbar.py" line="273"/>
         <source>Regex</source>
         <translation>Regex</translation>
     </message>
     <message>
-        <location filename="../ui/searchbar.py" line="282"/>
+        <location filename="../ui/searchbar.py" line="274"/>
         <source>List Contains</source>
         <translation>Liste enthält</translation>
     </message>
     <message>
-        <location filename="../ui/searchbar.py" line="292"/>
+        <location filename="../ui/searchbar.py" line="284"/>
         <source>Case Sensitive</source>
         <translation>Groß-/Kleinschreibung beachten</translation>
     </message>
@@ -209,214 +209,214 @@
 <context>
     <name>IdsEditDialog</name>
     <message>
-        <location filename="../ui/idseditor.py" line="100"/>
+        <location filename="../ui/idseditor.py" line="106"/>
         <source>Simple value</source>
         <translation>Einfacher Wert</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="101"/>
+        <location filename="../ui/idseditor.py" line="107"/>
         <source>Enumeration (list)</source>
         <translation>Liste</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="102"/>
+        <location filename="../ui/idseditor.py" line="108"/>
         <source>Bounds (range)</source>
         <translation>Wertebereich</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="103"/>
+        <location filename="../ui/idseditor.py" line="109"/>
         <source>Pattern (regex)</source>
         <translation>Regex</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="104"/>
+        <location filename="../ui/idseditor.py" line="110"/>
         <source>Length (of string)</source>
         <translation>Länge (Zeichenfolge)</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="105"/>
+        <location filename="../ui/idseditor.py" line="111"/>
         <source>Min lenght</source>
         <translation>Minimale Länge</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="106"/>
+        <location filename="../ui/idseditor.py" line="112"/>
         <source>Max length</source>
         <translation>Maximale Länge</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="107"/>
+        <location filename="../ui/idseditor.py" line="113"/>
         <source>Min, max lenght</source>
         <translation>Minimale, maximale Länge</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="116"/>
+        <location filename="../ui/idseditor.py" line="122"/>
         <source>Edit IDS %s</source>
         <translation>Bearbeite IDS %s</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="120"/>
+        <location filename="../ui/idseditor.py" line="126"/>
         <source>New IDS</source>
         <translation>Neue IDS</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="125"/>
+        <location filename="../ui/idseditor.py" line="131"/>
         <source>Edit copy of %s</source>
         <translation>Bearbeite Kopie von %s</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="145"/>
+        <location filename="../ui/idseditor.py" line="151"/>
         <source>Title</source>
         <translation>Titel</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="150"/>
-        <location filename="../ui/idseditor.py" line="215"/>
+        <location filename="../ui/idseditor.py" line="156"/>
+        <location filename="../ui/idseditor.py" line="220"/>
         <source>Description</source>
         <translation>Beschreibung</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="154"/>
+        <location filename="../ui/idseditor.py" line="160"/>
         <source>Purpose</source>
         <translation>Zweck</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="158"/>
+        <location filename="../ui/idseditor.py" line="164"/>
         <source>Author</source>
         <translation>Autor</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="160"/>
+        <location filename="../ui/idseditor.py" line="166"/>
         <source>Email</source>
         <translation>Email</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="163"/>
+        <location filename="../ui/idseditor.py" line="169"/>
         <source>Copyright</source>
         <translation>Copyright</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="170"/>
+        <location filename="../ui/idseditor.py" line="176"/>
         <source>Version</source>
         <translation>Version</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="173"/>
+        <location filename="../ui/idseditor.py" line="179"/>
         <source>Milestone</source>
         <translation>Meilenstein</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="178"/>
+        <location filename="../ui/idseditor.py" line="184"/>
         <source>Date of publication of the IDS</source>
         <translation>Datum der Veröffentlichung der IDS</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="182"/>
+        <location filename="../ui/idseditor.py" line="188"/>
         <source>Specifications</source>
         <translation>Spezifikationen</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="188"/>
-        <location filename="../ui/idseditor.py" line="680"/>
+        <location filename="../ui/idseditor.py" line="194"/>
+        <location filename="../ui/idseditor.py" line="729"/>
         <source>New Specification</source>
         <translation>Neue Spezifikation</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="191"/>
+        <location filename="../ui/idseditor.py" line="197"/>
         <source>Remove Specification</source>
         <translation>Spezifikation löschen</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="194"/>
+        <location filename="../ui/idseditor.py" line="200"/>
         <source>Edit Specification</source>
         <translation>Spezifikation bearbeiten</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="211"/>
+        <location filename="../ui/idseditor.py" line="216"/>
         <source>Specification Name</source>
         <translation>Name der Spezifikation</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="219"/>
+        <location filename="../ui/idseditor.py" line="224"/>
         <source>Instructions</source>
         <translation>Anweisungen</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="223"/>
+        <location filename="../ui/idseditor.py" line="228"/>
         <source>Identifier</source>
         <translation>Identifikator</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="227"/>
+        <location filename="../ui/idseditor.py" line="232"/>
         <source>Cardinality</source>
         <translation>Kardinalität</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="233"/>
+        <location filename="../ui/idseditor.py" line="238"/>
         <source>IFC Versions</source>
         <translation>IFC Versionen</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="243"/>
+        <location filename="../ui/idseditor.py" line="247"/>
         <source>Applicability</source>
         <translation>Anwendbarkeit</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="249"/>
-        <location filename="../ui/idseditor.py" line="268"/>
+        <location filename="../ui/idseditor.py" line="253"/>
+        <location filename="../ui/idseditor.py" line="272"/>
         <source>New</source>
         <translation>Neu</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="252"/>
-        <location filename="../ui/idseditor.py" line="271"/>
+        <location filename="../ui/idseditor.py" line="256"/>
+        <location filename="../ui/idseditor.py" line="275"/>
         <source>Remove</source>
         <translation>Entfernen</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="255"/>
-        <location filename="../ui/idseditor.py" line="274"/>
+        <location filename="../ui/idseditor.py" line="259"/>
+        <location filename="../ui/idseditor.py" line="278"/>
         <source>Edit</source>
         <translation>Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="262"/>
+        <location filename="../ui/idseditor.py" line="266"/>
         <source>Requirements</source>
         <translation>Erfordernisse</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="283"/>
-        <location filename="../ui/idseditor.py" line="359"/>
+        <location filename="../ui/idseditor.py" line="287"/>
+        <location filename="../ui/idseditor.py" line="363"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="286"/>
+        <location filename="../ui/idseditor.py" line="290"/>
         <source>Save Specification</source>
         <translation>Spezifikation speichern</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="362"/>
+        <location filename="../ui/idseditor.py" line="366"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="497"/>
-        <location filename="../ui/idseditor.py" line="827"/>
+        <location filename="../ui/idseditor.py" line="511"/>
+        <location filename="../ui/idseditor.py" line="885"/>
         <source>Required</source>
         <translation>Erforderlich</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="829"/>
+        <location filename="../ui/idseditor.py" line="888"/>
         <source>All required parameters must be specified</source>
         <translation>Alle erforderlichen Parameter müssen ausgefüllt sein</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="830"/>
+        <location filename="../ui/idseditor.py" line="889"/>
         <source>Missing required parameter</source>
         <translation>Erforderlicher Parameter fehlt</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="853"/>
+        <location filename="../ui/idseditor.py" line="922"/>
         <source>Invalid bounds:
 Should be in the form of
 2 &lt; value &lt;= 10</source>
@@ -424,57 +424,57 @@ Should be in the form of
 Sollte in der Form 2 &lt; value &lt;= 10 sein</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="854"/>
+        <location filename="../ui/idseditor.py" line="923"/>
         <source>Invalid bounds</source>
         <translation>Ungültiger Wertebereich</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="865"/>
+        <location filename="../ui/idseditor.py" line="934"/>
         <source>Invalid regex pattern:
 %s</source>
         <translation>Ungültiger regulärer Ausdruck: %s</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="866"/>
+        <location filename="../ui/idseditor.py" line="935"/>
         <source>Invalid regex pattern</source>
         <translation>Ungültiger regulärer Ausdruck</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="874"/>
+        <location filename="../ui/idseditor.py" line="943"/>
         <source>Invalid length:
 Should be an integer</source>
         <translation>Ungültige Länge: muss ganzzahlig sein</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="875"/>
-        <location filename="../ui/idseditor.py" line="886"/>
+        <location filename="../ui/idseditor.py" line="944"/>
+        <location filename="../ui/idseditor.py" line="959"/>
         <source>Invalid length</source>
         <translation>Ungültige Länge</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="885"/>
+        <location filename="../ui/idseditor.py" line="958"/>
         <source>Invalid length:
 Should be two integers separated by a comma</source>
         <translation>Ungültige Länge
 Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="983"/>
+        <location filename="../ui/idseditor.py" line="1092"/>
         <source>Optional field &lt;i&gt;author&lt;/i&gt; must be a valid email address</source>
         <translation>Optionales Feld &lt;i&gt;Autor&lt;/i&gt; muss gültige Email-Adresse sein</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="984"/>
+        <location filename="../ui/idseditor.py" line="1093"/>
         <source>Invalid email address</source>
         <translation>Ungültige Email-Adresse</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="1030"/>
+        <location filename="../ui/idseditor.py" line="1138"/>
         <source>&lt;b&gt;Could not save IDS file:&lt;/b&gt;</source>
         <translation>&lt;b&gt;Konnte IDS-Datei nicht speichern:&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="1032"/>
+        <location filename="../ui/idseditor.py" line="1140"/>
         <source>Could not save IDS file</source>
         <translation>Konnte IDS-Datei nicht speichern</translation>
     </message>
@@ -482,12 +482,12 @@ Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
 <context>
     <name>IfcCustomTreeModel</name>
     <message>
-        <location filename="../ui/ifctrees.py" line="621"/>
+        <location filename="../ui/ifctrees.py" line="619"/>
         <source>Custom</source>
         <translation>Eigener Baum</translation>
     </message>
     <message>
-        <location filename="../ui/ifctrees.py" line="678"/>
+        <location filename="../ui/ifctrees.py" line="676"/>
         <source>Unnamed</source>
         <translation>Ohne Namen</translation>
     </message>
@@ -495,81 +495,81 @@ Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
 <context>
     <name>IfcDetailsTreeModel</name>
     <message>
-        <location filename="../ui/detailview.py" line="277"/>
+        <location filename="../ui/detailview.py" line="278"/>
         <source>IFC Class</source>
         <translation>IFC-Klasse</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="287"/>
+        <location filename="../ui/detailview.py" line="288"/>
         <source>Unnamed</source>
         <translation>Ohne Namen</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="289"/>
-        <location filename="../ui/detailview.py" line="555"/>
+        <location filename="../ui/detailview.py" line="290"/>
+        <location filename="../ui/detailview.py" line="561"/>
         <source>Linked Object Type</source>
         <translation>Verlinkter Objekttyp</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="315"/>
+        <location filename="../ui/detailview.py" line="316"/>
         <source>Main Attributes</source>
         <translation>Hauptattribute</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="326"/>
+        <location filename="../ui/detailview.py" line="329"/>
         <source>Object Placement</source>
         <translation>Objektplatzierung</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="333"/>
+        <location filename="../ui/detailview.py" line="338"/>
         <source>Coordinates</source>
         <translation>Koordinaten</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="366"/>
+        <location filename="../ui/detailview.py" line="371"/>
         <source>Relations</source>
         <translation>Relationen</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="384"/>
-        <location filename="../ui/detailview.py" line="386"/>
+        <location filename="../ui/detailview.py" line="389"/>
+        <location filename="../ui/detailview.py" line="392"/>
         <source>Contained in</source>
         <translation>Enthalten in</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="441"/>
+        <location filename="../ui/detailview.py" line="448"/>
         <source>Filled openings</source>
         <translation>Gefüllte Öffnungen</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="465"/>
-        <location filename="../ui/detailview.py" line="467"/>
+        <location filename="../ui/detailview.py" line="471"/>
+        <location filename="../ui/detailview.py" line="473"/>
         <source>Fills void in</source>
         <translation>Füllt Öffnung in</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="486"/>
+        <location filename="../ui/detailview.py" line="492"/>
         <source>Connected to</source>
         <translation>Verbunden mit</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="499"/>
-        <location filename="../ui/detailview.py" line="559"/>
+        <location filename="../ui/detailview.py" line="505"/>
+        <location filename="../ui/detailview.py" line="565"/>
         <source>Property Sets</source>
         <translation>Property Sets</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="514"/>
+        <location filename="../ui/detailview.py" line="520"/>
         <source>Quantity Sets</source>
         <translation>Quantity Sets</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="583"/>
+        <location filename="../ui/detailview.py" line="588"/>
         <source>Failed</source>
         <translation>Fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="595"/>
+        <location filename="../ui/detailview.py" line="598"/>
         <source>Passed</source>
         <translation>Bestanden</translation>
     </message>
@@ -636,7 +636,7 @@ Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../ui/mainwindow.py" line="586"/>
+        <location filename="../ui/mainwindow.py" line="582"/>
         <source>&amp;File</source>
         <translation>&amp;Datei</translation>
     </message>
@@ -649,23 +649,23 @@ Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
         <translation type="vanished">IFC-Datei öffnen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="257"/>
-        <location filename="../ui/mainwindow.py" line="594"/>
+        <location filename="../ui/mainwindow.py" line="254"/>
+        <location filename="../ui/mainwindow.py" line="590"/>
         <source>Open IFC files</source>
         <translation>IFC-Dateien öffnen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="259"/>
+        <location filename="../ui/mainwindow.py" line="256"/>
         <source>IFC Files (*.ifc)</source>
         <translation>IFC-Dateien (*.ifc)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="277"/>
+        <location filename="../ui/mainwindow.py" line="274"/>
         <source>Open file %s</source>
         <translation>Öffne Datei %s</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="292"/>
+        <location filename="../ui/mainwindow.py" line="289"/>
         <source>Add files to treeviews</source>
         <translation>Füge Dateien zu den Baumansichten hinzu</translation>
     </message>
@@ -674,266 +674,266 @@ Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
         <translation type="vanished">{0} Dateien, {1} Elemente, {2} Typen, {3} Psets</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="340"/>
+        <location filename="../ui/mainwindow.py" line="337"/>
         <source>{} files were ignored because they are already open</source>
         <translation>{} Datein waren bereits geöffnet und wurden ignoriert</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="354"/>
+        <location filename="../ui/mainwindow.py" line="351"/>
         <source>Close all files</source>
         <translation>Alle Dateien schließen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="382"/>
+        <location filename="../ui/mainwindow.py" line="378"/>
         <source>Export to CSV</source>
         <translation>Exportiere zu CSV</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="384"/>
+        <location filename="../ui/mainwindow.py" line="380"/>
         <source>CSV Files (*.csv)</source>
         <translation>CSV-Dateien (*.csv)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="396"/>
+        <location filename="../ui/mainwindow.py" line="392"/>
         <source>Separator:</source>
         <translation>Trennzeichen:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="403"/>
+        <location filename="../ui/mainwindow.py" line="399"/>
         <source>Options:</source>
         <translation>Optionen:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="406"/>
+        <location filename="../ui/mainwindow.py" line="402"/>
         <source>With column for hierarchical level</source>
         <translation>Mit Spalte für Hierarchieebene</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="415"/>
+        <location filename="../ui/mainwindow.py" line="411"/>
         <source>Export only selected rows (%i rows)</source>
         <translation>Nur ausgewählte Zeilen exportieren (%i Zeilen)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="441"/>
+        <location filename="../ui/mainwindow.py" line="437"/>
         <source>Exported to %s</source>
         <translation>Als %s exportiert</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="448"/>
+        <location filename="../ui/mainwindow.py" line="442"/>
         <source>Save validation results</source>
         <translation>Speichere Validierungsergebnisse</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="450"/>
-        <location filename="../ui/mainwindow.py" line="494"/>
+        <location filename="../ui/mainwindow.py" line="444"/>
+        <location filename="../ui/mainwindow.py" line="490"/>
         <source>BCF (*.bcfzip)</source>
         <translation>BCF (*.bcfzip)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="450"/>
+        <location filename="../ui/mainwindow.py" line="444"/>
         <source>JSON (*.json)</source>
         <translation>JSON (*.json)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="457"/>
+        <location filename="../ui/mainwindow.py" line="451"/>
         <source>Select Validator:</source>
         <translation>Validierung wählen:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="468"/>
+        <location filename="../ui/mainwindow.py" line="465"/>
         <source>Select IFC file:</source>
         <translation>IFC-Datei wählen:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="495"/>
+        <location filename="../ui/mainwindow.py" line="491"/>
         <source>Saved to %s</source>
         <translation>Als %s gespeichert</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="507"/>
+        <location filename="../ui/mainwindow.py" line="503"/>
         <source>No element found with GUID %s</source>
         <translation>Kein Element mit der GUID %s gefunden</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="520"/>
+        <location filename="../ui/mainwindow.py" line="516"/>
         <source>No element found with Tag %s</source>
         <translation>Kein Element mit Tag %s gefunden</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="538"/>
+        <location filename="../ui/mainwindow.py" line="534"/>
         <source>Invalid ID %s</source>
         <translation>Invalide ID %s</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="542"/>
+        <location filename="../ui/mainwindow.py" line="538"/>
         <source>Any</source>
         <translation>Alle</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="551"/>
-        <location filename="../ui/mainwindow.py" line="559"/>
-        <location filename="../ui/mainwindow.py" line="566"/>
+        <location filename="../ui/mainwindow.py" line="547"/>
+        <location filename="../ui/mainwindow.py" line="555"/>
+        <location filename="../ui/mainwindow.py" line="562"/>
         <source>No element found with ID %i</source>
         <translation>Kein Element mit ID %s gefunden</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="582"/>
+        <location filename="../ui/mainwindow.py" line="578"/>
         <source>Toolbar</source>
         <translation>Werkzeugleiste</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="591"/>
+        <location filename="../ui/mainwindow.py" line="587"/>
         <source>&amp;Open IFC...</source>
         <translation>Ö&amp;ffnen...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="602"/>
+        <location filename="../ui/mainwindow.py" line="598"/>
         <source>&amp;Export View to CSV...</source>
         <translation>Ansicht als CSV &amp;exportieren...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="642"/>
+        <location filename="../ui/mainwindow.py" line="638"/>
         <source>&amp;Copy</source>
         <translation>&amp;Kopieren</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="690"/>
+        <location filename="../ui/mainwindow.py" line="686"/>
         <source>&amp;Search</source>
         <translation>&amp;Suchen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="692"/>
+        <location filename="../ui/mainwindow.py" line="688"/>
         <source>Search in the active view</source>
         <translation>In aktiver Ansicht suchen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="702"/>
+        <location filename="../ui/mainwindow.py" line="697"/>
         <source>&amp;Filter</source>
         <translation>&amp;Filter</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="704"/>
+        <location filename="../ui/mainwindow.py" line="699"/>
         <source>Filter the active view</source>
         <translation>Aktive Ansicht filtern</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="714"/>
+        <location filename="../ui/mainwindow.py" line="708"/>
         <source>Search content in SOM</source>
         <translation>Suche in SOM</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="716"/>
+        <location filename="../ui/mainwindow.py" line="710"/>
         <source>Search content of active cell in SOM</source>
         <translation>Inhalt der aktiven Zelle im SOM suchen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="824"/>
+        <location filename="../ui/mainwindow.py" line="816"/>
         <source>&amp;Semantic</source>
         <translation>&amp;Semantik</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="829"/>
+        <location filename="../ui/mainwindow.py" line="821"/>
         <source>&amp;Open SOM</source>
         <translation>Ö&amp;ffne SOM</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="831"/>
+        <location filename="../ui/mainwindow.py" line="823"/>
         <source>Load SOM list from a JSON file</source>
         <translation>SOM-Liste aus JSON-Datei laden</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="839"/>
+        <location filename="../ui/mainwindow.py" line="831"/>
         <source>&amp;Close SOM</source>
         <translation>S&amp;chließe SOM</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="841"/>
+        <location filename="../ui/mainwindow.py" line="833"/>
         <source>Close the SOM list</source>
         <translation>SOM-Liste schließen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="848"/>
+        <location filename="../ui/mainwindow.py" line="840"/>
         <source>&amp;Expand/Collapse SOM tree</source>
         <translation>SOM-Baumansicht &amp;ein-/ausklappen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="852"/>
+        <location filename="../ui/mainwindow.py" line="844"/>
         <source>Stop auto search</source>
         <translation>Autosuche stoppen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="854"/>
+        <location filename="../ui/mainwindow.py" line="846"/>
         <source>Stop the auto search in the SOM</source>
         <translation>Die automatische Suche im SOM stoppen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="862"/>
+        <location filename="../ui/mainwindow.py" line="854"/>
         <source>&amp;Validation</source>
         <translation>&amp;Validierung</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="867"/>
+        <location filename="../ui/mainwindow.py" line="859"/>
         <source>&amp;Load IDS file</source>
         <translation>IDS-Datei &amp;laden</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="869"/>
+        <location filename="../ui/mainwindow.py" line="861"/>
         <source>Load IDS file with validation rules</source>
         <translation>IDS-Datei mit Validierungsregeln laden</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="877"/>
+        <location filename="../ui/mainwindow.py" line="869"/>
         <source>&amp;Close IDS file</source>
         <translation>S&amp;chließe IDS-Datei</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="879"/>
+        <location filename="../ui/mainwindow.py" line="871"/>
         <source>Close selected IDS file</source>
         <translation>Gewählte IDS-Datei schließen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="885"/>
-        <location filename="../ui/mainwindow.py" line="887"/>
+        <location filename="../ui/mainwindow.py" line="877"/>
+        <location filename="../ui/mainwindow.py" line="879"/>
         <source>Close all IDS files</source>
         <translation>Alle IDS-Dateien schließen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="895"/>
+        <location filename="../ui/mainwindow.py" line="887"/>
         <source>&amp;New IDS file</source>
         <translation>&amp;Neue IDS-Datei</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="897"/>
+        <location filename="../ui/mainwindow.py" line="889"/>
         <source>Create a new IDS file with validation rules</source>
         <translation>Neue IDS-Datei mit Validierungsregeln erstellen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="904"/>
+        <location filename="../ui/mainwindow.py" line="896"/>
         <source>&amp;Edit IDS file</source>
         <translation>&amp;Bearbeite IDS-Datei</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="906"/>
+        <location filename="../ui/mainwindow.py" line="898"/>
         <source>Edit the specifications of the selected IDS file</source>
         <translation>Die Spezifikationen der gewählten IDS-Datei bearbeiten</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="913"/>
+        <location filename="../ui/mainwindow.py" line="905"/>
         <source>E&amp;dit copy of IDS file</source>
         <translation>&amp;Kopie der IDS-Datei bearbeiten</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="915"/>
+        <location filename="../ui/mainwindow.py" line="907"/>
         <source>Edit a copy of the selected IDS file</source>
         <translation>Eine Kopie der gewählten IDS-Datei bearbeiten</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="925"/>
+        <location filename="../ui/mainwindow.py" line="916"/>
         <source>&amp;Run all validations</source>
         <translation>&amp;Alle Validierungen starten</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="927"/>
+        <location filename="../ui/mainwindow.py" line="918"/>
         <source>Run validation using all validation rules</source>
         <translation>Führe Validierung mit allen Regeln durch</translation>
     </message>
@@ -942,22 +942,22 @@ Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
         <translation type="vanished">Gewählte &amp;Validierung starten</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="936"/>
+        <location filename="../ui/mainwindow.py" line="927"/>
         <source>Run validation with the selected validator</source>
         <translation>Starte Validierung mit dem gewählten Regelsatz</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="945"/>
+        <location filename="../ui/mainwindow.py" line="936"/>
         <source>&amp;Save validation result</source>
         <translation>&amp;Speichere Validierungsergebnis</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="947"/>
+        <location filename="../ui/mainwindow.py" line="940"/>
         <source>Save the validation result of the selected validator as BCF or JSON</source>
         <translation>Validierungsergebnis des gewählten Regelsatzes als BCF oder JSON speichern</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="1018"/>
+        <location filename="../ui/mainwindow.py" line="1019"/>
         <source>&amp;Qsets</source>
         <translation>&amp;Qsets</translation>
     </message>
@@ -966,12 +966,12 @@ Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
         <translation type="vanished">Strg+E</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="607"/>
+        <location filename="../ui/mainwindow.py" line="603"/>
         <source>Export the current view or the current selection to CSV</source>
         <translation>Aktuelle Ansicht bzw. aktuelle Auswahl zu CSV exportieren</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="617"/>
+        <location filename="../ui/mainwindow.py" line="613"/>
         <source>&amp;Close all IFCs</source>
         <translation>Alle IFCs s&amp;chließen</translation>
     </message>
@@ -980,12 +980,12 @@ Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
         <translation type="vanished">Strg+W</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="620"/>
+        <location filename="../ui/mainwindow.py" line="616"/>
         <source>Close all IFC files</source>
         <translation>Alle IFC-Dateien schließen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="627"/>
+        <location filename="../ui/mainwindow.py" line="623"/>
         <source>&amp;Quit</source>
         <translation>&amp;Beenden</translation>
     </message>
@@ -994,12 +994,12 @@ Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
         <translation type="vanished">Strg+Q</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="630"/>
+        <location filename="../ui/mainwindow.py" line="626"/>
         <source>Quit the application</source>
         <translation>Programm beenden</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="637"/>
+        <location filename="../ui/mainwindow.py" line="633"/>
         <source>&amp;Edit</source>
         <translation>&amp;Bearbeiten</translation>
     </message>
@@ -1012,13 +1012,13 @@ Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
         <translation type="vanished">Strg+C</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="645"/>
-        <location filename="../ui/mainwindow.py" line="678"/>
+        <location filename="../ui/mainwindow.py" line="641"/>
+        <location filename="../ui/mainwindow.py" line="674"/>
         <source>Copy selected rows to clipboard</source>
         <translation>Ausgewählte Zeilen in die Zwischenablage kopieren</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="652"/>
+        <location filename="../ui/mainwindow.py" line="648"/>
         <source>Copy cell</source>
         <translation>Zelle kopieren</translation>
     </message>
@@ -1027,178 +1027,178 @@ Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
         <translation type="vanished">{0} Dateien, {1} Elemente in {2} IFC-Klassen, {3} Psets</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="655"/>
+        <location filename="../ui/mainwindow.py" line="651"/>
         <source>Copy selected cell to clipboard</source>
         <translation>Ausgewählte Zellen in Zwischenablage kopieren</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="660"/>
+        <location filename="../ui/mainwindow.py" line="656"/>
         <source>Copy options</source>
         <translation>Optionen beim Kopieren</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="663"/>
+        <location filename="../ui/mainwindow.py" line="659"/>
         <source>Copy with headers</source>
         <translation>Mit Kopfzeile kopieren</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="669"/>
+        <location filename="../ui/mainwindow.py" line="665"/>
         <source>Copy with column of hierarchic level</source>
         <translation>Mit Spalte für Hierarchieebene kopieren</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="726"/>
+        <location filename="../ui/mainwindow.py" line="719"/>
         <source>&amp;Selection</source>
         <translation>&amp;Auswahl</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="729"/>
+        <location filename="../ui/mainwindow.py" line="722"/>
         <source>Select by &amp;GUID</source>
         <translation>Nach &amp;GUID auswählen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="731"/>
+        <location filename="../ui/mainwindow.py" line="724"/>
         <source>Select IFC element by GUID</source>
         <translation>IFC-Element nach GUID auswählen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="737"/>
+        <location filename="../ui/mainwindow.py" line="730"/>
         <source>Select by &amp;ID</source>
         <translation>Nach &amp;ID auswählen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="739"/>
+        <location filename="../ui/mainwindow.py" line="732"/>
         <source>Select IFC element by ID and filename</source>
         <translation>IFC-Element nach ID und Dateiname wählen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="745"/>
+        <location filename="../ui/mainwindow.py" line="738"/>
         <source>Select by &amp;Tag</source>
         <translation>Nach &amp;Tag auswählen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="747"/>
+        <location filename="../ui/mainwindow.py" line="740"/>
         <source>Select IFC element (IfcElement) by Tag</source>
         <translation>IFC-Element nach Tag auswählen (nur bei IfcElement)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="755"/>
+        <location filename="../ui/mainwindow.py" line="748"/>
         <source>Clear selection</source>
         <translation>Auswahl entfernen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="757"/>
+        <location filename="../ui/mainwindow.py" line="750"/>
         <source>Clear selection in all IFC tabs</source>
         <translation>Auswahl in allen IFC-Tabs entfernen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="764"/>
+        <location filename="../ui/mainwindow.py" line="756"/>
         <source>&amp;View</source>
         <translation>&amp;Ansicht</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="934"/>
+        <location filename="../ui/mainwindow.py" line="925"/>
         <source>Run selected &amp;validation</source>
         <translation>Gewählte &amp;Validierung starten</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="1004"/>
+        <location filename="../ui/mainwindow.py" line="1005"/>
         <source>&amp;Files in details dock</source>
         <translation>&amp;Dateien im Details-Dock</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="768"/>
+        <location filename="../ui/mainwindow.py" line="760"/>
         <source>&amp;Add custom IFC treeview</source>
         <translation>&amp;Eigene IFC-Baumansicht hinzufügen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="118"/>
-        <location filename="../ui/mainwindow.py" line="249"/>
+        <location filename="../ui/mainwindow.py" line="119"/>
+        <location filename="../ui/mainwindow.py" line="246"/>
         <source>File is not a valid IDS file</source>
         <translation>Datei ist keine valide IDS-Datei</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="192"/>
+        <location filename="../ui/mainwindow.py" line="189"/>
         <source>Open SOM list</source>
         <translation>Öffne SOM-Liste</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="194"/>
+        <location filename="../ui/mainwindow.py" line="191"/>
         <source>JSON files (*.json)</source>
         <translation>JSON-Dateien (*.json)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="202"/>
+        <location filename="../ui/mainwindow.py" line="199"/>
         <source>Loading SOM list</source>
         <translation>Lade SOM-Liste</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="210"/>
+        <location filename="../ui/mainwindow.py" line="207"/>
         <source>Failed to parse JSON file</source>
         <translation>Kann JSON-Datei nicht parsen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="214"/>
-        <location filename="../ui/mainwindow.py" line="247"/>
+        <location filename="../ui/mainwindow.py" line="211"/>
+        <location filename="../ui/mainwindow.py" line="243"/>
         <source>File not found</source>
         <translation>Datei nicht gefunden</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="222"/>
+        <location filename="../ui/mainwindow.py" line="219"/>
         <source>SOM loaded</source>
         <translation>SOM geladen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="239"/>
+        <location filename="../ui/mainwindow.py" line="235"/>
         <source>Load IDS rules</source>
         <translation>IDS-Regeln laden</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="241"/>
+        <location filename="../ui/mainwindow.py" line="237"/>
         <source>IDS files (*.ids)</source>
         <translation>IDS-Dateien (*.ids)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="313"/>
+        <location filename="../ui/mainwindow.py" line="310"/>
         <source>{0} files, {1} elements in {2} IFC classes, {3} psets, {4} qsets</source>
         <translation>{0} Dateien, {1} Elemente in {2} IFC-Klassen, {3} Psets, {4} Qsets</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="778"/>
+        <location filename="../ui/mainwindow.py" line="770"/>
         <source>&amp;Expand/Collapse active tree</source>
         <translation>Ausklappen/&amp;Einklappen der aktuellen Baumansicht</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="781"/>
+        <location filename="../ui/mainwindow.py" line="773"/>
         <location filename="../ui/mixin.py" line="160"/>
         <source>&amp;Collapse</source>
         <translation>&amp;Einklappen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="789"/>
-        <location filename="../ui/mixin.py" line="166"/>
+        <location filename="../ui/mainwindow.py" line="781"/>
+        <location filename="../ui/mixin.py" line="168"/>
         <source>Expand to level &amp;1</source>
         <translation>Bis Ebene &amp;1 ausklappen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="796"/>
-        <location filename="../ui/mixin.py" line="172"/>
+        <location filename="../ui/mainwindow.py" line="788"/>
+        <location filename="../ui/mixin.py" line="176"/>
         <source>Expand to level &amp;2</source>
         <translation>Bis Ebene &amp;2 ausklappen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="803"/>
+        <location filename="../ui/mainwindow.py" line="795"/>
         <source>Expand to level &amp;3</source>
         <translation>Bis Ebene &amp;3 ausklappen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="810"/>
+        <location filename="../ui/mainwindow.py" line="802"/>
         <source>Expand to level &amp;4</source>
         <translation>Bis Ebene &amp;4 ausklappen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="817"/>
-        <location filename="../ui/mixin.py" line="178"/>
+        <location filename="../ui/mainwindow.py" line="809"/>
+        <location filename="../ui/mixin.py" line="184"/>
         <source>Expand &amp;all</source>
         <translation>&amp;Alle ausklappen</translation>
     </message>
@@ -1207,7 +1207,7 @@ Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
         <translation type="vanished">&amp;Details</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="977"/>
+        <location filename="../ui/mainwindow.py" line="970"/>
         <source>&amp;Columns</source>
         <translation>&amp;Spalten</translation>
     </message>
@@ -1228,12 +1228,12 @@ Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
         <translation type="vanished">Alle ausblenden</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="955"/>
+        <location filename="../ui/mainwindow.py" line="948"/>
         <source>&amp;Help</source>
         <translation>&amp;Hilfe</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="958"/>
+        <location filename="../ui/mainwindow.py" line="951"/>
         <source>&amp;About</source>
         <translation>&amp;Über</translation>
     </message>
@@ -1243,13 +1243,13 @@ Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.py" line="57"/>
-        <location filename="../ui/mainwindow.py" line="377"/>
-        <location filename="../ui/mainwindow.py" line="971"/>
+        <location filename="../ui/mainwindow.py" line="373"/>
+        <location filename="../ui/mainwindow.py" line="964"/>
         <source>No open file</source>
         <translation>Keine offene Datei</translation>
     </message>
     <message>
-        <location filename="../ui/mixin.py" line="143"/>
+        <location filename="../ui/mixin.py" line="142"/>
         <source>SOM autosearch</source>
         <translation>SOM-Autosuche</translation>
     </message>
@@ -1257,27 +1257,27 @@ Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
 <context>
     <name>OverviewTreeModel</name>
     <message>
-        <location filename="../ui/detailview.py" line="633"/>
+        <location filename="../ui/detailview.py" line="635"/>
         <source>IFC Version</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="634"/>
+        <location filename="../ui/detailview.py" line="636"/>
         <source>File size</source>
         <translation>Dateigröße</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="635"/>
+        <location filename="../ui/detailview.py" line="637"/>
         <source>Project name</source>
         <translation>Projektname</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="639"/>
+        <location filename="../ui/detailview.py" line="641"/>
         <source>Long name</source>
         <translation>Langer Name</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="643"/>
+        <location filename="../ui/detailview.py" line="645"/>
         <source>Project phase</source>
         <translation>Projektphase</translation>
     </message>
@@ -1286,47 +1286,47 @@ Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
         <translation type="vanished">Projektkoordinaten</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="655"/>
+        <location filename="../ui/detailview.py" line="657"/>
         <source>Project base point</source>
         <translation>Projektbasispunkt</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="665"/>
+        <location filename="../ui/detailview.py" line="669"/>
         <source>IfcSite base point</source>
         <translation>IfcSite Basispunkt</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="669"/>
+        <location filename="../ui/detailview.py" line="673"/>
         <source>Project owner</source>
         <translation>Projektbesitzer</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="674"/>
+        <location filename="../ui/detailview.py" line="678"/>
         <source>Application</source>
         <translation>Anwendung</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="679"/>
+        <location filename="../ui/detailview.py" line="683"/>
         <source>Addresses</source>
         <translation>Adressen</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="707"/>
+        <location filename="../ui/detailview.py" line="711"/>
         <source>CRS</source>
         <translation>CRS</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="710"/>
+        <location filename="../ui/detailview.py" line="714"/>
         <source>IFC Elements</source>
         <translation>IFC-Elemente</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="712"/>
+        <location filename="../ui/detailview.py" line="716"/>
         <source>Pset count</source>
         <translation>Pset-Anzahl</translation>
     </message>
     <message>
-        <location filename="../ui/detailview.py" line="713"/>
+        <location filename="../ui/detailview.py" line="717"/>
         <source>Qset count</source>
         <translation>Qset-Anzahl</translation>
     </message>
@@ -1347,17 +1347,17 @@ Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
 <context>
     <name>PsetTreeModel</name>
     <message>
-        <location filename="../ui/psetdock.py" line="111"/>
+        <location filename="../ui/psetdock.py" line="113"/>
         <source>Elements</source>
         <translation>Elemente</translation>
     </message>
     <message>
-        <location filename="../ui/psetdock.py" line="111"/>
+        <location filename="../ui/psetdock.py" line="115"/>
         <source>Types</source>
         <translation>Typen</translation>
     </message>
     <message>
-        <location filename="../ui/psetdock.py" line="111"/>
+        <location filename="../ui/psetdock.py" line="114"/>
         <source>Spatial Elements</source>
         <translation>Raumelemente</translation>
     </message>
@@ -1365,37 +1365,37 @@ Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
 <context>
     <name>QsetTreeModel</name>
     <message>
-        <location filename="../ui/psetdock.py" line="198"/>
+        <location filename="../ui/psetdock.py" line="203"/>
         <source>Elements</source>
         <translation>Elemente</translation>
     </message>
     <message>
-        <location filename="../ui/psetdock.py" line="199"/>
+        <location filename="../ui/psetdock.py" line="204"/>
         <source>Spatial Elements</source>
         <translation>Raumelemente</translation>
     </message>
     <message>
-        <location filename="../ui/psetdock.py" line="200"/>
+        <location filename="../ui/psetdock.py" line="205"/>
         <source>Std</source>
         <translation>Std</translation>
     </message>
     <message>
-        <location filename="../ui/psetdock.py" line="201"/>
+        <location filename="../ui/psetdock.py" line="206"/>
         <source>Min</source>
         <translation>Min</translation>
     </message>
     <message>
-        <location filename="../ui/psetdock.py" line="202"/>
+        <location filename="../ui/psetdock.py" line="207"/>
         <source>Mean</source>
         <translation>Durchschnitt</translation>
     </message>
     <message>
-        <location filename="../ui/psetdock.py" line="203"/>
+        <location filename="../ui/psetdock.py" line="208"/>
         <source>Median</source>
         <translation>Median</translation>
     </message>
     <message>
-        <location filename="../ui/psetdock.py" line="204"/>
+        <location filename="../ui/psetdock.py" line="209"/>
         <source>Max</source>
         <translation>Max</translation>
     </message>
@@ -1433,7 +1433,7 @@ Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
         <translation>Suche in Spalte</translation>
     </message>
     <message>
-        <location filename="../ui/searchbar.py" line="102"/>
+        <location filename="../ui/searchbar.py" line="99"/>
         <source>Reset Filter</source>
         <translation>Filter entfernen</translation>
     </message>
@@ -1441,17 +1441,17 @@ Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
 <context>
     <name>SelectByDialog</name>
     <message>
-        <location filename="../ui/mainwindow.py" line="1079"/>
+        <location filename="../ui/mainwindow.py" line="1080"/>
         <source>Select element by %s</source>
         <translation>Element nach %s auswählen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="1092"/>
+        <location filename="../ui/mainwindow.py" line="1093"/>
         <source>IFC File</source>
         <translation>IFC-Datei</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.py" line="1094"/>
+        <location filename="../ui/mainwindow.py" line="1095"/>
         <source>Any</source>
         <translation>Jede</translation>
     </message>
@@ -1464,62 +1464,62 @@ Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
         <translation>SOM</translation>
     </message>
     <message>
-        <location filename="../ui/somdock.py" line="161"/>
+        <location filename="../ui/somdock.py" line="160"/>
         <source>&amp;Collapse</source>
         <translation>&amp;Einklappen</translation>
     </message>
     <message>
-        <location filename="../ui/somdock.py" line="169"/>
+        <location filename="../ui/somdock.py" line="168"/>
         <source>Expand to level &amp;1</source>
         <translation>Bis Ebene &amp;1 ausklappen</translation>
     </message>
     <message>
-        <location filename="../ui/somdock.py" line="176"/>
+        <location filename="../ui/somdock.py" line="175"/>
         <source>Expand to level &amp;2</source>
         <translation>Bis Ebene &amp;2 ausklappen</translation>
     </message>
     <message>
-        <location filename="../ui/somdock.py" line="183"/>
+        <location filename="../ui/somdock.py" line="182"/>
         <source>Expand to level &amp;3</source>
         <translation>Bis Ebene &amp;3 ausklappen</translation>
     </message>
     <message>
-        <location filename="../ui/somdock.py" line="190"/>
+        <location filename="../ui/somdock.py" line="189"/>
         <source>Expand to level &amp;4</source>
         <translation>Bis Ebene &amp;4 ausklappen</translation>
     </message>
     <message>
-        <location filename="../ui/somdock.py" line="197"/>
+        <location filename="../ui/somdock.py" line="196"/>
         <source>Expand &amp;all</source>
         <translation>&amp;Alle ausklappen</translation>
     </message>
     <message>
-        <location filename="../ui/somdock.py" line="213"/>
+        <location filename="../ui/somdock.py" line="212"/>
         <source>Expand/Collapse</source>
         <translation>Ein-/ausklappen</translation>
     </message>
     <message>
-        <location filename="../ui/somdock.py" line="221"/>
+        <location filename="../ui/somdock.py" line="220"/>
         <source>Hide column</source>
         <translation>Spalte verstecken</translation>
     </message>
     <message>
-        <location filename="../ui/somdock.py" line="228"/>
+        <location filename="../ui/somdock.py" line="227"/>
         <source>Show hidden columns</source>
         <translation>Versteckte Spalten anzeigen</translation>
     </message>
     <message>
-        <location filename="../ui/somdock.py" line="293"/>
+        <location filename="../ui/somdock.py" line="294"/>
         <source>Stop autosearch on %s{attribute[0]} | {attribute[1]}</source>
         <translation>Stoppe automatische Suche nach %s{attribute[0]} | {attribute[1]}</translation>
     </message>
     <message>
-        <location filename="../ui/somdock.py" line="302"/>
+        <location filename="../ui/somdock.py" line="303"/>
         <source>Autosearch attribute set to: %s{attribute[0]} | {attribute[1]}</source>
         <translation>Attribut der automatischen Suche gesetzt auf: %s{attribute[0]} | {attribute[1]}</translation>
     </message>
     <message>
-        <location filename="../ui/somdock.py" line="310"/>
+        <location filename="../ui/somdock.py" line="313"/>
         <source>Stop the auto search in the SOM</source>
         <translation>Automatische Suche im SOM stoppen</translation>
     </message>
@@ -1527,7 +1527,7 @@ Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
 <context>
     <name>TreeModelBaseclass</name>
     <message>
-        <location filename="../ui/treebase.py" line="217"/>
+        <location filename="../ui/treebase.py" line="215"/>
         <source>&lt;NULL&gt;</source>
         <translation>&lt;NULL&gt;</translation>
     </message>
@@ -1535,24 +1535,24 @@ Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
 <context>
     <name>ValidationDockWidget</name>
     <message>
-        <location filename="../ui/validationdock.py" line="15"/>
+        <location filename="../ui/validationdock.py" line="16"/>
         <source>&amp;Validation</source>
         <translation>&amp;Validierung</translation>
     </message>
     <message>
-        <location filename="../ui/validationdock.py" line="58"/>
-        <location filename="../ui/validationdock.py" line="60"/>
-        <location filename="../ui/validationdock.py" line="62"/>
+        <location filename="../ui/validationdock.py" line="59"/>
+        <location filename="../ui/validationdock.py" line="61"/>
+        <location filename="../ui/validationdock.py" line="63"/>
         <source>Integrity</source>
         <translation>Integrität</translation>
     </message>
     <message>
-        <location filename="../ui/validationdock.py" line="124"/>
+        <location filename="../ui/validationdock.py" line="129"/>
         <source>No IDS file selected</source>
         <translation>Keine IDS-Datei gewählt</translation>
     </message>
     <message>
-        <location filename="../ui/validationdock.py" line="147"/>
+        <location filename="../ui/validationdock.py" line="153"/>
         <source>No validator selected</source>
         <translation>Kein Validierungsregelsatz gewählt</translation>
     </message>
@@ -1560,7 +1560,7 @@ Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
 <context>
     <name>ValidationResultTreeModel</name>
     <message>
-        <location filename="../ui/detailview.py" line="730"/>
+        <location filename="../ui/detailview.py" line="734"/>
         <source>Validation of %s</source>
         <translation>Validierung von %s</translation>
     </message>
@@ -1568,7 +1568,32 @@ Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
 <context>
     <name>ValidationTreeModel</name>
     <message>
-        <location filename="../ui/validationdock.py" line="318"/>
+        <location filename="../ui/validationdock.py" line="287"/>
+        <source>Rules</source>
+        <translation>Regeln</translation>
+    </message>
+    <message>
+        <location filename="../ui/validationdock.py" line="288"/>
+        <source>Description</source>
+        <translation>Beschreibung</translation>
+    </message>
+    <message>
+        <location filename="../ui/validationdock.py" line="289"/>
+        <source>Instructions</source>
+        <translation>Anweisungen</translation>
+    </message>
+    <message>
+        <location filename="../ui/validationdock.py" line="290"/>
+        <source>If/then</source>
+        <translation>Wenn/Dann</translation>
+    </message>
+    <message>
+        <location filename="../ui/validationdock.py" line="292"/>
+        <source>Results</source>
+        <translation>Ergebnisse</translation>
+    </message>
+    <message>
+        <location filename="../ui/validationdock.py" line="334"/>
         <source>Requirement (%s)</source>
         <translation>Erfordernis (%s)</translation>
     </message>
