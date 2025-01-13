@@ -128,10 +128,18 @@ class Validators:
             for requirement in spec["requirements"]:
                 for entity in requirement["failed_entities"]:
                     element = entity["element"]
-                    self.add_failed(element.GlobalId)
+                    try:
+                        self.add_failed(element.GlobalId)
+                    except AttributeError:
+                        # No GlobalId for IfcMaterialConstituentSet
+                        pass
                 for entity in requirement["passed_entities"]:
                     element = entity["element"]
-                    self.add_passed(element.GlobalId)
+                    try:
+                        self.add_passed(element.GlobalId)
+                    except AttributeError:
+                        # No GlobalId for IfcMaterialConstituentSet
+                        pass
 
     def add_passed(self, guid):
         """Helper to add a passed validation to the results"""
