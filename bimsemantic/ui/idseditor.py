@@ -402,6 +402,8 @@ class IdsEditDialog(QDialog):
         :param value: The value of the parameter (numeric, string or restriction)
         :type value: str or ifctester.facet.Restriction
         """
+        if value is None:
+            value = ""
         if isinstance(value, ifctester.facet.Restriction):
             keys = value.options.keys()
             if "enumeration" in keys:
