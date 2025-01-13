@@ -901,17 +901,24 @@ class IdsEditDialog(QDialog):
         for combo, parameter in zip(combo_list, parameter_list):
             if combo.currentIndex() == 2:
                 bounds = extract_bounds(parameter.text().strip())
+                print(bounds)
                 if bounds:
                     min_value = bounds.get("min_value", "0")
                     max_value = bounds.get("max_value", "0")
+                    min_op = bounds.get("min_op", None)
+                    max_op = bounds.get("max_op", None)
                     if min_value is None and max_value is None:
                         min_value = "invalid"  # Trigger the exception
                     try:
                         if min_value is not None:
                             min_value = float(min_value)
+                            if min_op is None:
+                                raise ValueError
                         if max_value is not None:
                             max_value = float(max_value)
-                        if min_value >= max_value:
+                            if max_op is None:
+                                raise ValueError
+                        if type(min_value) == "float" and type(max_value) == "float" and min_value >= max_value:
                             raise ValueError
                     except ValueError:
                         mb = QMessageBox()
