@@ -331,7 +331,10 @@ class ValidationTreeModel(TreeModelBaseclass):
             validator_item.appendChild(spec_item)
 
             for req in spec.requirements:
-                namestring = self.tr("Requirement (%s)") % req.__class__.__name__
+                class_name = req.__class__.__name__
+                if class_name == "Requirement":
+                    class_name = "Integrity" # Looks better in GUI
+                namestring = self.tr("Requirement (%s)") % class_name
                 req_item = TreeItem(
                     [
                         namestring,
