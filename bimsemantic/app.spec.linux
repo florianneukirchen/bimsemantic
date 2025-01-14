@@ -5,13 +5,16 @@ import glob
 
 rules_path = "../venv/lib/python3.10/site-packages/ifcopenshell/express/rules"
 rulesdata = [(file, 'ifcopenshell/express/rules') for file in glob.glob(rules_path)]
+ids_xsd = [("../venv/lib/python3.10/site-packages/ifctester/ids.xsd", 
+    "ifctester")]
 i18n_data = [('i18n/bimsemantic_de.qm', 'i18n')]
+
 
 a = Analysis(
     ['app.py'],
     pathex=['.'],
     binaries=[],
-    datas=rulesdata + i18n_data,
+    datas=rulesdata + i18n_data + ids_xsd,
     hiddenimports=['ifcopenshell.express'],
     hookspath=[],
     hooksconfig={},
@@ -28,11 +31,11 @@ exe = EXE(
     [],
     exclude_binaries=True,
     name='bimsemantic',
-    debug=False,
+    debug=False,                           # True for debugging
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    console=False,
+    console=False,                         # True for debugging
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
