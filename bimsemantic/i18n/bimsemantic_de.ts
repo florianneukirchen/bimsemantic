@@ -4,8 +4,8 @@
 <context>
     <name>ChooseFacetDialog</name>
     <message>
-        <location filename="../ui/idseditor.py" line="1162"/>
-        <location filename="../ui/idseditor.py" line="1167"/>
+        <location filename="../ui/idseditor.py" line="1178"/>
+        <location filename="../ui/idseditor.py" line="1183"/>
         <source>Choose Facet</source>
         <translation>Facette wählen</translation>
     </message>
@@ -316,7 +316,7 @@
     </message>
     <message>
         <location filename="../ui/idseditor.py" line="194"/>
-        <location filename="../ui/idseditor.py" line="729"/>
+        <location filename="../ui/idseditor.py" line="738"/>
         <source>New Specification</source>
         <translation>Neue Spezifikation</translation>
     </message>
@@ -400,23 +400,23 @@
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="511"/>
-        <location filename="../ui/idseditor.py" line="885"/>
+        <location filename="../ui/idseditor.py" line="520"/>
+        <location filename="../ui/idseditor.py" line="894"/>
         <source>Required</source>
         <translation>Erforderlich</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="888"/>
+        <location filename="../ui/idseditor.py" line="897"/>
         <source>All required parameters must be specified</source>
         <translation>Alle erforderlichen Parameter müssen ausgefüllt sein</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="889"/>
+        <location filename="../ui/idseditor.py" line="898"/>
         <source>Missing required parameter</source>
         <translation>Erforderlicher Parameter fehlt</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="922"/>
+        <location filename="../ui/idseditor.py" line="938"/>
         <source>Invalid bounds:
 Should be in the form of
 2 &lt; value &lt;= 10</source>
@@ -424,57 +424,57 @@ Should be in the form of
 Sollte in der Form 2 &lt; value &lt;= 10 sein</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="923"/>
+        <location filename="../ui/idseditor.py" line="939"/>
         <source>Invalid bounds</source>
         <translation>Ungültiger Wertebereich</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="934"/>
+        <location filename="../ui/idseditor.py" line="950"/>
         <source>Invalid regex pattern:
 %s</source>
         <translation>Ungültiger regulärer Ausdruck: %s</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="935"/>
+        <location filename="../ui/idseditor.py" line="951"/>
         <source>Invalid regex pattern</source>
         <translation>Ungültiger regulärer Ausdruck</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="943"/>
+        <location filename="../ui/idseditor.py" line="959"/>
         <source>Invalid length:
 Should be an integer</source>
         <translation>Ungültige Länge: muss ganzzahlig sein</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="944"/>
-        <location filename="../ui/idseditor.py" line="959"/>
+        <location filename="../ui/idseditor.py" line="960"/>
+        <location filename="../ui/idseditor.py" line="975"/>
         <source>Invalid length</source>
         <translation>Ungültige Länge</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="958"/>
+        <location filename="../ui/idseditor.py" line="974"/>
         <source>Invalid length:
 Should be two integers separated by a comma</source>
         <translation>Ungültige Länge
 Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="1092"/>
+        <location filename="../ui/idseditor.py" line="1108"/>
         <source>Optional field &lt;i&gt;author&lt;/i&gt; must be a valid email address</source>
         <translation>Optionales Feld &lt;i&gt;Autor&lt;/i&gt; muss gültige Email-Adresse sein</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="1093"/>
+        <location filename="../ui/idseditor.py" line="1109"/>
         <source>Invalid email address</source>
         <translation>Ungültige Email-Adresse</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="1138"/>
+        <location filename="../ui/idseditor.py" line="1154"/>
         <source>&lt;b&gt;Could not save IDS file:&lt;/b&gt;</source>
         <translation>&lt;b&gt;Konnte IDS-Datei nicht speichern:&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/idseditor.py" line="1140"/>
+        <location filename="../ui/idseditor.py" line="1156"/>
         <source>Could not save IDS file</source>
         <translation>Konnte IDS-Datei nicht speichern</translation>
     </message>
@@ -1556,6 +1556,16 @@ Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
         <source>No validator selected</source>
         <translation>Kein Validierungsregelsatz gewählt</translation>
     </message>
+    <message>
+        <location filename="../ui/validationdock.py" line="175"/>
+        <source>Running all validators ...</source>
+        <translation>Führe Validierung mit allen Regeln aus ...</translation>
+    </message>
+    <message>
+        <location filename="../ui/validationdock.py" line="196"/>
+        <source>Running validator %s ...</source>
+        <translation>Führe Validierung mit %s aus ...</translation>
+    </message>
 </context>
 <context>
     <name>ValidationResultTreeModel</name>
@@ -1568,32 +1578,32 @@ Bitte zwei ganzzahlige Werte, durch Komma getrennt</translation>
 <context>
     <name>ValidationTreeModel</name>
     <message>
-        <location filename="../ui/validationdock.py" line="287"/>
+        <location filename="../ui/validationdock.py" line="306"/>
         <source>Rules</source>
         <translation>Regeln</translation>
     </message>
     <message>
-        <location filename="../ui/validationdock.py" line="288"/>
+        <location filename="../ui/validationdock.py" line="307"/>
         <source>Description</source>
         <translation>Beschreibung</translation>
     </message>
     <message>
-        <location filename="../ui/validationdock.py" line="289"/>
+        <location filename="../ui/validationdock.py" line="308"/>
         <source>Instructions</source>
         <translation>Anweisungen</translation>
     </message>
     <message>
-        <location filename="../ui/validationdock.py" line="290"/>
+        <location filename="../ui/validationdock.py" line="309"/>
         <source>If/then</source>
         <translation>Wenn/Dann</translation>
     </message>
     <message>
-        <location filename="../ui/validationdock.py" line="292"/>
+        <location filename="../ui/validationdock.py" line="311"/>
         <source>Results</source>
         <translation>Ergebnisse</translation>
     </message>
     <message>
-        <location filename="../ui/validationdock.py" line="334"/>
+        <location filename="../ui/validationdock.py" line="356"/>
         <source>Requirement (%s)</source>
         <translation>Erfordernis (%s)</translation>
     </message>

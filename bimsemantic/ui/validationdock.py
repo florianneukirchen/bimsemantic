@@ -1,7 +1,7 @@
 from PySide6.QtCore import Qt, QSortFilterProxyModel, QModelIndex
 from bimsemantic.ui import TreeItem, TreeModelBaseclass
 import ifcopenshell.util.element
-from PySide6.QtWidgets import QDockWidget, QTreeView
+from PySide6.QtWidgets import QDockWidget, QTreeView, QApplication
 from bimsemantic.ui import CopyMixin, ContextMixin, IdsEditDialog
 from bimsemantic.util import IdsValidator, IntegrityValidator, Validators
 
@@ -172,10 +172,18 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
 
     def run_all_validations(self):
         """Run all validators and update the views"""
+        self.mainwindow.statusbar.showMessage(self.tr("Running all validators ..."))
+        self.mainwindow.progressbar.setRange(0, 0)
+        # The statusbar is not updated without the following line
+        QApplication.processEvents()
+
         self.validators.validate()
+
         self.update_results_column()
         self.update_ifc_views()
         self.mainwindow.save_validation_act.setEnabled(True)
+        self.mainwindow.progressbar.setRange(0, 100)
+        self.mainwindow.statusbar.clearMessage()
         self.show()  # Show the dock in case it was hidden
 
     def run_selected_validation(self):
@@ -183,10 +191,20 @@ class ValidationDockWidget(CopyMixin, ContextMixin, QDockWidget):
         validator_id = self.selected_validator_id()
         if not validator_id:
             return
+        self.mainwindow.statusbar.showMessage(
+            self.tr("Running validator %s ...") % str(validator_id)
+        )
+        self.mainwindow.progressbar.setRange(0, 0)
+        # The statusbar is not updated without the following line
+        QApplication.processEvents()
+
         self.validators.validate(validator_id)
+
         self.update_results_column()
         self.update_ifc_views()
         self.mainwindow.save_validation_act.setEnabled(True)
+        self.mainwindow.progressbar.setRange(0, 100)
+        self.mainwindow.statusbar.clearMessage()
 
     def update_results_column(self):
         """Update the results column in the validators dock"""
