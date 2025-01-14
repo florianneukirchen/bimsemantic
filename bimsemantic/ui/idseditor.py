@@ -445,17 +445,22 @@ class IdsEditDialog(QDialog):
             combo.setCurrentIndex(0)
             parameter.setText(str(value))
 
-    def get_parameter_or_restriction(self, parameter, combo):
+    def get_parameter_or_restriction(self, parameter, combo, upper=False):
         """Get parameter as simple value or as restriction
 
         The parameter can be a simple value (string) or a restriction (if the
         combo box is not at index 0). The restriction is returned as an instance
         of ifctester.facet.Restriction.
 
+        The string can be forced to upper case. Facet Entity name / type expects 
+        upper case.
+
         :param parameter: The QLineEdit widget with the parameter value
         :type parameter: QLineEdit
         :param combo: The QComboBox widget with the restriction type
         :type combo: QComboBox
+        :param upper: If True, force upper case for parameter string 
+        :type upper: bool
         :return: The parameter value as simple value or restriction
         :rtype: str or ifctester.facet.Restriction
         """
@@ -463,6 +468,8 @@ class IdsEditDialog(QDialog):
         text = parameter.text().strip()
         if not text:
             return None
+        if upper:
+            text = text.upper()
         if combo_index == 0:
             return text
         elif combo_index == 1:
@@ -1017,10 +1024,10 @@ class IdsEditDialog(QDialog):
 
         if isinstance(facet, ifctester.ids.Entity):
             facet.name = self.get_parameter_or_restriction(
-                self.parameter1, self.restriction1
+                self.parameter1, self.restriction1, upper=True
             )
             facet.predefinedType = self.get_parameter_or_restriction(
-                self.parameter2, self.restriction2
+                self.parameter2, self.restriction2, upper=True
             )
             facet.cardinality = None
         elif isinstance(facet, ifctester.ids.Attribute):
