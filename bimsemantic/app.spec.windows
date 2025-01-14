@@ -13,7 +13,7 @@ a = Analysis(
     ['app.py'],
     pathex=[],
     binaries=[],
-    datas=rulesdata + i18n_data + i18n_data,
+    datas=rulesdata + i18n_data + ids_xsd,
     hiddenimports=[
         'ifcopenshell.express',
         ],
