@@ -287,7 +287,7 @@ class IdsEditDialog(QDialog):
         self.back_to_main = QPushButton(self.tr("Cancel"))
         self.back_to_main.clicked.connect(self.show_main_layout)
         buttonlayout3.addWidget(self.back_to_main)
-        self.save_spec_btn = QPushButton(self.tr("Save Specification"))
+        self.save_spec_btn = QPushButton(self.tr("OK"))
         self.save_spec_btn.clicked.connect(self.save_specification)
         buttonlayout3.addWidget(self.save_spec_btn)
 
