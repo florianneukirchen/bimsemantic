@@ -90,7 +90,7 @@ pip install PyInstaller
 ```
 
 PyInstaller uses a spec file for configuration.
-To create a spec file for a project, run with activated venv:
+To create a spec file for a project, run the following commands with activated venv. **Note: use one of the provided spec files instead!**
 ```
 cd bimsemanticviewer
 pyinstaller app.py
