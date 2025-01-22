@@ -328,8 +328,8 @@ class IdsEditDialog(QDialog):
         self.label3 = QLabel()
         self.label4 = QLabel()
         self.label5 = QLabel()
-        self.instructions_label = QLabel("Instructions")
-        self.cardinality_label = QLabel("Cardinality")
+        self.instructions_label = QLabel(self.tr("Instructions"))
+        self.cardinality_label = QLabel(self.tr("Cardinality"))
 
         layout.addWidget(self.label1, 1, 0)
         layout.addWidget(self.label2, 2, 0)
