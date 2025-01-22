@@ -1,3 +1,21 @@
+"""
+/***************************************************************************
+                              BIM Semantic Viewer
+                              -------------------
+        begin                : 2024-10-03
+        copyright            : (C) 2025 by Florian Neukirchen
+        email                : mail@riannek.de
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+"""
 from PySide6.QtCore import Qt, QModelIndex
 from PySide6.QtWidgets import QDockWidget, QLabel, QTreeView
 import ifcopenshell.util.element
