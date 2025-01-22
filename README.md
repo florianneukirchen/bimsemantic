@@ -1,34 +1,27 @@
 # BIM Semantic Viewer
 
-BIM Semantic Viewer
-präsentiert die Elemente von IFC-Dateien und ihre Semantik in mehreren 
-unterschiedlich aufgebauten Baumansichten. Neben den vorgegebenen Ansichten 
-können auch benutzerdefinierte Baumansichten erstellt werden. Die Werte 
-ausgewählter Attribute können in Tabellenspalten eingeblendet werden.
-Ein Panel an der Seite zeigt alle Details des gewählten Elements an. 
-Weitere Panels fassen alle Property Sets bzw. Quantity Sets und darin verwendete Werte zusammen.
-Zudem ist eine Validierung der Daten anhand von in IDS-Dateien definierten Regeln 
-möglich, wobei auch ein Editor für diese Regeln bereitgestellt wird.  
-Das semantische Objektmodell (SOM) der Deutschen Bahn kann ebenfalls eingelesen
-und angezeigt werden, wobei eine automatische Suche nach dem Wert einer 
-bestimmten Property eingestellt werden kann, um zu einem gewählten Objekt 
-des IFC-Modells den relevanten Eintrag in der SOM-Liste zu finden.
-Das Programm ermöglicht es, die semantische Struktur von BIM-Modellen zu untersuchen
-sowie schnell fehlende Attribute und Tippfehler zu erkennen. 
+BIM Semantic Viewer presents the elements of IFC files and their semantics in 
+several differently structured tree views. In addition to the predefined views, 
+user-defined tree views can also be created. The values of selected attributes 
+can be displayed in table columns. A panel on the side shows all the details of 
+the selected element. Other panels summarize all property sets or quantity sets 
+and the values used in them. It is also possible to validate the data using rules 
+defined in IDS files, and an editor for IDS files is also provided.
 
-BIM Semantic Viewer ist Open Source unter GPL 2.
+
+BIM Semantic Viewer is Open Source under GPL 2.
 
 ![Screenshot](bimsemantic/doc/screenshot.png)
 
 ## Installation 
 
-Mit PyInstaller erzeugte ausführbare Dateien können ohne weitere Installation 
-mit einem Doppelklick gestartet werden. 
+The provided packages contain executables that can be started with a 
+double click without any further installation.
 
-Die folgenden Angaben betreffen nur die Installation des Source Codes.
+The following sections are about running the source code.
 ### Python
 
-Python must be installed on the system.
+Python must be installed on the system to run the source code.
 The required package IfcOpenShell is compatible with Python 3.9 to 3.12.
 
 ### Setup venv
