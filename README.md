@@ -16,7 +16,7 @@ des IFC-Modells den relevanten Eintrag in der SOM-Liste zu finden.
 Das Programm ermöglicht es, die semantische Struktur von BIM-Modellen zu untersuchen
 sowie schnell fehlende Attribute und Tippfehler zu erkennen. 
 
-
+BIM Semantic Viewer ist Open Source unter GPL 2.
 
 ## Installation 
 
