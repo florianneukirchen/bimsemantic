@@ -18,6 +18,8 @@ sowie schnell fehlende Attribute und Tippfehler zu erkennen.
 
 BIM Semantic Viewer ist Open Source unter GPL 2.
 
+![Screenshot](bimsemantic/doc/screenshot.png)
+
 ## Installation 
 
 Mit PyInstaller erzeugte ausführbare Dateien können ohne weitere Installation 
