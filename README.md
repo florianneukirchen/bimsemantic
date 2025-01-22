@@ -9,7 +9,10 @@ and the values used in them. It is also possible to validate the data using rule
 defined in IDS files, and an editor for IDS files is also provided.
 
 
-BIM Semantic Viewer is Open Source under GPL 2.
+BIM Semantic Viewer is Open Source under GPL 2. It has been tested on Windows 
+and Linux.
+
+> This program has been developed as project in the module "Geoprojektarbeit" at Berliner Hochschule für Technik (BHT)
 
 ![Screenshot](bimsemantic/doc/screenshot.png)
 
