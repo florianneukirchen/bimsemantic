@@ -82,72 +82,23 @@ pyside6-rcc resources.qrc -o resources.py
 
 
 ### Packaging with PyInstaller
+This section explains how to create a package with PyInstaller.
+
 With activated venv:
 ```
 pip install PyInstaller
 ```
 
-To create a spec file, run with activated venv:
+PyInstaller uses a spec file for configuration.
+To create a spec file for a project, run with activated venv:
 ```
 cd bimsemanticviewer
 pyinstaller app.py
 ```
 
-Edit spec file: We need to add the IfcOpenSell IFC rules manually
-```python
-# -*- mode: python ; coding: utf-8 -*-
-
-# Add these lines
-import os
-import glob
-rules_path = "../venv/lib/python3.10/site-packages/ifcopenshell/express/rules" # Linux
-# rules_path = "../venv/Lib/site-packages/ifcopenshell/express/rules" # Windows
-rulesdata = [(file, 'ifcopenshell/express/rules') for file in glob.glob(rules_path)]
-i18n_data = [('i18n/bimsemantic_de.qm', 'i18n')]
-
-a = Analysis(
-    ['app.py'],
-    pathex=[],
-    binaries=[],
-    datas=rulesdata + i18n_data, # Edit here
-    hiddenimports=['ifcopenshell.express'], # Edit here
-    hookspath=[],
-    hooksconfig={},
-    runtime_hooks=[],
-    excludes=[],
-    noarchive=False,
-    optimize=0,
-)
-pyz = PYZ(a.pure)
-
-exe = EXE(
-    pyz,
-    a.scripts,
-    [],
-    exclude_binaries=True,
-    name='bimsemantic', # Edit here
-    debug=False,
-    bootloader_ignore_signals=False,
-    strip=False,
-    upx=True,
-    console=False, # Set to False to hide console
-    disable_windowed_traceback=False,
-    argv_emulation=False,
-    target_arch=None,
-    codesign_identity=None,
-    entitlements_file=None,
-)
-coll = COLLECT(
-    exe,
-    a.binaries,
-    a.datas,
-    strip=False,
-    upx=True,
-    upx_exclude=[],
-    name='bimsemantic', # Edit here
-)
-
-```
+The spec file has to be edited: Hidden imports and required files such as the
+IFC rules and ids.xsd have to be packaged as well. The source code contains the edited 
+files for windows (`app.spec.windows`) and Linux (`app.spec.linux`).
 
 Now run
 ```
@@ -160,5 +111,5 @@ In case of any problems, try:
 pip3 install --upgrade PyInstaller pyinstaller-hooks-contrib
 ```
 
-Note to self: git pull mit github cli: gh repo sync
+Note to self: git pull with github cli: gh repo sync
 
